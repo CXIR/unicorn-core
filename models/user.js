@@ -10,31 +10,42 @@ module.exports = function(sequelize, DataTypes) {
       autoIncrement : true,
     },
     lastname: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: false
     },
     firstname: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: false
     },
     birthdate: {
-      type : DataTypes.DATE
+      type : DataTypes.DATE,
+      allowNull: false
     },
     mailAdress: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: false
     },
     password: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: false
     },
     phoneNumber: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: true
     },
     description: {
-      type : DataTypes.TEXT
+      type : DataTypes.TEXT,
+      allowNull: true
     },
     positiveRating: {
-      type : DataTypes.INTEGER
+      type : DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
     },
     negativeRating: {
-      type : DataTypes.INTEGER
+      type : DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
     }
 
   }, {
