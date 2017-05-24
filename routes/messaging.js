@@ -9,7 +9,26 @@ const router = express.Router();
 
 /**************************GET**************************/
 
+/** Get all messages from conversation */
+router.get('/findall/:id',function(req,res){
+  MSG_Conversation.findAll({
+    where:{
+        id: req.params.id
+    }
+  })
+  .then(function(sites){
+    let results = [];
+    for(let conv of conversations){
+      results.push(message.responsify());
+    }
+    res.json(results);
+  }).catch(function(err){
+    if(err){
+      res.json({ result: 0 });
+    }
+  });
 
+});
 
 /**************************POST**************************/
 

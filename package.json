@@ -1,6 +1,6 @@
 {
-  "name": "api",
-  "version": "0.0.0",
+  "name": "unicorn-core",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node-dev ./bin/www"

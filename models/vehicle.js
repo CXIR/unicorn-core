@@ -10,22 +10,29 @@ module.exports = function(sequelize, DataTypes) {
       autoIncrement : true,
     },
     brand: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: false
     },
     model: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: false
     },
     registrationNumber: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: false
     },
     placesNumber: {
-      type : DataTypes.INTEGER
+      type : DataTypes.INTEGER,
+      allowNull: false
     },
     vehicleType: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: false
     },
     isVehicleOK: {
-      type : DataTypes.BOOLEAN
+      type : DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     paranoid: true,

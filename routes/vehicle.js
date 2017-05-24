@@ -8,23 +8,21 @@ const router = express.Router();
 /**************************GET**************************/
 
 /** Get all cars */
-router.get('/vehicles/find/all',function(req,res){
-  Vehicle.findAll().then(function(vehicles){
+router.get('/findall',function(req,res){
+  Vehicle.findAll()
+  .then(function(vehicles){
     let results = [];
     for(let vehicle of vehicles){
-      results.push(Vehicle.responsify());
+      results.push(vehicle.responsify());
     }
     res.json(results);
-  }).catch(function(err){
-    if(err){
-      res.json({ result: 0 });
-    }
-  });
+  })
+  .catch(err => { res.json({result: -1, error: err}); } );
 
 });
 
 /** Get a single car by id */
-router.get('vehicles/:id',function(req,res){
+router.get('/find/:id',function(req,res){
   Vehicle.find({
     where:{
             id: req.params.id
@@ -36,46 +34,33 @@ router.get('vehicles/:id',function(req,res){
     }
     else res.json({ result: 0 });
   })
-  .catch(function(err){
-      res.json({
-                  result: -1
-               });
-  });
+  .catch(err => { res.json({result: -1, error: err}); } );
 
 });
 
 /**************************POST**************************/
 
 /** Create a new vehicle */
-router.post('vehicle/add',function(req,res,next){
+router.post('/new',function(req,res,next){
   let send = req.body;
 
-  /* 'phoneNumber' and 'description' should be null
-  * 'negativeRating' and 'positiveRating' are initialized with 0 by default
+  /* 'isVehiculeOK' initialized w/ default value 0
   */
   Vehicle.create({
     brand: send.brand,
     model: send.model,
     registrationNumber: send.registration,
     placesNumber: send.seats,
-    vehicleType: send.type,
-    isVehicleOK: 1
+    vehicleType: send.type
   })
   .then(function(vehicle){
     if(vehicle){
       res.json(vehicle);
     }
-    else{
-      res.json({
-                result: 0
-              });
-    }
+    else res.json({ result: 0 });
+
   })
-  .catch(function(err){
-    res.json({
-                result: -1
-             });
-  });
+  .catch(err => { res.json({result: -1, error: err}); } );
 
 });
 
@@ -83,7 +68,7 @@ router.post('vehicle/add',function(req,res,next){
 /**************************DELETE**************************/
 
 /** Drop a car */
-router.post('/vehicles/delete/:id',function(req,res,next){
+router.delete('/delete/:id',function(req,res,next){
   Vehicle.find({
     where:{
             id: req.params.id
@@ -93,27 +78,15 @@ router.post('/vehicles/delete/:id',function(req,res,next){
     if(vehicle){
       Vehicle.destroy()
       .then(function(vehicle){
-        req.json({
-                    result: 1
-                });
+        req.json({ result: 1 });
       })
-      .catch(function(err){
-        req.json({
-                    result: 0
-                });
-      });
+      .catch(err => { res.json({result: 0, error: err}); } );
     }
     else{
-      res.json({
-                  result: -1
-              });
+      res.json({ result: -1 });
     }
   })
-  .catch(function(err){
-    res.json({
-              result: -1
-            });
-  });
+  .catch(err => { res.json({result: -1, error: err}); } );
 
 });
 

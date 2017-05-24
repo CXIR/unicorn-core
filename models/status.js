@@ -7,7 +7,8 @@ module.exports = function(sequelize, DataTypes) {
       autoIncrement : true,
     },
     label: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: false
     }
   }, {
     paranoid: true,

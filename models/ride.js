@@ -1,4 +1,5 @@
 'use strict';
+
 module.exports = function(sequelize, DataTypes) {
   var Ride = sequelize.define('Ride', {
     id: {
@@ -7,40 +8,52 @@ module.exports = function(sequelize, DataTypes) {
       autoIncrement : true,
     },
     ad_date: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: false
     },
     ad_message: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: true
     },
     depature_date: {
-      type : DataTypes.DATE
+      type : DataTypes.DATE,
+      allowNull: false
     },
     departure_adress: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: true
     },
     departure_postalCode: {
-      type : DataTypes.INTEGER
+      type : DataTypes.INTEGER,
+      allowNull: true
     },
     departure_city: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: true
     },
     departure_idSite: {
-      type : DataTypes.INTEGER
+      type : DataTypes.INTEGER,
+      allowNull: true
     },
     arrival_date: {
-      type : DataTypes.DATE
+      type : DataTypes.DATE,
+      allowNull: false
     },
     arrival_adress: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: true
     },
     arrival_postalCode: {
-      type : DataTypes.INTEGER
+      type : DataTypes.INTEGER,
+      allowNull: true
     },
     arrival_city: {
-      type : DataTypes.STRING
+      type : DataTypes.STRING,
+      allowNull: true
     },
     arrival_idSite: {
-      type : DataTypes.INTEGER
+      type : DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     paranoid: true,
@@ -72,6 +85,9 @@ module.exports = function(sequelize, DataTypes) {
         result.arrival_idSite = this.arrival_idSite;
         if (this.User) {
           result.driver = this.User.responsify();
+        }
+        if (this.getUser_Rides()) {
+          result.passengers = this.getUser_Rides();
         }
         return result;
       }
