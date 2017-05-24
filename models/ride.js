@@ -85,10 +85,10 @@ module.exports = function(sequelize, DataTypes) {
         result.arrival_idSite = this.arrival_idSite;
         if (this.User) {
           result.driver = this.User.responsify();
-        }
+        }/*
         if (this.getUser_Rides()) {
           result.passengers = this.getUser_Rides();
-        }
+        }*/
         return result;
       }
     }

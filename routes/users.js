@@ -9,10 +9,11 @@ const router = express.Router();
 
 /** Get all active users */
 router.get('/findall',function(req,res){
-  User.findAll().then(function(users){
+  User.findAll()
+  .then(function(users){
     let results = [];
     for(let user of users){
-      results.push(User.responsify());
+      results.push(user.responsify());
     }
     res.json(results);
   }).catch(err => { res.json({result: -1, error: err}); } );
@@ -26,16 +27,10 @@ router.get('/find/:id',function(req,res){
             id: req.params.id
           }
   })
-  .then(function(user){
-    if(user) {
-      res.json(user.responsify());
-    }
-    else res.json({ result: 0 });
-  })
-  .catch(err => { res.json({result: -1, error: err}); } );
+  .then(user => { if(user) res.json(user.responsify()); else res.json(0); })
+  .catch(err => { res.json({result: -1, error: err}); });
 
 });
-
 
 /**************************POST**************************/
 

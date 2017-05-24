@@ -12,7 +12,7 @@ router.get('/findall/comming',function(req,res){
   Ride.findAll({
       where: {
                 depature_date: {
-                                  $gte: new Date()
+                                  $gte: Date.now()
                                 }
              }
   })
@@ -22,11 +22,7 @@ router.get('/findall/comming',function(req,res){
       results.push(ride.responsify());
     }
     res.json(results);
-  }).catch(function(err){
-    if(err){
-      res.json({ result: 0 });
-    }
-  });
+  }).catch(err => { res.json({result: -1, error: err}); } );
 
 });
 
@@ -35,7 +31,7 @@ router.get('/findall/passed',function(req,res){
   Ride.findAll({
     where: {
               depature_date: {
-                              $lt: new Date()
+                              $lt: Date.now()
                              }
            }
   })
@@ -45,11 +41,7 @@ router.get('/findall/passed',function(req,res){
       results.push(ride.responsify());
     }
     res.json(results);
-  }).catch(function(err){
-    if(err){
-      res.json({ result: 0 });
-    }
-  });
+  }).catch(err => { res.json({result: -1, error: err}); } );
 
 });
 
@@ -66,9 +58,7 @@ router.get('/find/:id',function(req,res){
     }
     else res.json({ result: 0 });
   })
-  .catch(function(err){
-      res.json({ result: -1 });
-  });
+  .catch(err => { res.json({result: -1, error: err}); } );
 
 });
 
@@ -92,17 +82,8 @@ router.post('/new',function(req,res,next){
     arrival_city: send.arr_city,
     arrival_idSite: send.arr_site
   })
-  .then(function(ride){
-    if(ride){
-      res.json(ride);
-    }
-    else{
-      res.json({ result: 0 });
-    }
-  })
-  .catch(function(err){
-    res.json({ result: -1, error:err });
-  });
+  .then(ride => { if(ride) res.json(ride); else res.json(0); })
+  .catch(err => { res.json({result: -1, error: err}); } );
 
 });
 
@@ -118,20 +99,14 @@ router.delete('/delete/:id',function(req,res,next){
   .then(function(ride){
     if(ride){
       Ride.destroy()
-      .then(function(ride){
-        req.json({ result: 1 });
-      })
-      .catch(function(err){
-        req.json({ result: 0 });
-      });
+      .then(ride => { if(ride) res.json(1); else res.json(0); })
+      .catch(err => { res.json({result: -1, error: err}); } );
     }
     else{
       res.json({ result: -1 });
     }
   })
-  .catch(function(err){
-    res.json({ result: -1 });
-  });
+  .catch(err => { res.json({result: -1, error: err}); } );
 
 });
 
