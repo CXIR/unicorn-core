@@ -7,8 +7,8 @@ const router = express.Router();
 
 /**************************GET**************************/
 
-/** Get all site status */
-router.get('/findall',function(req,res){
+/** Get all sites */
+router.get('/',function(req,res){
   Site.findAll().then(function(sites){
     let results = [];
     for(let site of sites){
@@ -24,7 +24,7 @@ router.get('/findall',function(req,res){
 });
 
 /** Get one active site by ID */
-router.get('/find/:id',function(req,res){
+router.get('/:id',function(req,res){
   Site.find({
     where:{
             id: req.params.id
@@ -72,11 +72,36 @@ router.post('/new',function(req,res,next){
 
 });
 
+/** Update on site */
+router.post('/edit',function(req,res,next){
+  let send = req.body;
+
+  Site.find({
+    where:{
+            id: send.id
+          }
+  })
+  .then(function(site){
+    if(site){
+      user.updateAttributes({
+                              name: send.name,
+                              adress: send.adress,
+                              city: send.city,
+                              postalCode: send.postal
+                            });
+
+      res.json({ result: 1 });
+    }
+    else res.json({ result: 0, message: 'Something went wrong when updating this site' });
+  })
+  .catch(err => { res.json({result: -1, message:'Site not found', error: err}); });
+});
+
 
 /**************************DELETE**************************/
 
 /** Delete an active site */
-router.delete('/delete/:id',function(req,res,next){
+router.delete('/:id',function(req,res,next){
   Status.find({
     where:{
             id: req.params.id
@@ -88,17 +113,13 @@ router.delete('/delete/:id',function(req,res,next){
       .then(function(site){
         req.json({ result: 1 });
       })
-      .catch(function(err){
-        req.json({ result: 0 });
-      });
+      .catch(err => { res.json({ result:0, message:'Site not removed', error:err}); });
     }
     else{
       res.json({ result: -1 });
     }
   })
-  .catch(function(err){
-    res.json({ result: -1 });
-  });
+  .catch(err => { res.json({result:-1, message:'Site not found', error:err}); });
 
 });
 

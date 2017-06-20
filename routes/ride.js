@@ -3,36 +3,107 @@
 const express = require('express');
 const models = require('../models');
 const Ride = models.Ride;
+const User = models.User;
 const router = express.Router();
 
 /**************************GET**************************/
 
-/** Get all comming rides */
-router.get('/findall/comming',function(req,res){
+/** Get all comming rides w/ all users */
+router.get('/comming',function(req,res){
   Ride.findAll({
       where: {
                 depature_date: {
                                   $gte: Date.now()
                                 }
+             },
+      include : [ User ]
+  })
+  .then(function(rides){
+    if(rides){
+      let results = [];
+      for(let ride of rides){
+        results.push(ride.responsify());
+      }
+      res.json(results);
+    }
+    else res.json({ result:0, message:'No rides found' });
+
+  }).catch(err => { res.json({result: -1, error: err}); } );
+});
+
+
+
+
+/// On pourrait peut-être combiner les 2 routes suivantes en une seule?
+/// Attention, pas de requête unique !!
+
+/** Get all single user comming rides as driver */
+//TODO: récupérer le driver car plus de foreign key
+router.get('/comming/driver/:id',function(req,res){
+  let user = req.params.id;
+
+  Ride.findAll({
+      where: {
+                depature_date: {
+                                  $gte: Date.now()
+                                },
+                driver: user
              }
   })
   .then(function(rides){
-    let results = [];
-    for(let ride of rides){
-      results.push(ride.responsify());
+    if(rides){
+      let results = [];
+      for(let ride of rides){
+        results.push(ride.responsify());
+      }
+      res.json(results);
     }
-    res.json(results);
-  }).catch(err => { res.json({result: -1, error: err}); } );
+    else res.json({ result:0, message:'No rides found' });
 
+  })
+  .catch(err => { res.json({result: -1, error: err}); });
 });
 
-/** Get all passed rides */
-router.get('/findall/passed',function(req,res){
+/** Get all single user comming rides as passenger */
+//TODO: récupérer le driver car plus de clé étrangère
+router.get('/passed/passenger/:id',function(req,res){
+  let user = req.params.id;
+
+  User.find({
+    where:{
+            id: user
+          }
+  })
+  .then(function(user){
+    let results = [];
+
+    user.getRides({ where: "depature_date < '"+Date.now()+"'" })
+    .then(rides => {
+      for(let ride of rides){
+        results.push(ride.responsify());
+      }
+    })
+    .catch(err => { res.json({result:-1, message: 'Something went wrong w/ user.getRides()'}); });
+    res.json(results);
+  })
+  .catch(err => { res.json({result: -1, message:'User not found', error: err}); });
+});
+
+
+
+/// On pourrait peut-être combiner les 2 routes suivantes en une seule?
+/// Attention, pas de requête unique !!
+
+/** Get all single user passed rides as driver */
+router.get('/passed/driver/:id',function(req,res){
+  let user = req.params.id;
+
   Ride.findAll({
     where: {
               depature_date: {
                               $lt: Date.now()
-                             }
+                            },
+              driver: user
            }
   })
   .then(function(rides){
@@ -41,12 +112,38 @@ router.get('/findall/passed',function(req,res){
       results.push(ride.responsify());
     }
     res.json(results);
-  }).catch(err => { res.json({result: -1, error: err}); } );
+  })
+  .catch(err => { res.json({result: -1, message:'No rides found', error: err}); });
 
 });
 
+/** Get all single user passed rides as passenger */
+router.get('/passed/passenger/:id',function(req,res){
+  let user = req.params.id;
+
+  User.find({
+    where:{
+            id: user
+          }
+  })
+  .then(function(user){
+    let results = [];
+
+    user.getRides({ where: "depature_date >= '"+Date.now()+"'" })
+    .then(rides => {
+      for(let ride of rides){
+        results.push(ride.responsify());
+      }
+    })
+    .catch(err => { res.json({result:-1, message:'Something went wrong w/ user.getRides()', error:err}); });
+
+    res.json(results);
+  })
+  .catch(err => { res.json({result: -1, message:'Usr not found', error: err}); });
+});
+
 /** Get one ride by ID */
-router.get('/find/:id',function(req,res){
+router.get('/:id',function(req,res){
   Ride.find({
     where:{
             id: req.params.id
@@ -54,11 +151,28 @@ router.get('/find/:id',function(req,res){
   })
   .then(function(ride){
     if(ride) {
-      res.json(ride.responsify());
+      let info = ride.responsify();
+      let passengers = [];
+
+      ride.getUsers().then(users => {
+        for(let user of users){
+          passengers.push(user.responsify());
+        }
+      })
+      .catch(err => { res.json({result:-1, message: 'Something went wrong w/ ride.getUsers()', error:err}); });
+
+      res.json({info:info,passengers:passengers});
     }
-    else res.json({ result: 0 });
+    else res.json({ result: 0, message:'Ride not found' });
   })
-  .catch(err => { res.json({result: -1, error: err}); } );
+  .catch(err => { res.json({result: -1, message:'Ride not found', error: err}); } );
+
+});
+
+/** Get all single user rejected rides as passenger */
+router.get('/rejected/:id',function(req,res,next){
+
+  //TODO: Les trajets refusés (pas besoin des passagers [yolo] )
 
 });
 
@@ -87,10 +201,37 @@ router.post('/new',function(req,res,next){
 
 });
 
+//TODO: Modification d'un trajet (pas prévu dans l'appli pour le moment)
+
+/** Add an accepted Passenger to a Ride */
+router.post('/:rideID/users/:userID',function(req,res,next){
+    Ride.find({
+        where:{
+            id: req.params.rideID
+        }
+    })
+    .then(function(ride){
+        if(ride){
+           return models.User.find({
+              where:{
+                      id: req.params.userID
+                    }
+            })
+            .then(function(user){
+              user.addRide(ride);
+              res.json({result: 1 });
+            })
+            .catch(err => { res.json({ result: -2, error: err }); });
+        }
+    })
+    .catch(err => { res.json({result: -1, error: err}); } );
+
+});
+
 /**************************DELETE**************************/
 
-/** Delete an active status */
-router.delete('/delete/:id',function(req,res,next){
+/** Delete a ride */
+router.delete('/:id',function(req,res,next){
   Ride.find({
     where:{
             id: req.params.id

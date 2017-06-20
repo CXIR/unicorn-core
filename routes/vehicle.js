@@ -8,7 +8,7 @@ const router = express.Router();
 /**************************GET**************************/
 
 /** Get all cars */
-router.get('/findall',function(req,res){
+router.get('/',function(req,res){
   Vehicle.findAll()
   .then(function(vehicles){
     let results = [];
@@ -22,7 +22,7 @@ router.get('/findall',function(req,res){
 });
 
 /** Get a single car by id */
-router.get('/find/:id',function(req,res){
+router.get('/:id',function(req,res){
   Vehicle.find({
     where:{
             id: req.params.id
@@ -35,7 +35,27 @@ router.get('/find/:id',function(req,res){
     else res.json({ result: 0 });
   })
   .catch(err => { res.json({result: -1, error: err}); } );
+});
 
+/** Make Vehicle valid */
+router.get('/validate/:id',function(req,res,next){
+  let vehicle = req.params.id;
+
+  Vehicle.find({
+    where:{
+            id: vehicle
+          }
+  })
+  .then(function(vehicle){
+    if(vehicle){
+      vehicle.updateAttributes({
+                                  isVehicleOK: 1
+                              });
+      res.json({result:1, message:'Vehicle successfully validated'});
+    }
+    else res.json({result:0, message:'Vehicle not found'});
+  })
+  .catch(err => { res.json({result:-1, message:'Vehicle not found', error:err}) });
 });
 
 /**************************POST**************************/
@@ -44,8 +64,7 @@ router.get('/find/:id',function(req,res){
 router.post('/new',function(req,res,next){
   let send = req.body;
 
-  /* 'isVehiculeOK' initialized w/ default value 0
-  */
+  /* 'isVehiculeOK' initialized w/ default value */
   Vehicle.create({
     brand: send.brand,
     model: send.model,
@@ -61,14 +80,38 @@ router.post('/new',function(req,res,next){
 
   })
   .catch(err => { res.json({result: -1, error: err}); } );
+});
 
+/** Update vehicle */
+router.post('/edit',function(req,res,next){
+  let send = req.body;
+
+  Vehicle.find({
+    where:{
+            id: send.id
+          }
+  })
+  .then(function(vehicle){
+    if(vehicle){
+      vehicle.updateAttributes({
+                                  brand: send.brand,
+                                  model: send.model,
+                                  registrationNumber: send.registration,
+                                  placesNumber: send.places,
+                                  vehicleType: send.type
+                              });
+      res.json({result:1, message:'Vehicle successfully validated'});
+    }
+    else res.json({result:0, message:'Vehicle not found'});
+  })
+  .catch(err => { res.json({result:-1, message:'Vehicle not found', error:err}) });
 });
 
 
 /**************************DELETE**************************/
 
 /** Drop a car */
-router.delete('/delete/:id',function(req,res,next){
+router.delete('/:id',function(req,res,next){
   Vehicle.find({
     where:{
             id: req.params.id

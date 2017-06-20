@@ -8,7 +8,7 @@ const router = express.Router();
 /**************************GET**************************/
 
 /** Get all active users */
-router.get('/findall',function(req,res){
+router.get('/all',function(req,res){
   User.findAll()
   .then(function(users){
     let results = [];
@@ -20,8 +20,27 @@ router.get('/findall',function(req,res){
 
 });
 
+/** Get all active users except whom searching */
+router.get('/all/:id',function(req,res){
+  User.findAll({
+    where:{
+            id: {
+                  $ne: req.params.id
+                }
+          }
+  })
+  .then(function(users){
+    let results = [];
+    for(let user of users){
+      results.push(user.responsify());
+    }
+    res.json(results);
+  }).catch(err => { res.json({result: -1, error: err}); } );
+
+});
+
 /** Get one active user by ID */
-router.get('/find/:id',function(req,res){
+router.get('/:id',function(req,res){
   User.find({
     where:{
             id: req.params.id
@@ -48,7 +67,9 @@ router.post('/new',function(req,res,next){
     mailAdress: send.mail,
     password: send.pass,
     phoneNumber: (send.phone != undefined) ? send.phone : null,
-    description: (send.description != undefined) ? send.description : null
+    description: (send.description != undefined) ? send.description : null,
+    site_id: send.site,
+    status_id: send.status
   })
   .then(function(user){
     if(user){
@@ -61,31 +82,45 @@ router.post('/new',function(req,res,next){
 
 });
 
-/** Update User 'positiveRating' */
-router.post('/modify/markup',function(req,res,next){
-  let send = req.body;
-
+/** Update User rating */
+router.post('/markup',function(req,res,next){
+  let id = req.body;
+  let type = req.type;
+  
   User.find({
     where:{
-            id: send.id
+            id: id
           }
   })
   .then(function(user){
     if(user){
-      user.updateAttributes({
-                              positiveRating: send.markup
-                            });
+      if(type == 'positive'){
+        let markup = user.positiveRating;
+        let mark = markup+1;
+        user.updateAttributes({
+                                positiveRating: mark
+                              });
+      }
+      else if(type == 'negative'){
+        let markdown = user.negativeRating;
+        let mark = markdown+1;
+        user.updateAttributes({
+                                negativeRating: mark
+                              });
+      }
+      else res.json({ result: -1, message: 'Unknown rating type' });
+
 
       res.json({ result: 1 });
     }
-    else res.json({ result: 0 });
+    else res.json({ result: 0, message: 'User not found' });
   })
   .catch(err => { res.json({result: -1, error: err}); } );
 
 });
 
-/** Update User 'negativeRating' */
-router.post('/modify/markdown',function(req,res,next){
+/** Update User Information */
+router.post('/edit',function(req,res,next){
   let send = req.body;
 
   User.find({
@@ -96,12 +131,17 @@ router.post('/modify/markdown',function(req,res,next){
   .then(function(user){
     if(user){
       user.updateAttributes({
-                              negativeRating: send.markdown
+                              lastname: send.name,
+                              mailAdress: send.mail,
+                              phoneNumber: (send.phone != undefined) ? send.phone : null,
+                              description: (send.description != undefined) ? send.description : null,
+                              site_id: send.site,
+                              status_id: send.status
                             });
 
       res.json({ result: 1 });
     }
-    else res.json({ result: 0 });
+    else res.json({ result: 0, message: 'User not found' });
   })
   .catch(err => { res.json({result: -1, error: err}); } );
 
@@ -110,7 +150,7 @@ router.post('/modify/markdown',function(req,res,next){
 /**************************DELETE**************************/
 
 /** Delete an active user */
-router.delete('/delete/:id',function(req,res,next){
+router.delete('/:id',function(req,res,next){
   User.find({
     where:{
             id: req.params.id
