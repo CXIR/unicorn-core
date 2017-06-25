@@ -8,7 +8,7 @@ const router = express.Router();
 
 /**************************GET**************************/
 
-/** Get all comming rides w/ all users */
+/** Get all comming rides w/ all users | 02-001 */
 router.get('/comming',function(req,res){
   Ride.findAll({
       where: {
@@ -37,7 +37,7 @@ router.get('/comming',function(req,res){
 /// On pourrait peut-être combiner les 2 routes suivantes en une seule?
 /// Attention, pas de requête unique !!
 
-/** Get all single user comming rides as driver */
+/** Get all single user comming rides as driver | 02-002 */
 //TODO: récupérer le driver car plus de foreign key
 router.get('/comming/driver/:id',function(req,res){
   let user = req.params.id;
@@ -64,7 +64,7 @@ router.get('/comming/driver/:id',function(req,res){
   .catch(err => { res.json({result: -1, error: err}); });
 });
 
-/** Get all single user comming rides as passenger */
+/** Get all single user comming rides as passenger | 02-003 */
 //TODO: récupérer le driver car plus de clé étrangère
 router.get('/passed/passenger/:id',function(req,res){
   let user = req.params.id;
@@ -82,19 +82,18 @@ router.get('/passed/passenger/:id',function(req,res){
       for(let ride of rides){
         results.push(ride.responsify());
       }
+      res.json(results);
     })
-    .catch(err => { res.json({result:-1, message: 'Something went wrong w/ user.getRides()'}); });
-    res.json(results);
+    .catch(err => { res.json({result:-1, message: 'Something went wrong w/ url 02-003'}); });
   })
-  .catch(err => { res.json({result: -1, message:'User not found', error: err}); });
+  .catch(err => { res.json({result: -1, message:'User not found on url 02-003', error: err}); });
 });
-
 
 
 /// On pourrait peut-être combiner les 2 routes suivantes en une seule?
 /// Attention, pas de requête unique !!
 
-/** Get all single user passed rides as driver */
+/** Get all single user passed rides as driver | 02-004 */
 router.get('/passed/driver/:id',function(req,res){
   let user = req.params.id;
 
@@ -113,11 +112,10 @@ router.get('/passed/driver/:id',function(req,res){
     }
     res.json(results);
   })
-  .catch(err => { res.json({result: -1, message:'No rides found', error: err}); });
-
+  .catch(err => { res.json({result: -1, message:'Something went wrong with url 02-004', error: err}); });
 });
 
-/** Get all single user passed rides as passenger */
+/** Get all single user passed rides as passenger | 02-005 */
 router.get('/passed/passenger/:id',function(req,res){
   let user = req.params.id;
 
@@ -139,10 +137,10 @@ router.get('/passed/passenger/:id',function(req,res){
 
     res.json(results);
   })
-  .catch(err => { res.json({result: -1, message:'Usr not found', error: err}); });
+  .catch(err => { res.json({result: -1, message:'Something went wrong with url 02-006', error: err}); });
 });
 
-/** Get one ride by ID */
+/** Get one ride by ID | 02-007 */
 router.get('/:id',function(req,res){
   Ride.find({
     where:{
@@ -169,7 +167,7 @@ router.get('/:id',function(req,res){
 
 });
 
-/** Get all single user rejected rides as passenger */
+/** Get all single user rejected rides as passenger | 02-008 */
 router.get('/rejected/:id',function(req,res,next){
 
   //TODO: Les trajets refusés (pas besoin des passagers [yolo] )
@@ -178,7 +176,7 @@ router.get('/rejected/:id',function(req,res,next){
 
 /**************************POST**************************/
 
-/** Create a new ride */
+/** Create a new ride | 02-009 */
 router.post('/new',function(req,res,next){
   let send = req.body;
 
@@ -203,7 +201,7 @@ router.post('/new',function(req,res,next){
 
 //TODO: Modification d'un trajet (pas prévu dans l'appli pour le moment)
 
-/** Add an accepted Passenger to a Ride */
+/** Add an accepted Passenger to a Ride | 02-010 */
 router.post('/:rideID/users/:userID',function(req,res,next){
     Ride.find({
         where:{
@@ -230,7 +228,7 @@ router.post('/:rideID/users/:userID',function(req,res,next){
 
 /**************************DELETE**************************/
 
-/** Delete a ride */
+/** Delete a ride | 02-011 */
 router.delete('/:id',function(req,res,next){
   Ride.find({
     where:{

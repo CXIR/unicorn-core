@@ -7,7 +7,7 @@ const router = express.Router();
 
 /**************************GET**************************/
 
-/** Get all active users */
+/** Get all active users | 04-001 */
 router.get('/all',function(req,res){
   User.findAll()
   .then(function(users){
@@ -16,11 +16,10 @@ router.get('/all',function(req,res){
       results.push(user.responsify());
     }
     res.json(results);
-  }).catch(err => { res.json({result: -1, error: err}); } );
-
+  }).catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-001', error: err}); } );
 });
 
-/** Get all active users except whom searching */
+/** Get all active users except whom searching | 04-002 */
 router.get('/all/:id',function(req,res){
   User.findAll({
     where:{
@@ -35,29 +34,32 @@ router.get('/all/:id',function(req,res){
       results.push(user.responsify());
     }
     res.json(results);
-  }).catch(err => { res.json({result: -1, error: err}); } );
+  }).catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-002', error: err}); } );
 
 });
 
-/** Get one active user by ID */
+/** Get one active user by ID | 04-003 */
 router.get('/:id',function(req,res){
   User.find({
     where:{
             id: req.params.id
           }
   })
-  .then(user => { if(user) res.json(user.responsify()); else res.json(0); })
-  .catch(err => { res.json({result: -1, error: err}); });
-
+  .then(user => {
+    //TODO; vérifier que l'utilisation d'une lamba est fonctionnel ici
+    if(user) res.json(user.responsify());
+    else res.json({result:0,message:'No user found w/ url 04-003'});
+  })
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-003', error: err}); });
 });
 
 /**************************POST**************************/
 
-/** Create a new user */
+/** Create a new user | 04-004 */
 router.post('/new',function(req,res,next){
   let send = req.body;
 
-  /* 'phoneNumber' and 'description' should be null
+  /* 'phoneNumber' and 'description' could be null
   * 'negativeRating' and 'positiveRating' are initialized with 0 by default
   */
   User.create({
@@ -75,18 +77,16 @@ router.post('/new',function(req,res,next){
     if(user){
       res.json(user);
     }
-    else res.json({ result: 0 });
-
+    else res.json({result:0, message:'Unable to create a user w/ url 04-004'});
   })
-  .catch(err => { res.json({result: -1, error: err}); } );
-
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-004', error: err}); } );
 });
 
-/** Update User rating */
+/** Update User rating | 04-005 */
 router.post('/markup',function(req,res,next){
   let id = req.body;
   let type = req.type;
-  
+
   User.find({
     where:{
             id: id
@@ -108,18 +108,16 @@ router.post('/markup',function(req,res,next){
                                 negativeRating: mark
                               });
       }
-      else res.json({ result: -1, message: 'Unknown rating type' });
+      else res.json({ result: -1, message: 'Unknown rating type w/ url 04-005' });
 
-
-      res.json({ result: 1 });
+      res.json({result: 1 });
     }
-    else res.json({ result: 0, message: 'User not found' });
+    else res.json({ result: 0, message: 'User not found w/ url 04-005' });
   })
-  .catch(err => { res.json({result: -1, error: err}); } );
-
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-005' error: err}); } );
 });
 
-/** Update User Information */
+/** Update User Information | 04-006 */
 router.post('/edit',function(req,res,next){
   let send = req.body;
 
@@ -141,15 +139,14 @@ router.post('/edit',function(req,res,next){
 
       res.json({ result: 1 });
     }
-    else res.json({ result: 0, message: 'User not found' });
+    else res.json({result: 0, message: 'User not found w/ url 04-006 '});
   })
-  .catch(err => { res.json({result: -1, error: err}); } );
-
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-006', error: err}); });
 });
 
 /**************************DELETE**************************/
 
-/** Delete an active user */
+/** Delete an active user | 04-007 */
 router.delete('/:id',function(req,res,next){
   User.find({
     where:{
@@ -162,12 +159,11 @@ router.delete('/:id',function(req,res,next){
       .then(function(user){
         req.json({ result: 1 });
       })
-      .catch(err => { res.json({result: 0, error: err}); } );
+      .catch(err => { res.json({result: 0, message:'Unable to destroy user w/ url 04-007', error: err}); } );
     }
-    else res.json({ result: -1 });
+    else res.json({result:-1, message:'User not found w/ url 04-007'});
   })
-  .catch(err => { res.json({result: -1, error: err}); } );
-
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-007', error: err}); });
 });
 
 

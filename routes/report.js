@@ -7,24 +7,21 @@ const router = express.Router();
 
 /**************************GET**************************/
 
-/** Get all reports */
-router.get('/findall',function(req,res){
-  Report.findAll().then(function(sites){
+/** Get all reports | 03-001 */
+router.get('/',function(req,res){
+  Report.findAll()
+  .then(function(sites){
     let results = [];
     for(let report of reports){
       results.push(report.responsify());
     }
     res.json(results);
-  }).catch(function(err){
-    if(err){
-      res.json({ result: 0 });
-    }
-  });
-
+  })
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 03-001', error:err}); });
 });
 
-/** Get one report by ID */
-router.get('/find/:id',function(req,res){
+/** Get one report by ID | 03-002 */
+router.get('/:id',function(req,res){
   Report.find({
     where:{
             id: req.params.id
@@ -32,19 +29,17 @@ router.get('/find/:id',function(req,res){
   })
   .then(function(report){
     if(report) {
-      res.json(site.responsify());
+      res.json(report.responsify());
     }
-    else res.json({ result: 0 });
+    else res.json({result: 0, message:'No report found w/ url 03-002'});
   })
-  .catch(function(err){
-      res.json({ result: -1 });
-  });
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 03-002', error:err}); });
 
 });
 
 /**************************POST**************************/
 
-/** Create a new site */
+/** Create a new report | 03-003 */
 router.post('/new',function(req,res,next){
   let send = req.body;
 
@@ -53,27 +48,18 @@ router.post('/new',function(req,res,next){
     idUser_request: send.request,
     idUser_reported: send.reported
   })
-  .then(function(site){
-    if(site){
-      res.json(site);
+  .then(function(report){
+    if(report){
+      res.json({result:1, object:report});
     }
-    else{
-      res.json({
-                result: 0
-              });
-    }
+    else res.json({result:0, message:'No report created w/ url 03-003'})
   })
-  .catch(function(err){
-    res.json({
-                result: -1
-             });
-  });
-
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 03-003', error:err})});
 });
 
 /**************************DELETE**************************/
 
-/** Delete an active site */
+/** Delete a report | 03-004 */
 router.delete('/delete/:id',function(req,res,next){
   Report.find({
     where:{
@@ -83,21 +69,14 @@ router.delete('/delete/:id',function(req,res,next){
   .then(function(report){
     if(report){
       Report.destroy()
-      .then(function(site){
-        req.json({ result: 1 });
+      .then(function(report){
+        req.json({result: 1, object:report});
       })
-      .catch(function(err){
-        req.json({ result: 0 });
-      });
+      .catch(err =>{ res.json({result:-1, message:'Unable to destroy w/ url 03-004'}); });
     }
-    else{
-      res.json({ result: -1 });
-    }
+    else res.json({result:0, message:'No report found w/ url 03-004'});
   })
-  .catch(function(err){
-    res.json({ result: -1 });
-  });
-
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 03-004', error:err}); });
 });
 
 /**************************END**************************/
