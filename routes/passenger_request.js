@@ -28,7 +28,7 @@ router.get('/sended/:userID',function(req,res){
 
 });
 
-/** Get all received passenger request | 01-002*/
+/** Get all received passenger request | 01-002 */
 router.get('/received/:rideID',function(req,res,next){
   Passenger_Request.findAll({
     where:{

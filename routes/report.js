@@ -60,7 +60,7 @@ router.post('/new',function(req,res,next){
 /**************************DELETE**************************/
 
 /** Delete a report | 03-004 */
-router.delete('/delete/:id',function(req,res,next){
+router.delete('/:id',function(req,res,next){
   Report.find({
     where:{
             id: req.params.id

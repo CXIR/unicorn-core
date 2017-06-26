@@ -114,7 +114,7 @@ router.post('/markup',function(req,res,next){
     }
     else res.json({ result: 0, message: 'User not found w/ url 04-005' });
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-005' error: err}); } );
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-005', error: err}); } );
 });
 
 /** Update User Information | 04-006 */

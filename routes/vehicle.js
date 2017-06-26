@@ -7,7 +7,7 @@ const router = express.Router();
 
 /**************************GET**************************/
 
-/** Get all cars */
+/** Get all cars | 06-001 */
 router.get('/',function(req,res){
   Vehicle.findAll()
   .then(function(vehicles){
@@ -17,11 +17,11 @@ router.get('/',function(req,res){
     }
     res.json(results);
   })
-  .catch(err => { res.json({result: -1, error: err}); } );
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 06-001', error: err}); } );
 
 });
 
-/** Get a single car by id */
+/** Get a single car by id | 06-002 */
 router.get('/:id',function(req,res){
   Vehicle.find({
     where:{
@@ -32,12 +32,12 @@ router.get('/:id',function(req,res){
     if(vehicle) {
       res.json(vehicle.responsify());
     }
-    else res.json({ result: 0 });
+    else res.json({result: 0, message:'No vehicle found w/ url 06-002'});
   })
-  .catch(err => { res.json({result: -1, error: err}); } );
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 06-002', error: err}); });
 });
 
-/** Make Vehicle valid */
+/** Make Vehicle valid | 06-003 */
 router.get('/validate/:id',function(req,res,next){
   let vehicle = req.params.id;
 
@@ -51,20 +51,20 @@ router.get('/validate/:id',function(req,res,next){
       vehicle.updateAttributes({
                                   isVehicleOK: 1
                               });
-      res.json({result:1, message:'Vehicle successfully validated'});
+      res.json({result:1});
     }
-    else res.json({result:0, message:'Vehicle not found'});
+    else res.json({result:0, message:'Vehicle not found w/ url 06-003'});
   })
-  .catch(err => { res.json({result:-1, message:'Vehicle not found', error:err}) });
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 06-003', error:err}) });
 });
 
 /**************************POST**************************/
 
-/** Create a new vehicle */
+/** Create a new vehicle | 06-004 */
 router.post('/new',function(req,res,next){
   let send = req.body;
 
-  /* 'isVehiculeOK' initialized w/ default value */
+  /* 'isVehiculeOK' initialized w/ default value 0 */
   Vehicle.create({
     brand: send.brand,
     model: send.model,
@@ -76,13 +76,12 @@ router.post('/new',function(req,res,next){
     if(vehicle){
       res.json(vehicle);
     }
-    else res.json({ result: 0 });
-
+    else res.json({result: 0, message:'Unable to create vehicle w/ url 06-004'});
   })
-  .catch(err => { res.json({result: -1, error: err}); } );
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 06-004', error: err}); });
 });
 
-/** Update vehicle */
+/** Update vehicle | 06-005 */
 router.post('/edit',function(req,res,next){
   let send = req.body;
 
@@ -100,17 +99,17 @@ router.post('/edit',function(req,res,next){
                                   placesNumber: send.places,
                                   vehicleType: send.type
                               });
-      res.json({result:1, message:'Vehicle successfully validated'});
+      res.json({result:1});
     }
-    else res.json({result:0, message:'Vehicle not found'});
+    else res.json({result:0, message:'Vehicle not found w/ url 06-005'});
   })
-  .catch(err => { res.json({result:-1, message:'Vehicle not found', error:err}) });
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 06-005', error:err}) });
 });
 
 
 /**************************DELETE**************************/
 
-/** Drop a car */
+/** Drop a car | 06-006 */
 router.delete('/:id',function(req,res,next){
   Vehicle.find({
     where:{
@@ -123,14 +122,11 @@ router.delete('/:id',function(req,res,next){
       .then(function(vehicle){
         req.json({ result: 1 });
       })
-      .catch(err => { res.json({result: 0, error: err}); } );
+      .catch(err => { res.json({result: 0, message:'Unable to remove vehicle w/ url 06-006', error: err}); });
     }
-    else{
-      res.json({ result: -1 });
-    }
+    else res.json({result:0, message:'No vehicle found w/ url 06-006'});
   })
-  .catch(err => { res.json({result: -1, error: err}); } );
-
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 06-006', error: err}); } );
 });
 
 
