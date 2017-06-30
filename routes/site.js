@@ -67,7 +67,7 @@ router.post('/edit',function(req,res,next){
   })
   .then(function(site){
     if(site){
-      user.updateAttributes({
+      site.updateAttributes({
                               name: send.name,
                               adress: send.adress,
                               city: send.city,
@@ -86,16 +86,16 @@ router.post('/edit',function(req,res,next){
 
 /** Delete an active site | 05-005 */
 router.delete('/:id',function(req,res,next){
-  Status.find({
+  Site.find({
     where:{
             id: req.params.id
           }
   })
   .then(function(site){
     if(site){
-      User.destroy()
+      site.destroy()
       .then(function(site){
-        req.json({ result: 1 });
+        res.json({ result: 1 });
       })
       .catch(err => { res.json({ result:0, message:'Unable to remove site on url 05-005', error:err}); });
     }

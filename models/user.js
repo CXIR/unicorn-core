@@ -56,7 +56,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         User.belongsTo(models.Site);
         User.belongsTo(models.Status);
-        //User.belongsTo(models.Ride);
+
         User.belongsToMany(models.Ride, {
           through:"Passengers"
         });
@@ -75,10 +75,10 @@ module.exports = function(sequelize, DataTypes) {
         result.positiveRating = this.positiveRating;
         result.negativeRating = this.negativeRating;
         result.password = this.password;
-        if (this.Site) {
+        if(this.Site){
           result.site = this.Site.responsify();
         }
-        if (this.Status) {
+        if(this.Status){
           result.status = this.Status.responsify();
         }
         return result;

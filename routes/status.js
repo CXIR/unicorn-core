@@ -7,8 +7,8 @@ const router = express.Router();
 
 /**************************GET**************************/
 
-/** Get all active status */
-router.get('/findall',function(req,res){
+/** Get all active status | 07-001 */
+router.get('/',function(req,res){
   Status.findAll()
   .then(function(status){
     let results = [];
@@ -20,8 +20,8 @@ router.get('/findall',function(req,res){
 
 });
 
-/** Get one active status by ID */
-router.get('/find/:id',function(req,res){
+/** Get one active status by ID | 07-002 */
+router.get('/:id',function(req,res){
   Status.find({
     where:{
             id: req.params.id
@@ -43,36 +43,46 @@ router.get('/find/:id',function(req,res){
 
 /**************************POST**************************/
 
-/** Create a new status */
+/** Create a new status | 07-003 */
 router.post('/new',function(req,res,next){
   let send = req.body;
 
   Status.create({
     label: send.label
   })
-  .then(function(status){
-    if(status){
-      res.json(status);
+  .then(site => {
+    if(site){
+      res.json(site);
     }
-    else{
-      res.json({
-                result: 0
-              });
-    }
+    else res.json({result: 0, message:'Unable to create Status w/ url 07-003'});
   })
-  .catch(function(err){
-    res.json({
-                result: -1
-             });
-  });
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 07-003', error:err}); });
+});
 
+/** Update on status | 07-004 */
+router.post('/edit',function(req,res,next){
+  let send = req.body;
+
+  Site.find({
+    where:{
+            id: send.id
+          }
+  })
+  .then(function(site){
+    if(site){
+      site.updateAttributes({ label: send.label });
+      res.json({ result: 1 });
+    }
+    else res.json({ result: 0, message: 'No status found w/ url 07-004' });
+  })
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 07-004', error: err}); });
 });
 
 
 /**************************DELETE**************************/
 
-/** Delete an active status */
-router.delete('/delete/:id',function(req,res,next){
+/** Delete an active status | 07-005 */
+router.delete('/:id',function(req,res,next){
   Status.find({
     where:{
             id: req.params.id
@@ -80,22 +90,15 @@ router.delete('/delete/:id',function(req,res,next){
   })
   .then(function(status){
     if(status){
-      User.destroy()
+      status.destroy()
       .then(function(status){
-        req.json({ result: 1 });
+        res.json({ result: 1 });
       })
-      .catch(function(err){
-        req.json({ result: 0 });
-      });
+      .catch(err => { res.json({ result:0, message:'Unable to remove status on url 07-005', error:err}); });
     }
-    else{
-      res.json({ result: -1 });
-    }
+    else res.json({result: -1, message:'No status found w/ url 07-005'});
   })
-  .catch(function(err){
-    res.json({ result: -1 });
-  });
-
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 07-005', error:err}); });
 });
 
 

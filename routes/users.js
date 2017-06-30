@@ -9,7 +9,9 @@ const router = express.Router();
 
 /** Get all active users | 04-001 */
 router.get('/all',function(req,res){
-  User.findAll()
+  User.findAll({
+    include: [ models.Site, models.Status ]
+  })
   .then(function(users){
     let results = [];
     for(let user of users){
@@ -26,7 +28,8 @@ router.get('/all/:id',function(req,res){
             id: {
                   $ne: req.params.id
                 }
-          }
+          },
+    include: [ models.Site, models.Status ]
   })
   .then(function(users){
     let results = [];
@@ -38,19 +41,16 @@ router.get('/all/:id',function(req,res){
 
 });
 
-/** Get one active user by ID | 04-003 */
+/** Get a single user | 04-003 */
 router.get('/:id',function(req,res){
   User.find({
-    where:{
-            id: req.params.id
-          }
+    where:{ id: req.params.id },
+    include : [ models.Site, models.Status ]
   })
   .then(user => {
-    //TODO; vérifier que l'utilisation d'une lamba est fonctionnel ici
-    if(user) res.json(user.responsify());
-    else res.json({result:0,message:'No user found w/ url 04-003'});
+    res.json(user.responsify());
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-003', error: err}); });
+  .catch(err => { res.json({result: -1, message:'User not found w/ url 04-003', error: err}); });
 });
 
 /**************************POST**************************/
@@ -70,11 +70,29 @@ router.post('/new',function(req,res,next){
     password: send.pass,
     phoneNumber: (send.phone != undefined) ? send.phone : null,
     description: (send.description != undefined) ? send.description : null,
-    site_id: send.site,
-    status_id: send.status
   })
   .then(function(user){
     if(user){
+      models.Site.find({
+        where: { id: send.site }
+      })
+      .then(site => {
+        user.setSite(site)
+        .then(site => { console.log({result:1, message:'Site successfully added to user w/ url 04-004'}); })
+        .catch(err => { res.json({ result:-2, message:'Unable to add Site on user w/ url 04-004'}); });
+      })
+      .catch(err => { res.json({result:-1, message:'Site not found w/ url 04-004'}); });
+
+      models.Status.find({
+          where: { id: send.status }
+      })
+      .then(status => {
+        user.setStatus(status)
+        .then(status => { console.log({result:1, message:'Status successfully added to user w/ url 04-004'}); })
+        .catch(err => { res.json({result:-2, message:'Unable to add status to user w/ url 04-004'}); });
+      })
+      .catch(err => { res.json({result:-1, message:'Status not found w/ url 04-004'}); });
+
       res.json(user);
     }
     else res.json({result:0, message:'Unable to create a user w/ url 04-004'});
@@ -84,13 +102,11 @@ router.post('/new',function(req,res,next){
 
 /** Update User rating | 04-005 */
 router.post('/markup',function(req,res,next){
-  let id = req.body;
-  let type = req.type;
+  let send = req.body;
+  let type = req.body.type;
 
   User.find({
-    where:{
-            id: id
-          }
+    where:{ id: send.id }
   })
   .then(function(user){
     if(user){
@@ -117,24 +133,21 @@ router.post('/markup',function(req,res,next){
   .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-005', error: err}); } );
 });
 
-/** Update User Information | 04-006 */
+/** Update user Basic Information | 04-006 */
 router.post('/edit',function(req,res,next){
   let send = req.body;
 
   User.find({
-    where:{
-            id: send.id
-          }
+    where:{ id: send.id }
   })
   .then(function(user){
     if(user){
       user.updateAttributes({
                               lastname: send.name,
+                              firstname: send.first,
                               mailAdress: send.mail,
                               phoneNumber: (send.phone != undefined) ? send.phone : null,
-                              description: (send.description != undefined) ? send.description : null,
-                              site_id: send.site,
-                              status_id: send.status
+                              description: (send.description != undefined) ? send.description : null
                             });
 
       res.json({ result: 1 });
@@ -144,9 +157,50 @@ router.post('/edit',function(req,res,next){
   .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-006', error: err}); });
 });
 
+/** Update user Site | 04-007 */
+router.post('/edit/site',function(req,res,next){
+  let send = req.body;
+
+  models.User.find({
+    where : { id: send.user }
+  })
+  .then(user => {
+    models.Site.find({
+      where: { id: send.site }
+    })
+    .then(site => {
+      user.setSite(site)
+      .then(site => { res.json({ result:1, message:'Site successfully updated w/ url 04-007'}); })
+      .catch(err => { res.json({ result:-2, message:'Unable to update Site w/ url 04-007'}); });
+    })
+    .catch(err => { res.json({ result:-1, message:'Site not found w/ url 04-007'}); });
+  })
+  .catch(err => { res.json({ result:-1, message:'User not found w/ url 04-007'}); });
+});
+
+/** Update user Status | 04-008 */
+router.post('/edit/status',function(req,res,next){
+  let send = req.body;
+  models.User.find({
+    where : { id:send.user }
+  })
+  .then(user => {
+    models.Status.find({
+      where: { id: send.status }
+    })
+    .then(status => {
+      user.setStatus(status)
+      .then(status => { res.json({ result:1, message:'Status successfully updated w/ url 04-007'}); })
+      .catch(err => { res.json({ result:-2, message:'Unable to update Status w/ url 04-007'}); });
+    })
+    .catch(err => { res.json({ result:-1, message:'Status not found w/ url 04-007'}); });
+  })
+  .catch(err => { res.json({ result:-1, message:'User not found w/ url 04-007'}); });
+});
+
 /**************************DELETE**************************/
 
-/** Delete an active user | 04-007 */
+/** Delete an active user | 04-009 */
 router.delete('/:id',function(req,res,next){
   User.find({
     where:{
@@ -155,9 +209,9 @@ router.delete('/:id',function(req,res,next){
   })
   .then(function(user){
     if(user){
-      User.destroy()
+      user.destroy()
       .then(function(user){
-        req.json({ result: 1 });
+        res.json({ result: 1 });
       })
       .catch(err => { res.json({result: 0, message:'Unable to destroy user w/ url 04-007', error: err}); } );
     }

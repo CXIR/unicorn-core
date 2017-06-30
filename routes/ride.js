@@ -3,7 +3,6 @@
 const express = require('express');
 const models = require('../models');
 const Ride = models.Ride;
-const User = models.User;
 const router = express.Router();
 
 /**************************GET**************************/
@@ -16,7 +15,10 @@ router.get('/comming',function(req,res){
                                   $gte: Date.now()
                                 }
              },
-      include : [ User ]
+      include : [
+                  { model: models.User, as: 'Driver'},
+                  { model: models.User, as: 'Passengers'}
+                ]
   })
   .then(function(rides){
     if(rides){
@@ -48,7 +50,11 @@ router.get('/comming/driver/:id',function(req,res){
                                   $gte: Date.now()
                                 },
                 driver: user
-             }
+             },
+      include : [
+                  { model: models.User, as: 'Driver'},
+                  { model: models.User, as: 'Passengers'}
+                ]
   })
   .then(function(rides){
     if(rides){
@@ -72,7 +78,11 @@ router.get('/comming/passenger/:id',function(req,res){
   User.find({
     where:{
             id: user
-          }
+          },
+   include : [
+               { model: models.User, as: 'Driver'},
+               { model: models.User, as: 'Passengers'}
+             ]
   })
   .then(function(user){
     let results = [];
@@ -103,7 +113,11 @@ router.get('/passed/driver/:id',function(req,res){
                               $lt: Date.now()
                             },
               driver: user
-           }
+           },
+    include : [
+                { model: models.User, as: 'Driver'},
+                { model: models.User, as: 'Passengers'}
+              ]
   })
   .then(function(rides){
     let results = [];
