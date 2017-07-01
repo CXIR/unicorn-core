@@ -56,8 +56,9 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         User.belongsTo(models.Site);
         User.belongsTo(models.Status);
+        //User.belongsTo(models.Ride);
         User.belongsToMany(models.Ride, {
-          through:"User_Ride"
+          through:"Passengers"
         });
       }
     },

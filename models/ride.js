@@ -54,6 +54,10 @@ module.exports = function(sequelize, DataTypes) {
     arrival_idSite: {
       type : DataTypes.INTEGER,
       allowNull: true
+    },
+    driver: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
   }, {
     paranoid: true,
@@ -61,9 +65,9 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
-        Ride.belongsTo(models.User); //Conducteur : celui qui à créer l'annonce
+        //Ride.belongsTo(models.User); //Conducteur : celui qui à créer l'annonce
         Ride.belongsToMany(models.User, {
-          through:"User_Ride"
+          through:"Passengers"
         });
       }
     },
@@ -86,9 +90,9 @@ module.exports = function(sequelize, DataTypes) {
         if (this.User) {
           result.driver = this.User.responsify();
         }
-        if (this.getUser_Rides()) {
-          result.passengers = this.getUser_Rides();
-        }
+        /*if(this.Users){
+          result.passengers = this.Users;
+        }*/
         return result;
       }
     }
