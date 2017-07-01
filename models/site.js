@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
       type : DataTypes.STRING
     },
     postalCode: {
-      type : DataTypes.INTEGER
+      type : DataTypes.STRING
     }
   }, {
     paranoid: true,
@@ -37,7 +37,6 @@ module.exports = function(sequelize, DataTypes) {
         result.adress = this.adress;
         result.city = this.city;
         result.postalCode = this.postalCode;
-
         return result;
       }
     }

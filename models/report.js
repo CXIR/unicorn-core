@@ -18,22 +18,21 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
-        Report.belongsTo(models.User, {
-            foreignKey: 'idUser_request' //celui qui a fait le signalement
-        });
-        Report.belongsTo(models.User, {
-            foreignKey: 'idUser_reported' // celui qui est signalé
-        });
+        Report.belongsTo(models.User, {as:'Plaintiff'});
+        Report.belongsTo(models.User, {as:'Reported'});
       }
     },
     instanceMethods: {
       responsify: function() {
         let result = {};
         result.id = this.id;
-        result.label = this.label;
-        //TODO : affichage pretty
-        result.idUser_request = this.idUser_request;
-        result.idUser_reported = this.idUser_reported;
+        result.message = this.message;
+        if(this.Plaintiff){
+          result.plaintiff = this.Plaintiff.responsify();
+        }
+        if(this.Reported){
+          result.reported = this.Reported.responsify();
+        }
         return result;
       }
     }
