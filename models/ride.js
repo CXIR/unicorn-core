@@ -31,10 +31,6 @@ module.exports = function(sequelize, DataTypes) {
       type : DataTypes.STRING,
       allowNull: true
     },
-    departure_idSite: {
-      type : DataTypes.INTEGER,
-      allowNull: true
-    },
     arrival_date: {
       type : DataTypes.DATE,
       allowNull: false
@@ -50,14 +46,6 @@ module.exports = function(sequelize, DataTypes) {
     arrival_city: {
       type : DataTypes.STRING,
       allowNull: true
-    },
-    arrival_idSite: {
-      type : DataTypes.INTEGER,
-      allowNull: true
-    },
-    driver: {
-        type: DataTypes.INTEGER,
-        allowNull: false
     }
   }, {
     paranoid: true,
@@ -70,6 +58,8 @@ module.exports = function(sequelize, DataTypes) {
           through:"Passengers",
           as:'Passengers'
         });
+        Ride.belongsTo(models.Site, { as: 'Departure'});
+        Ride.belongsTo(models.Site, { as: 'Arrival'});
       }
     },
     instanceMethods: {
@@ -93,6 +83,12 @@ module.exports = function(sequelize, DataTypes) {
         }
         if(this.Passengers){
           result.passengers = this.Passengers;
+        }
+        if(this.Departure){
+          result.departure = this.Departure.responsify();
+        }
+        if(this.Arrival){
+          result.arrival = this.Arrival.responsify();
         }
         return result;
       }

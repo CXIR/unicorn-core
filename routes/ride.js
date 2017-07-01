@@ -16,25 +16,21 @@ router.get('/comming',function(req,res){
                                 }
              },
       include : [
+                  { model: models.Site, as:'Departure' },
+                  { model: models.Site, as:'Arrival' },
                   { model: models.User, as: 'Driver'},
                   { model: models.User, as: 'Passengers'}
                 ]
   })
   .then(function(rides){
-    if(rides){
       let results = [];
       for(let ride of rides){
         results.push(ride.responsify());
       }
       res.json(results);
-    }
-    else res.json({ result:0, message:'No rides found' });
-
-  }).catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-001', error: err}); } );
+  })
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-001', error: err}); });
 });
-
-
-
 
 /// On pourrait peut-être combiner les 2 routes suivantes en une seule?
 /// Attention, pas de requête unique !!
@@ -42,14 +38,13 @@ router.get('/comming',function(req,res){
 /** Get all single user comming rides as driver | 02-002 */
 //TODO: récupérer le driver car plus de foreign key
 router.get('/comming/driver/:id',function(req,res){
-  let user = req.params.id;
 
   Ride.findAll({
       where: {
                 depature_date: {
                                   $gte: Date.now()
                                 },
-                driver: user
+                driver: req.params.id
              },
       include : [
                   { model: models.User, as: 'Driver'},
@@ -159,23 +154,16 @@ router.get('/:id',function(req,res){
   Ride.find({
     where:{
             id: req.params.id
-          }
+          },
+    include: [
+                { model: models.User, as:'Driver' },
+                { model: models.User, as:'Passengers'},
+                { model: models.Site, as:'Departure' },
+                { model: models.Site, as:'Arrival' }
+             ]
   })
   .then(function(ride){
-    if(ride) {
-      let info = ride.responsify();
-      let passengers = [];
-
-      ride.getUsers().then(users => {
-        for(let user of users){
-          passengers.push(user.responsify());
-        }
-      })
-      .catch(err => { res.json({result:-1, message: 'Something went wrong w/ ride.getUsers()', error:err}); });
-
-      res.json({info:info,passengers:passengers});
-    }
-    else res.json({ result: 0, message:'Ride not found' });
+    res.json(ride.responsify());
   })
   .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-007', error: err}); } );
 
@@ -222,46 +210,101 @@ router.post('/new',function(req,res,next){
     ad_date: send.date,
     ad_message: send.message,
     depature_date: send.dep_date,
-    departure_adress: send.dep_adress,
-    departure_postalCode: send.dep_postal,
-    departure_city: send.dep_city,
-    departure_idSite: send.dep_site,
+    departure_adress: (send.dep_adress == undefined) ? null : send.dep_adress,
+    departure_postalCode: (send.dep_postal == undefined) ? null : send.dep_postal,
+    departure_city: (send.dep_city == undefined) ? null : send.dep_city,
     arrival_date: send.arr_date,
-    arrival_adress: send.arr_adress,
-    arrival_postalCode: send.arr_postal,
-    arrival_city: send.arr_city,
-    arrival_idSite: send.arr_site
+    arrival_adress: (send.arr_adress == undefined) ? null : send.arr_adress,
+    arrival_postalCode: (send.arr_postal == undefined) ? null : send.arr_postal,
+    arrival_city: (send.arr_city == undefined) ? null : send.arr_city
   })
-  .then(ride => { if(ride) res.json(ride); else res.json(0); })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-009', error: err}); } );
+  .then(ride => {
+      if(send.dep_site != undefined){
+        models.Site.find({
+          where: { id: send.dep_site}
+        })
+        .then(site => {
+          ride.setDeparture(site)
+          .then(site => { console.log('Departure Site successfully added to the ride w/ url 02-010'); })
+          .catch(err => { res.json({result:-2, message:'Unable to set Departure Site w/ url 02-010', error:err}); });
+        })
+        .catch(err => { res.json({result:-1, message:'Site not found w/ url 02-010', error:err}); });
+      }
+      if(send.arr_site != undefined){
+        models.Site.find({
+          where: { id: send.arr_site }
+        })
+        .then(site => {
+          ride.setArrival(site)
+          .then(site => { console.log('Arrival site successfully added to the ride w/ url 02-010');})
+          .catch(err => { res.json({result:-2, message:'Unable to set Arrival Site w/ url 02-010', error:err}); });
+        })
+        .catch(err => { res.json({result:-1, message:'Site not found w/ url 02-010', error:err}); });
+      }
+
+      models.User.find({
+        where: { id: send.driver }
+      })
+      .then(user => {
+        ride.setDriver(user)
+        .then(user => { console.log('User successfully added as Driver to the ride w/ url 02-010'); })
+        .catch(err => { res.json({result:-2, message:'Unable to set Driver w/ url 02-010', error:err}); });
+      })
+      .catch(err => { res.json({result:-1, message:'User not found w/ url 02-010', error:err}); });
+
+      res.json({result:1, object:ride});
+   })
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-010', error: err}); } );
 
 });
 
-/** Update single active site | 02-011 */
+/** Update single ride | 02-011 */
 router.post('/edit',function(req,res,next){
   let send = req.body;
 
   Ride.find({
     where : { id: send.id }
   })
-  .then(site => {
-      if(site){
-        site.updateAttributes({
+  .then(ride => {
+      if(ride){
+        ride.updateAttributes({
           ad_date: send.date,
           ad_message: send.message,
           depature_date: send.dep_date,
-          departure_adress: send.dep_adress,
-          departure_postalCode: send.dep_postal,
-          departure_city: send.dep_city,
-          departure_idSite: send.dep_site,
+          departure_adress: (send.dep_adress == undefined) ? null : send.dep_adress,
+          departure_postalCode: (send.dep_postal == undefined) ? null : send.dep_postal,
+          departure_city: (send.dep_city == undefined) ? null : send.dep_city,
           arrival_date: send.arr_date,
-          arrival_adress: send.arr_adress,
-          arrival_postalCode: send.arr_postal,
-          arrival_city: send.arr_city,
-          arrival_idSite: send.arr_site
+          arrival_adress: (send.arr_adress == undefined) ? null : send.arr_adress,
+          arrival_postalCode: (send.arr_postal == undefined) ? null : send.arr_postal,
+          arrival_city: (send.arr_city == undefined) ? null : send.arr_city
         });
+
+        if(send.dep_site != undefined){
+          models.Site.find({
+            where: { id: send.dep_site}
+          })
+          .then(site => {
+            ride.setDeparture(site)
+            .then(site => { console.log('Departure Site successfully added to the ride w/ url 02-011'); })
+            .catch(err => { res.json({result:-2, message:'Unable to set Departure Site w/ url 02-011', error:err}); });
+          })
+          .catch(err => { res.json({result:-1, message:'Site not found w/ url 02-011', error:err}); });
+        }
+        if(send.arr_site != undefined){
+          models.Site.find({
+            where: { id: send.arr_site }
+          })
+          .then(site => {
+            ride.setArrival(site)
+            .then(site => { console.log('Arrival site successfully added to the ride w/ url 02-011');})
+            .catch(err => { res.json({result:-2, message:'Unable to set Arrival Site w/ url 02-011', error:err}); });
+          })
+          .catch(err => { res.json({result:-1, message:'Site not found w/ url 02-011', error:err}); });
+        }
+        res.json({result:1, message:'Ride successfully updated w/ url 02-011'});
       }
-      else res.json({result:0, message:'Site not found w/ url 02-011'});
+      else res.json({result:0, message:'Ride not found w/ url 02-011'});
   })
   .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 02-011', error:err}); });
 });
@@ -277,7 +320,7 @@ router.delete('/:id',function(req,res,next){
   })
   .then(function(ride){
     if(ride){
-      Ride.destroy()
+      ride.destroy()
       .then(ride => { if(ride) res.json(1); else res.json(0); })
       .catch(err => { res.json({result: -1, error: err}); } );
     }

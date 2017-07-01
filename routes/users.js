@@ -5,6 +5,8 @@ const models = require('../models');
 const User = models.User;
 const router = express.Router();
 
+//TODO: les contrôles de saisie pour les champs qui ne doivent pas être nuls
+
 /**************************GET**************************/
 
 /** Get all active users | 04-001 */

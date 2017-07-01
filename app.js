@@ -18,12 +18,13 @@ var vehicle = require('./routes/vehicle');
 
 var models = require('./models');
 models.sequelize.sync();
+
 //models.sequelize.sync({force:true});
-/*
-models.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', {raw: true}).then(function(results) {
+
+/*models.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', {raw: true}).then(function(results) {
         models.sequelize.sync({force: true});
-});
-*/
+});*/
+
 
 var app = express();
 
