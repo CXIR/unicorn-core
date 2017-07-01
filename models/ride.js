@@ -24,15 +24,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     departure_postalCode: {
-      type : DataTypes.INTEGER,
+      type : DataTypes.STRING,
       allowNull: true
     },
     departure_city: {
       type : DataTypes.STRING,
-      allowNull: true
-    },
-    departure_idSite: {
-      type : DataTypes.INTEGER,
       allowNull: true
     },
     arrival_date: {
@@ -44,20 +40,12 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     arrival_postalCode: {
-      type : DataTypes.INTEGER,
+      type : DataTypes.STRING,
       allowNull: true
     },
     arrival_city: {
       type : DataTypes.STRING,
       allowNull: true
-    },
-    arrival_idSite: {
-      type : DataTypes.INTEGER,
-      allowNull: true
-    },
-    driver: {
-        type: DataTypes.INTEGER,
-        allowNull: false
     }
   }, {
     paranoid: true,
@@ -65,10 +53,13 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
-        //Ride.belongsTo(models.User); //Conducteur : celui qui à créer l'annonce
+        Ride.belongsTo(models.User, { as:'Driver'});
         Ride.belongsToMany(models.User, {
-          through:"Passengers"
+          through:"Passengers",
+          as:'Passengers'
         });
+        Ride.belongsTo(models.Site, { as: 'Departure'});
+        Ride.belongsTo(models.Site, { as: 'Arrival'});
       }
     },
     instanceMethods: {
@@ -87,12 +78,18 @@ module.exports = function(sequelize, DataTypes) {
         result.arrival_city = this.arrival_city;
         result.arrival_postalCode = this.arrival_postalCode;
         result.arrival_idSite = this.arrival_idSite;
-        if (this.User) {
-          result.driver = this.User.responsify();
+        if(this.Driver){
+          result.driver = this.Driver.responsify();
         }
-        /*if(this.Users){
-          result.passengers = this.Users;
-        }*/
+        if(this.Passengers){
+          result.passengers = this.Passengers;
+        }
+        if(this.Departure){
+          result.departure = this.Departure.responsify();
+        }
+        if(this.Arrival){
+          result.arrival = this.Arrival.responsify();
+        }
         return result;
       }
     }

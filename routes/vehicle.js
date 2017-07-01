@@ -9,7 +9,9 @@ const router = express.Router();
 
 /** Get all cars | 06-001 */
 router.get('/',function(req,res){
-  Vehicle.findAll()
+  Vehicle.findAll({
+    include: [ models.User ]
+  })
   .then(function(vehicles){
     let results = [];
     for(let vehicle of vehicles){
@@ -26,7 +28,8 @@ router.get('/:id',function(req,res){
   Vehicle.find({
     where:{
             id: req.params.id
-          }
+          },
+    include: [ models.User ]
   })
   .then(function(vehicle){
     if(vehicle) {
@@ -65,6 +68,7 @@ router.post('/new',function(req,res,next){
   let send = req.body;
 
   /* 'isVehiculeOK' initialized w/ default value 0 */
+
   Vehicle.create({
     brand: send.brand,
     model: send.model,
@@ -74,6 +78,15 @@ router.post('/new',function(req,res,next){
   })
   .then(function(vehicle){
     if(vehicle){
+      models.User.find({
+        where: { id: send.user }
+      })
+      .then(user => {
+        vehicle.setUser(user)
+        .then(user => { console.log('User succesfully added to the car w/ url 06-004'); })
+        .catch(err => { res.json({result:-2, message:'Unable to add user to the car w/ url 06-004', error:err}); });
+      })
+      .catch(err => { res.json({result:-2, message:'User not found w/ url 06-004', error:err}); });
       res.json(vehicle);
     }
     else res.json({result: 0, message:'Unable to create vehicle w/ url 06-004'});
@@ -96,7 +109,7 @@ router.post('/edit',function(req,res,next){
                                   brand: send.brand,
                                   model: send.model,
                                   registrationNumber: send.registration,
-                                  placesNumber: send.places,
+                                  placesNumber: send.seats,
                                   vehicleType: send.type
                               });
       res.json({result:1});
@@ -118,9 +131,9 @@ router.delete('/:id',function(req,res,next){
   })
   .then(function(vehicle){
     if(vehicle){
-      Vehicle.destroy()
+      vehicle.destroy()
       .then(function(vehicle){
-        req.json({ result: 1 });
+        res.json({ result: 1 });
       })
       .catch(err => { res.json({result: 0, message:'Unable to remove vehicle w/ url 06-006', error: err}); });
     }
