@@ -81,6 +81,9 @@ module.exports = function(sequelize, DataTypes) {
         if(this.Status){
           result.status = this.Status.responsify();
         }
+        if(this.Rides){
+          result.rides = this.Rides;
+        }
         return result;
       }
     }

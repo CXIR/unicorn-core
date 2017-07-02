@@ -12,7 +12,7 @@ const router = express.Router();
 /** Get all active users | 04-001 */
 router.get('/all',function(req,res){
   User.findAll({
-    include: [ models.Site, models.Status ]
+    include: [ models.Site, models.Status, models.Ride ]
   })
   .then(function(users){
     let results = [];
