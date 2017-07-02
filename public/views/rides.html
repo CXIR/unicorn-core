@@ -1,0 +1,74 @@
+<section>
+  <title>Les Trajets</title>
+
+  <div user-pop></div>
+  <div my-nav></div>
+
+  <div class="main-wrapper">
+
+    <div class="rides-head">
+      <h2>Rechercher un Trajet</h2>
+
+      <form>
+        <fieldset>
+          <div class="s-component">
+            <select class="form-control" ng-model="search.departure" ng-option="departure.name for departure in departures">
+              <option value="">-- Lieu de Départ --</option>
+            </select>
+          </div>
+          <div class="s-component">
+            <select class="form-control" ng-model="search.arrival" ng-option="arrival.name for arrival in arrivals">
+              <option value="">-- Lieu d'Arrivée --</option>
+            </select>
+          </div>
+          <div class="s-component">
+            <div datepicker></div>
+          </div>
+      </fieldset>
+      <div style="clear: both"></div>
+        <a href="" class="btn btn-primary" ng-click="searchRide(search,dt | date:'shortDate')">Rechercher</a>
+    </form>
+    </div>
+
+    <hr/>
+
+    <div class="panel panel-default content"><!-- ng-repeat="ride in rides" -->
+      <div class="panel-body">
+        <table class="table-inbox">
+          <tr>
+            <td class="cell-s">
+              <a href="" ng-click="userPreview(user)">
+                <img src="toolbox/asset/images/default.png" width="100" height="100"/>
+              </a>
+            </td>
+            <td>
+              <p ng-bind="'Driver : '+ride.user.name | uppercase+' '+ride.user.first"></p>
+              <p><b ng-bind="ride.departure"></b><i class="fa fa-arrow-right fa-1x"></i><b ng-bind="ride.arrival"></b></p>
+              <p ng-bind="'Le '+ride.date+' à '+ride.hour"></p>
+              <p ng-bind="'Places Disponibles : '+ride.seats"></p>
+            </td>
+            <td>
+              <a href="" class="btn btn-primary" ng-click="askForSeat(ride)">Je m'inscris !</a><!-- ng-show="ride.seats > 0 && !user_is_passenger" -->
+              <a href="" class="btn btn-primary disabled">Complet</a><!-- ng-show="ride.seats == 0 && !user_is_passenger" -->
+              <i class="fa fa-check-circle fa-3x text-success"></i><!-- ng-show="user_is_passenger" -->
+            </td>
+          </tr>
+        </table>
+    </div>
+
+
+
+    <div class="panel panel-default box" ng-show="details">
+      <div class="panel-heading">
+        <a href="" ng-click="details = false">Moins <i class="fa fa-chevron-up fa-1x"></i></a>
+      </div>
+      <div class="panel-body">
+
+      </div>
+    </div>
+
+      <div style="clear: both"></div>
+
+    </div>
+
+</section>

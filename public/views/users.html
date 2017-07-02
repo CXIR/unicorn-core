@@ -1,0 +1,51 @@
+<section>
+  <title>Les Utilisateurs</title>
+
+  <div user-pop></div>
+  <div my-nav></div>
+
+    <div class="jumbotron main-wrapper-pad">
+      <div class="form-group">
+        <h2>Rechercher un Utilisateur :</h2>
+        <div class="search-lg">
+          <input class="form-control" placeholder="Nom, Prénom, Site..." type="text" ng-model="usrfilter">
+          <a class="btn btn-primary" ng-click="">Rechercher</a>
+        </div>
+      </div>
+    </div>
+
+    <hr/>
+
+    <div ng-hide="loaded" class="main-wrapper">
+      <div class="loading">
+        <i class="fa fa-circle-o-notch fa-5x fa-spin"></i>
+      </div>
+    </div>
+
+
+      <div ng-show="loaded" class="panel panel-default content" ng-repeat="user in users | filter:usrfilter">
+        <div class="panel-body">
+          <table class="table-inbox">
+            <tr>
+              <td class="cell-s">
+                <a href="" ng-click="userPop(user)">
+                  <img src="toolbox/asset/images/default.png" width="100" height="100"/>
+                </a>
+              </td>
+              <td>
+                <p>Nom : {{ user.lastname | uppercase}} {{ user.firstname }}</p>
+                <p>Age : {{ user.birthdate | date:'yyyy-MM-dd'}}</p>
+                <p>Bureau : {{ user.site.name }}</p>
+                <i class="fa fa-thumbs-up fa-2x text-info">{{ user.positiveRating }}</i>
+                <i class="fa fa-thumbs-down fa-2x text-danger">{{ user.negativeRating }}</i>
+              </td>
+              <td>
+                <a href="" class="btn btn-primary" ng-click="userProfile(user)">Voir le Profil <i class="fa fa-chevron-right fa-1x"></i></a>
+              </td>
+            </tr>
+          </table>
+      </div>
+
+    </div>
+
+</section>

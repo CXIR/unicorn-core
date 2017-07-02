@@ -15,11 +15,14 @@ router.get('/all',function(req,res){
     include: [ models.Site, models.Status, models.Ride ]
   })
   .then(function(users){
-    let results = [];
-    for(let user of users){
-      results.push(user.responsify());
+    if(users){
+      let results = [];
+      for(let user of users){
+        results.push(user.responsify());
+      }
+      res.json(results);
     }
-    res.json(results);
+    else res.json({result:0, message:'No users found w/ url 04-001'});
   }).catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-001', error: err}); } );
 });
 
