@@ -88,6 +88,7 @@ router.post('/new',function(req,res,next){
       })
       .catch(err => { res.json({result:-1, message:'Site not found w/ url 04-004'}); });
 
+      /** initialization to 'User' : recover the correct id */
       models.Status.find({
           where: { id: send.status }
       })

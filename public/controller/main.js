@@ -68,7 +68,7 @@ shareApp.config(['$routeProvider','$locationProvider',
           templateUrl: 'views/profil.html',
           controller: 'profilCtrl'
         })
-        /*
+        /* TODO
         .when('/rprofil/:user',{
           templateUrl: 'views/rprofil.html',
           controller: 'rprofilCtrl'
@@ -284,7 +284,6 @@ shareApp.directive('datepicker',[
   }
 ]);
 
-
 /**
 *
 * CONTROLLERS MODULE
@@ -294,3 +293,26 @@ shareApp.directive('datepicker',[
 
 
 var shareAppControllers = angular.module('shareAppControllers',[]);
+
+
+
+/**
+*
+* FILTERS
+*
+**/
+
+
+
+shareAppControllers.filter('age',[
+  function(birthdate,current){
+    return function(birthdate){
+      current = Date.parse(current) || Date.now();
+
+      var ageDiffMs =  current - new Date(birthdate).getTime();
+      var ageDate = new Date(ageDiffMs);
+
+      return Math.abs( ageDate.getUTCFullYear() - 1970 );
+    };
+  }
+]);

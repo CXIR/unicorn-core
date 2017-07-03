@@ -34,7 +34,7 @@
               </td>
               <td>
                 <p>Nom : {{ user.lastname | uppercase}} {{ user.firstname }}</p>
-                <p>Age : {{ user.birthdate | date:'yyyy-MM-dd'}}</p>
+                <p>Age : {{ user.birthdate | age:'user.birthdate' }} ans</p>
                 <p>Bureau : {{ user.site.name }}</p>
                 <i class="fa fa-thumbs-up fa-2x text-info">{{ user.positiveRating }}</i>
                 <i class="fa fa-thumbs-down fa-2x text-danger">{{ user.negativeRating }}</i>

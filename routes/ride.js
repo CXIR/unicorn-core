@@ -65,7 +65,7 @@ router.get('/comming/passenger/:id',function(req,res){
     where: { depature_date: { $gte: new Date() } },
     include:  [
                 { model: models.User,
-                  as:'Passengers', attributes: [ 'user_id', 'ride_id' ],
+                  as:'Passengers',
                   through: { where: { user_id: req.params.id } }
                 }
               ]
@@ -281,6 +281,33 @@ router.post('/edit',function(req,res,next){
       else res.json({result:0, message:'Ride not found w/ url 02-011'});
   })
   .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 02-011', error:err}); });
+});
+
+/** Search a ride | 02-013 */
+router.post('/search',function(req,res){
+  let send = req.body;
+
+  Ride.findAll({
+    where:  {
+              departure_idSite: send.departure,
+              arrival_idSite: send.arrival//,
+              //departure_date: send.date
+            },
+    include:  [
+                { model: models.User, as: 'Driver' },
+                { model: models.User, as: 'Passengers' },
+                { model: models.Site, as: 'Departure' },
+                { model: models.Site, as: 'Arrival' }
+              ]
+  })
+  .then(rides => {
+    let results = [];
+    for(let ride of rides){
+      results.push(ride.responsify());
+    }
+    res.json(results);
+  })
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 02-013'}); });
 });
 
 /**************************DELETE**************************/
