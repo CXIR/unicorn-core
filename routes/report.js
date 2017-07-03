@@ -9,11 +9,16 @@ const router = express.Router();
 
 /** Get all reports | 03-001 */
 router.get('/',function(req,res,next){
-  Report.findAll()
+  Report.findAll({
+    include:  [
+                { model: models.User, as: 'Plaintiff' },
+                { model: models.User, as: 'Reported' }
+              ]
+  })
   .then(function(reports){
     let results = [];
     for(let report of reports){
-        results.push({ content: res.redirect('/report/'+report.id) });
+        results.push(report);
     }
     res.json(results);
   })

@@ -7,8 +7,17 @@ module.exports = function(sequelize, DataTypes) {
       autoIncrement : true,
     },
     requestDate: {
-      type : DataTypes.DATE
-    }
+      type : DataTypes.DATE,
+      allowNull: false
+    }/*,
+    acceptedDate: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    refusedDate: {
+      type: DataTypes.DATE,
+      allowNull: true
+    }*/
   }, {
     paranoid: true,
     underscored: true,

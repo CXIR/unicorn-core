@@ -12,14 +12,17 @@ const router = express.Router();
 /** Get all active users | 04-001 */
 router.get('/all',function(req,res){
   User.findAll({
-    include: [ models.Site, models.Status ]
+    include: [ models.Site, models.Status, models.Ride ]
   })
   .then(function(users){
-    let results = [];
-    for(let user of users){
-      results.push(user.responsify());
+    if(users){
+      let results = [];
+      for(let user of users){
+        results.push(user.responsify());
+      }
+      res.json(results);
     }
-    res.json(results);
+    else res.json({result:0, message:'No users found w/ url 04-001'});
   }).catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-001', error: err}); } );
 });
 
@@ -85,6 +88,7 @@ router.post('/new',function(req,res,next){
       })
       .catch(err => { res.json({result:-1, message:'Site not found w/ url 04-004'}); });
 
+      /** initialization to 'User' : recover the correct id */
       models.Status.find({
           where: { id: send.status }
       })

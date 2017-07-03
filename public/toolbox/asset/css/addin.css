@@ -1,0 +1,62 @@
+/*
+* BOOTSTRAP 'FLATLY' SPECIFIC ADDIN CSS
+*/
+
+/** General */
+
+.navbar{ position: fixed; width: 100%; top: 0px; z-index: 1; }
+
+.main-wrapper-pad{ width: 90%; margin: 5%; padding: 5%; }
+.main-wrapper{ width: 90%; margin: 5%;}
+.search-lg{ width: 100%; }
+.search-lg input[type="text"]{ width: 85%; float: left; }
+
+.s-component{ width: 30%; padding: 1em; margin-left: 1em; float: left; }
+
+.navbar-nav .badge{ margin-left: 0.5em; background-color: #e74c3c; color: #ffffff; }
+.nav-fix{ height: 5em; }
+
+.txtarea{ max-width: 100%; }
+
+.content{ width: 50%; margin-left: 25%; }
+
+.table-inbox{ width: 90%; margin-left: 5%; }
+.cell-s{ width: 30%; }
+
+.times{ width: 100%; text-align: right; }
+
+.loading{ width: 100%; text-align: center; }
+
+/** Users */
+
+.user-pop{ width: 40%; margin-left: 30%; position: fixed; z-index: 500; margin-top: 5em; }
+.user-pop .panel-body{ text-align: center; }
+.user-pop-rides{ height: 10em; overflow: scroll; }
+.user-pop .panel-heading{ text-align: center; }
+
+.user-pop .table-icon{ width: 5%; }
+.user-pop .table-info{ width: 45%; text-align: left; font-size: 14px; padding-left: 1em; }
+.user-pop table{ margin: 1em; }
+
+/** Login */
+
+.login-title{ text-align: center; }
+.login-form{ width: 50%; margin-left: 25%; margin-top: 2em; }
+.login-form input[type="text"]{ width: 90%; margin-left: 5%; }
+.login-action{ text-align: right; margin-right: 5%;  }
+
+/** Profil */
+.profil-header{ width: 100%; }
+.profil-section{ float: left; margin-right: 5%; width: auto; height: 15em; }
+
+.profil a{ margin-top: 1em; margin-bottom: 1em; }
+.profil h3{ margin-left: 2%; }
+
+
+/** Rides */
+.rides-head{ width: 100%; }
+.rides-head a{ margin-left: 84%; }
+.rides-head h2{ margin-left: 1em; margin-top: 1em; }
+
+/** Message */
+.send{ width: 60%; margin-left: 20%; margin-top: 2em; margin-bottom: 2em; }

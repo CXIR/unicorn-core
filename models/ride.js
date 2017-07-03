@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
       autoIncrement : true,
     },
     ad_date: {
-      type : DataTypes.STRING,
+      type : DataTypes.DATE,
       allowNull: false
     },
     ad_message: {
