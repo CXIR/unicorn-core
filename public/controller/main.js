@@ -82,6 +82,10 @@ shareApp.config(['$routeProvider','$locationProvider',
           templateUrl: 'views/message.html',
           controller: 'messageCtrl'
         })
+        .when('/init', {
+          templateUrl: 'views/init.html',
+          controller : 'initCtrl'
+        })
         .when('/about',{
             templateUrl: 'views/about.html',
             controller: 'aboutCtrl'
@@ -115,6 +119,7 @@ shareApp.directive('myNav',['$location',function($location){
         else if(current[1] == 'users') angular.element(document.querySelector('#users')).addClass('active');
         else if(current[1] == 'rides') angular.element(document.querySelector('#rides')).addClass('active');
         else if(current[1] == 'message') angular.element(document.querySelector('#message')).addClass('active');
+        else if(current[1] == 'init') angular.element(document.querySelector('#init')).addClass('active');
 
         /*
         $http.get(node_url)
