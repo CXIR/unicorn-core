@@ -67,7 +67,10 @@ router.get('/comming/passenger/:id',function(req,res){
                 { model: models.User,
                   as:'Passengers',
                   through: { where: { user_id: req.params.id } }
-                }
+                },
+                { model: models.User, as: 'Driver', include: [ models.Site, models.Status ] },
+                { model: models.Site, as: 'Departure' },
+                { model: models.Site, as: 'Arrival' }
               ]
   })
   .then(rides => {
@@ -115,7 +118,7 @@ router.get('/passed/passenger/:id',function(req,res){
                   as: 'Passengers',
                   through: { where: { user_id: req.params.id } }
                 },
-                { model: models.User, as: 'Driver' },
+                { model: models.User, as: 'Driver' , include: [ models.Site, models.Status ] },
                 { model: models.Site, as: 'Departure' },
                 { model: models.Site, as: 'Arrival' }
               ]

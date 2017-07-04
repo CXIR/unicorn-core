@@ -7,9 +7,7 @@
 .navbar{ position: fixed; width: 100%; top: 0px; z-index: 1; }
 
 .main-wrapper-pad{ width: 90%; margin: 5%; padding: 5%; }
-.main-wrapper{ width: 90%; margin: 5%;}
-.search-lg{ width: 100%; }
-.search-lg input[type="text"]{ width: 85%; float: left; }
+.main-wrapper{ width: 90%; margin: 5%; margin-top: 5em; }
 
 .s-component{ width: 30%; padding: 1em; margin-left: 1em; float: left; }
 
@@ -18,10 +16,11 @@
 
 .txtarea{ max-width: 100%; }
 
-.content{ width: 50%; margin-left: 25%; }
+.content{ width: 70%; margin-left: 15%; }
 
 .table-inbox{ width: 90%; margin-left: 5%; }
 .cell-s{ width: 30%; }
+.cell-l{ width: 40%; }
 
 .times{ width: 100%; text-align: right; }
 
@@ -60,3 +59,13 @@
 
 /** Message */
 .send{ width: 60%; margin-left: 20%; margin-top: 2em; margin-bottom: 2em; }
+
+/** Accueil */
+.home{ width: 100%; margin-bottom: 1em; }
+
+.bloc{ float: left; width: 100%; }
+
+.bloc-m{ width: 48%; margin-right: 2%; height: 20em; overflow-y: scroll; }
+.bloc-s{ width: 31%; margin-right: 2%; height: 20em; overflow-y: scroll;}
+.bloc-l{ width: 65%; margin-right: 2%; height: 20em; overflow-y: scroll;}
+.bloc-x{ width: 98%; overflow-y: scroll;}

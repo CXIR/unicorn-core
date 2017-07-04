@@ -3,6 +3,7 @@
 /**
 * View : users
 */
+
 shareAppControllers.controller('usersCtrl',['$scope','$location','$http',
     function($scope,$location,$http){
         $scope.loaded = false;
