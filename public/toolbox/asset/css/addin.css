@@ -4,6 +4,8 @@
 
 /** General */
 
+#datepkr{ z-index: -1; }
+
 .navbar{ position: fixed; width: 100%; top: 0px; z-index: 1; }
 
 .main-wrapper-pad{ width: 90%; margin: 5%; padding: 5%; }

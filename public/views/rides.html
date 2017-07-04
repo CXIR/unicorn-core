@@ -1,7 +1,6 @@
 <section>
   <title>PTC | Trajets</title>
 
-  <div user-pop></div>
   <div my-nav></div>
 
   <div class="main-wrapper">
@@ -50,7 +49,7 @@
             <td>
               <p>Proposé par : {{ ride.driver.lastname | uppercase }} {{ ride.driver.firstname }}</p>
               <p><b>{{ ride.departure.name }}</b><i class="fa fa-arrow-right fa-1x"></i><b>{{ ride.arrival.name }}</b></p>
-              <p>Le : {{  ride.departure_date | date:'yyyy-MM-dd' }}, à {{ }}</p>
+              <p>Le : {{  ride.depature_date | date:'yyyy-MM-dd' }}, à {{  ride.depature_date | date:'HH:mm' }}</p>
               <p>Places Disponibles : {{ ride.remain }}</p>
             </td>
             <td>
@@ -61,14 +60,12 @@
           </tr>
         </table>
     </div>
-  </div>
 
-  <div class="panel panel-default box" ng-show="details">
+    <div class="panel panel-default box" ng-show="details">
           <div class="panel-heading">
             <a href="" ng-click="details = false" ng-show="details">Moins <i class="fa fa-chevron-up fa-1x"></i></a>
             <a href="" ng-click="details = true" ng-hide="details">Plus <i class="fa fa-chevron-down fa-1x"></i></a>
           </div>
-
 
           <div class="panel-body" ng-repeat="passenger in rides.passengers">
               <h3>Les Passagers : </h3>
@@ -77,10 +74,11 @@
               </ul>
           </div>
 
-          <div class="panel-body">
-
-          </div>
-        </div>
+    </div>
 
   </div>
+
+</div>
+
+
 </section>
