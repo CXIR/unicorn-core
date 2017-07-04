@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
     requestDate: {
       type : DataTypes.DATE,
       allowNull: false
-    }/*,
+    },
     acceptedDate: {
       type: DataTypes.DATE,
       allowNull: true
@@ -17,7 +17,7 @@ module.exports = function(sequelize, DataTypes) {
     refusedDate: {
       type: DataTypes.DATE,
       allowNull: true
-    }*/
+    }
   }, {
     paranoid: true,
     underscored: true,

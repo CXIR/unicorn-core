@@ -52,6 +52,10 @@ shareApp.config(['$routeProvider','$locationProvider',
             templateUrl: 'views/login.html',
             controller: 'loginCtrl'
         })
+        .when('/home',{
+            templateUrl: 'views/home.html',
+            controller: 'homeCtrl'
+        })
         .when('/users',{
             templateUrl: 'views/users.html',
             controller: 'usersCtrl'
@@ -68,19 +72,13 @@ shareApp.config(['$routeProvider','$locationProvider',
           templateUrl: 'views/profil.html',
           controller: 'profilCtrl'
         })
-        /* TODO
-        .when('/rprofil/:user',{
-          templateUrl: 'views/rprofil.html',
-          controller: 'rprofilCtrl'
-        })
-        .when('/wprofil/:user',{
-          templateUrl: 'views/wprofil.html',
-          controller: 'wprofilCtrl'
-        })
-        */
         .when('/message',{
           templateUrl: 'views/message.html',
           controller: 'messageCtrl'
+        })
+        .when('/init', {
+          templateUrl: 'views/init.html',
+          controller : 'initCtrl'
         })
         .when('/about',{
             templateUrl: 'views/about.html',
@@ -115,7 +113,7 @@ shareApp.directive('myNav',['$location',function($location){
         else if(current[1] == 'users') angular.element(document.querySelector('#users')).addClass('active');
         else if(current[1] == 'rides') angular.element(document.querySelector('#rides')).addClass('active');
         else if(current[1] == 'message') angular.element(document.querySelector('#message')).addClass('active');
-
+        else if(current[1] == 'home') angular.element(document.querySelector('#home')).addClass('active');
         /*
         $http.get(node_url)
         .then(fucntion(res){

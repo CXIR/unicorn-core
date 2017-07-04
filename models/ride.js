@@ -46,6 +46,10 @@ module.exports = function(sequelize, DataTypes) {
     arrival_city: {
       type : DataTypes.STRING,
       allowNull: true
+    },
+    remain_seats: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     paranoid: true,
