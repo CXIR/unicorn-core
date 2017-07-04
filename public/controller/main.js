@@ -113,12 +113,7 @@ shareApp.directive('myNav',['$location',function($location){
         else if(current[1] == 'users') angular.element(document.querySelector('#users')).addClass('active');
         else if(current[1] == 'rides') angular.element(document.querySelector('#rides')).addClass('active');
         else if(current[1] == 'message') angular.element(document.querySelector('#message')).addClass('active');
-<<<<<<< HEAD
         else if(current[1] == 'home') angular.element(document.querySelector('#home')).addClass('active');
-=======
-        else if(current[1] == 'init') angular.element(document.querySelector('#init')).addClass('active');
-
->>>>>>> master
         /*
         $http.get(node_url)
         .then(fucntion(res){
