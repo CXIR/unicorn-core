@@ -1,0 +1,23 @@
+<section>
+  <div class="login-title">
+    <h1>Entreprise</h1>
+  </div>
+
+  <div class="jumbotron login-form">
+    <div class="login-title">
+      <i class="fa fa-sign-in fa-5x" aria-hidden="true"></i>
+      <h2>Identification</h2>
+      <h3 class="text-danger" ng-show="error.uncorrect">{{error.message}}</h3>
+    </div>
+    <div id="pin" class="form-group">
+      <input type="text" class="form-control" placeholder="Identifiant" ng-model="log.pin"/>
+    </div>
+    <div id="pw" class="form-group">
+      <input type="text" class="form-control" placeholder="Mot de Passe" ng-model="log.pw" ng-keyup="$event.keyCode == 13; login(log)"/>
+    </div>
+    <div class="login-action">
+      <a class="btn btn-danger" ng-click="reset()">Effacer</a>
+      <a class="btn btn-primary" ng-click="login(log)">Valider</a>
+    </div>
+    </div>
+</section>
