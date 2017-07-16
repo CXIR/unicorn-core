@@ -40,6 +40,23 @@ router.get('/:id',function(req,res){
   .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 06-002', error: err}); });
 });
 
+/** Get a single car by User | 06-007 */
+router.get('/byuser/:id',function(req,res){
+  Vehicle.find({
+    where:{
+            user_id: req.params.id
+          },
+    include: [ models.User ]
+  })
+  .then(function(vehicle){
+    if(vehicle) {
+      res.json(vehicle.responsify());
+    }
+    else res.json({result: 0, message:'No vehicle found w/ url 06-007'});
+  })
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 06-007', error: err}); });
+});
+
 /** Make Vehicle valid | 06-003 */
 router.get('/validate/:id',function(req,res,next){
   let vehicle = req.params.id;

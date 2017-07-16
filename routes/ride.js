@@ -28,6 +28,48 @@ router.get('/comming',function(req,res){
   .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-001', error: err}); });
 });
 
+/** Get all comming rides except those user requested for or those who drives | 02-014*/
+router.get('/comming/:id',function(req,res){
+  Ride.findAll({
+    where: {
+              driver_id : { $ne: req.params.id }
+            },
+    include : [
+                { model: models.Site, as:'Departure' },
+                { model: models.Site, as:'Arrival' },
+                { model: models.User, as: 'Driver'},
+                { model: models.User, as: 'Passengers'}
+              ]
+  })
+  .then(rides => {
+    let results = [];
+    if(rides){
+      for(let ride of rides){
+        let isPassenger = false;
+        let hasRequested = false;
+
+        let passengers = ride.Passengers;
+
+        for(let passenger of passengers){
+          if(passenger.id == req.params.id) isPassenger = true;
+        }
+
+        models.Passenger_Request.find({
+          where: { user_id: req.params.id }
+        })
+        .then(request => {
+          if(request) hasRequested = true;
+        })
+        .catch(err => { console.log(); });
+
+        if(!isPassenger && !hasRequested) results.push(ride.responsify());
+      }
+      res.json(results);
+    }
+  })
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 02-014', error:err}); });
+});
+
 /** Get all single user comming rides as driver | 02-002 */
 router.get('/comming/driver/:id',function(req,res){
 
@@ -61,26 +103,30 @@ router.get('/comming/driver/:id',function(req,res){
 
 /** Get all single user comming rides as passenger | 02-003 */
 router.get('/comming/passenger/:id',function(req,res){
-  Ride.findAll({
-    where: { depature_date: { $gte: new Date() } },
-    include:  [
-                { model: models.User,
-                  as:'Passengers',
-                  through: { where: { user_id: req.params.id } }
-                },
-                { model: models.User, as: 'Driver', include: [ models.Site, models.Status ] },
+
+  models.User.find({
+    where: { id: req.params.id },
+    include : [
                 { model: models.Site, as: 'Departure' },
-                { model: models.Site, as: 'Arrival' }
+                { model: models.Site, as: 'Arrival' },
+                { model: models.User, as: 'Driver' },
+                { model: models.User, as: 'Passengers'}
               ]
   })
-  .then(rides => {
-    let results = [];
-    for(let ride of rides){
-      results.push(ride);
-    }
-    res.json(results);
+  .then(user => {
+    user.getRides()
+    .then(rides => {
+      let results = [];
+      for(let ride of rides){
+        if(ride.date_departure > new Date()){
+          results.push(ride.responsify);
+        }
+      }
+      res.json(results);
+    })
+    .catch(err => { });
   })
-  .catch(err => { res.json({result:-1, message:'No rides found w/ url 02-003', error:err}); });
+  .catch(err => { });
 });
 
 /** Get all single user passed rides as driver | 02-004 */
@@ -109,26 +155,28 @@ router.get('/passed/driver/:id',function(req,res){
 
 /** Get all single user passed rides as passenger | 02-005 */
 router.get('/passed/passenger/:id',function(req,res){
-  let user = req.params.id;
 
-  Ride.findAll({
-    where: { depature_date: { $lt: new Date() } },
-    include:  [
-                { model: models.User,
-                  as: 'Passengers',
-                  through: { where: { user_id: req.params.id } }
-                },
-                { model: models.User, as: 'Driver' , include: [ models.Site, models.Status ] },
+  models.User.find({
+    where: { id: req.params.id },
+    include : [
                 { model: models.Site, as: 'Departure' },
-                { model: models.Site, as: 'Arrival' }
+                { model: models.Site, as: 'Arrival' },
+                { model: models.User, as: 'Driver' },
+                { model: models.User, as: 'Passengers'}
               ]
   })
-  .then(rides => {
-    let results = [];
-    for(let ride of rides){
-      results.push(ride);
-    }
-    res.json(results);
+  .then(user => {
+    user.getRides()
+    .then(rides => {
+      let results = [];
+      for(let ride of rides){
+        if(ride.departure_date < new Date()){
+          results.push(ride);
+        }
+      }
+      res.json(results);
+    })
+    .catch(err => { });
   })
   .catch(err => { res.json({result: -1, message:'Something went wrong with url 02-006', error: err}); });
 });

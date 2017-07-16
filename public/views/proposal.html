@@ -1,0 +1,139 @@
+<title>PTC | Nouveau Trajet</title>
+
+<section>
+  <div my-nav></div>
+
+  <div class="main-wrapper">
+    <div class="home">
+      <div class="well bloc bloc-x">
+        <h2>Proposer un Trajet</h2>
+      </div>
+      <div style="clear:both"></div>
+    </div>
+
+  <div class="home">
+
+  <div class="well bloc bloc-m">
+  <h4>DÉPART</h4>
+  <ul class="nav nav-tabs">
+    <li ng-class="(d_pro == true) ? 'active' : ''"><a href="" ng-click="d_pro = true">Professionnel</a></li>
+    <li ng-class="(d_pro == false) ? 'active' : ''"><a href="" ng-click="d_pro = false">Domestique</a></li>
+  </ul>
+  <br/>
+  <form class="form-horizontal">
+    <fieldset>
+      <div ng-show="d_pro">
+        <div class="form-group">
+          <div class="col-lg-10">
+            <select class="form-control" id="select">
+              <option value="">-- Sélectionnez un Site --</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div ng-hide="d_pro">
+        <div class="form-group">
+          <div class="col-lg-10">
+            <input type="text" class="form-control"placeholder="Adresse">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-10">
+            <input type="text" class="form-control"placeholder="Code Postal">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-10">
+            <input type="text" class="form-control"placeholder="Ville">
+          </div>
+        </div>
+      </div>
+        <div class="form-group">
+          <div class="col-lg-10">
+
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-10">
+            <select class="form-control" id="select">
+              <option value="">-- Heure --</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-10">
+            <select class="form-control" id="select">
+              <option value="">-- Minutes --</option>
+            </select>
+          </div>
+        </div>
+  </fieldset>
+</form>
+    </div>
+
+  <div class="well bloc bloc-m">
+
+    <h4>ARRIVÉE</h4>
+    <ul class="nav nav-tabs">
+      <li ng-class="(a_pro == true) ? 'active' : ''"><a href="" ng-click="a_pro = true">Professionnel</a></li>
+      <li ng-class="(a_pro == false) ? 'active' : ''"><a href="" ng-click="a_pro = false">Domestique</a></li>
+    </ul>
+    <br/>
+    <form class="form-horizontal">
+      <fieldset>
+        <div ng-show="a_pro">
+          <div class="form-group">
+            <div class="col-lg-10">
+              <select class="form-control" id="select">
+                <option value="">-- Sélectionnez un Site --</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div ng-hide="a_pro">
+          <div class="form-group">
+            <div class="col-lg-10">
+              <input type="text" class="form-control"placeholder="Adresse">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-10">
+              <input type="text" class="form-control"placeholder="Code Postal">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-10">
+              <input type="text" class="form-control"placeholder="Ville">
+            </div>
+          </div>
+        </div>
+          <div class="form-group">
+            <div class="col-lg-10">
+
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-10">
+              <select class="form-control" id="select">
+                <option value="">-- Heure --</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-10">
+              <select class="form-control" id="select">
+                <option value="">-- Minutes --</option>
+              </select>
+            </div>
+          </div>
+    </fieldset>
+  </form>
+</div>
+  <div style="clear:both"></div>
+  </div>
+
+  <a href="" class="btn btn-danger" ng-click="">Effacer</a>
+  <a href="" class="btn btn-success" ng-click="">Proposer</a>
+</div>
+
+</section>

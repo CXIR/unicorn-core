@@ -53,9 +53,6 @@ module.exports = function(sequelize, DataTypes) {
         result.placesNumber = this.placesNumber;
         result.vehicleType = this.vehicleType;
         result.isVehicleOK = this.isVehicleOK;
-        if(this.User){
-          result.driver = this.User.responsify();
-        }
         return result;
       }
     }

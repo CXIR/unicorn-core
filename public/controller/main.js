@@ -56,6 +56,14 @@ shareApp.config(['$routeProvider','$locationProvider',
             templateUrl: 'views/home.html',
             controller: 'homeCtrl'
         })
+        .when('/edit/:id',{
+          templateUrl: 'views/edit.html',
+          controller: 'editCtrl'
+        })
+        .when('/proposal/:id',{
+          templateUrl: 'views/proposal.html',
+          controller: 'proposalCtrl'
+        })
         .when('/users',{
             templateUrl: 'views/users.html',
             controller: 'usersCtrl'
@@ -139,7 +147,9 @@ shareApp.directive('userPop',['$location',function($location){
   };
 }]);
 
-// Simple Notification
+/**
+* SIMPLE NOTIFICATION
+*/
 shareApp.directive('notif',[
   function(){
     return {
@@ -148,9 +158,7 @@ shareApp.directive('notif',[
       transclude: true,
       templateUrl: 'views/notification.html',
       link:function(scope, element, attrs){
-        scope.closeNotif = function(){
-          scope.notif =  {};
-        }
+
       }
     };
   }
@@ -167,6 +175,25 @@ shareApp.directive('dialog',[
       link:function(scope, element, attrs){
         scope.closeDialog = function(){
           scope.dialog =  {};
+        }
+      }
+    };
+  }
+]);
+
+/**
+* User Report
+*/
+shareApp.directive('userReport',[
+  function(){
+    return{
+      restrict: 'A',
+      replace: true,
+      transclude: true,
+      templateUrl : 'views/report.html',
+      link:function(scope,element,attrs){
+        scope.close = function(){
+          scope.report = {};
         }
       }
     };

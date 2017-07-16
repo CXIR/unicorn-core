@@ -6,16 +6,13 @@
 
   <div class="main-wrapper">
 
-    <div class="well">
+    <div class="well" ng-init="simple = true">
       <h2>Les Trajets</h2>
     </div>
-    <input class="form-control" placeholder="Rechercher..." type="text" ng-model="rideFilter">
-    <br/>
-    <em class="text-success">Recherchez ce que vous voulez sur les trajets,
-      si l'un d'entre correspond à votre saisie, il remontra tout seul! Ou bien, affinez votre recherche ci-dessous.</em>
-
-    <h3>Affiner la Recherche<span class="label label-primary">+</span></h3>
-
+    <div ng-show="simple">
+      <input class="form-control" placeholder="Rechercher..." type="text" ng-model="rideFilter">
+    </div>
+    <div ng-hide="simple">
       <form>
         <fieldset>
           <div class="s-component">
@@ -33,8 +30,15 @@
           </div>
       </fieldset>
       <div style="clear: both"></div>
-        <a href="" class="btn btn-primary" ng-click="searchRide(search,dt | date:'shortDate')">Rechercher</a>
+        <a href="" class="btn btn-success" ng-click="searchRide(search,dt | date:'shortDate')">Rechercher</a>
     </form>
+    </div>
+    <br/>
+    <em class="text-success">Recherchez ce que vous voulez sur les trajets,
+      si l'un d'entre correspond à votre saisie, il remontra tout seul! Ou bien, affinez votre recherche ci-dessous.</em>
+    <br/><br/>
+    <a href="" class="btn btn-primary" ng-click="simple = false" ng-show="simple">Recherche Affinée</a>
+    <a href="" class="btn btn-primary" ng-click="simple = true" ng-hide="simple">Recherche Simple</a>
 
     <hr/>
 
@@ -56,7 +60,6 @@
             <td>
               <a href="" class="btn btn-primary" ng-click="askForSeat(ride)">Je m'inscris !</a><!-- ng-show="ride.seats > 0 && !user_is_passenger" -->
               <a href="" class="btn btn-primary disabled">Complet</a><!-- ng-show="ride.seats == 0 && !user_is_passenger" -->
-              <i class="fa fa-check-circle fa-3x text-success"></i><!-- ng-show="user_is_passenger" -->
             </td>
           </tr>
         </table>

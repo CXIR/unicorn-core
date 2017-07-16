@@ -34,7 +34,7 @@ router.get('/all/:id',function(req,res){
                   $ne: req.params.id
                 }
           },
-    include: [ models.Site, models.Status ]
+    include: [ models.Site, models.Status, models.Ride, models.Vehicle ]
   })
   .then(function(users){
     let results = [];
@@ -50,7 +50,7 @@ router.get('/all/:id',function(req,res){
 router.get('/:id',function(req,res){
   User.find({
     where:{ id: req.params.id },
-    include : [ models.Site, models.Status ]
+    include : [ models.Site, models.Status, models.Ride ]
   })
   .then(user => {
     res.json(user.responsify());

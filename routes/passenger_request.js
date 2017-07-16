@@ -29,13 +29,21 @@ router.get('/sended/:userID',function(req,res){
 
 });
 
-/** Get all received passenger request | 01-002
-* at this time, need to execute sub request to recover sites and driver
-*/
+/** Get all single ride received passenger request | 01-002*/
 router.get('/received/:rideID',function(req,res,next){
   Passenger_Request.findAll({
     where: { ride_id: req.params.rideID },
-    include: [ models.Ride ]
+    include: [
+                { model: models.Ride,
+                  include: [
+                              { model: models.Site , as: 'Departure'},
+                              { model: models.Site , as: 'Arrival'},
+                              { model: models.User , as: 'Driver'},
+                              { model: models.User , as: 'Passengers'}
+                           ]
+                },
+                { model: models.User }
+              ]
   })
   .then(function(requests){
       let results = [];
@@ -45,6 +53,28 @@ router.get('/received/:rideID',function(req,res,next){
       res.json(results);
   })
   .catch(err => { res.json({result:-1, message:'Something went wrong with url 01-002', error:err}); });
+});
+
+/** Get all rides received requests | 01-000 */
+router.get('/received/:userID',function(req,res){
+    Passenger_Request.findAll({
+      where: { user_id: req.params.id },
+      include: [
+                  { model: models.Ride,
+                    include: [
+                                { model: models.Site , as: 'Departure'},
+                                { model: models.Site , as: 'Arrival'},
+                                { model: models.User , as: 'Driver'},
+                                { model: models.User , as: 'Passengers'}
+                             ]
+                  },
+                  { model: models.User }
+                ]
+    })
+    .then(requests => {
+
+    })
+    .catch(err => { });
 });
 
 /** Accept passenger request | 01-003 */

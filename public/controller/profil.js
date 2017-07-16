@@ -3,12 +3,12 @@
 /**
 * View : my profile
 */
-shareAppControllers.controller('profilCtrl',['$scope','$location','$route','$http',
-    function($scope,$location,$route,$http){
-        var url = $location.path().split(/\//g);
+shareAppControllers.controller('profilCtrl',['$scope','$location','$route','$http','$routeParams',
+    function($scope,$location,$route,$http,$routeParams){
+        var display = $routeParams.user;
 
         /** Get user profile information */
-        $http.get('/user/find/'+url[2])
+        $http.get('/users/'+display)
         .then(function(res){
           if(res.data != 0){
             $scope.user = res.data;
@@ -16,6 +16,7 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$route','$htt
         },function(res){ console.log('FAIL : '+res.data); });
 
         /** Get user profile comming rides as Passenger */
+        /*
         var getPassengerCommingRides = function(){
           $http.get(node_url)
           .then(function(res){
@@ -24,8 +25,9 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$route','$htt
             }
           },function(res){ console.log('FAIL : '+res.data); });
         }; getPassengerCommingRides();
-
+*/
         /** Get user profile comming rides as Driver */
+        /*
         var getDriverCommingRides = function(){
           $http.get(node_url)
           .then(function(res){
@@ -35,7 +37,10 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$route','$htt
           },function(res){ console.log('FAIL : '+res.data); });
         }; getDriverCommingRides();
 
+      */
+
         /** Get user profile over rides as Passenger */
+        /*
         var getPassengerOverRides = function(){
           $http.get(node_url)
           .then(function(res){
@@ -44,8 +49,10 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$route','$htt
             }
           },function(res){ console.log('FAIL : '+res.data); });
         }; getPassengerOverRides();
+        */
 
         /** Get user profile over rides as Driver */
+        /*
         var getDriverOverRides = function(){
           $http.get(node_url)
           .then(function(res){
@@ -54,8 +61,9 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$route','$htt
             }
           },function(res){ console.log('FAIL : '+res.data); });
         }; getDriverOverRides();
-
+*/
         /** Get user profile refused rides as Passenger only */
+        /*
         var getPassengerRefusedRides = function(){
           $http.get(node_url)
           .then(function(res){
@@ -64,7 +72,7 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$route','$htt
             }
           },function(res){ console.log('FAIL : '+res.data); });
         }; getPassengerRefusedRides();
-
+*/
         /** Call to ride proposal box */
         $scope.rideProposal = function(user){
 
