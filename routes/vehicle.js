@@ -78,6 +78,20 @@ router.get('/validate/:id',function(req,res,next){
   .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 06-003', error:err}) });
 });
 
+/** Make Vehicle unvalide | 06-00 */
+router.get('/unvalidate/:id',function(req,res,next){
+  Vehicle.find({
+    where: { id: req.params.id }
+  })
+  .then(vehicle => {
+    vehicle.updateAttributes({
+      isVehiculeOK: 0
+    });
+    res.json({result:1, message:'Vehicle successfully unvalidate w/ url '});
+  })
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url '}); });
+});
+
 /**************************POST**************************/
 
 /** Create a new vehicle | 06-004 */
@@ -127,7 +141,8 @@ router.post('/edit',function(req,res,next){
                                   model: send.model,
                                   registrationNumber: send.registration,
                                   placesNumber: send.seats,
-                                  vehicleType: send.type
+                                  vehicleType: send.type,
+                                  isVehiculeOK: 0
                               });
       res.json({result:1});
     }

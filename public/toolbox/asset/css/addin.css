@@ -17,9 +17,10 @@
 .txtarea{ max-width: 100%; }
 
 .content{ width: 70%; margin-left: 15%; }
+.in-container{ width: 90%; margin-left: 5%; }
 
 .table-inbox{ width: 90%; margin-left: 5%; }
-.cell-s{ width: 30%; }
+.cell-s{ width: 25%; text-align: center; }
 .cell-l{ width: 40%; }
 
 .times{ width: 100%; text-align: right; }
@@ -31,12 +32,14 @@
 .description{ width: 100%; margin-bottom: 1em; }
 .description textarea{ max-width: 100%; }
 
+.notif{ position: fixed; right:1em; bottom: 1em; }
+
 /** USERS */
 
 .user-pop{ width: 40%; margin-left: 30%; position: fixed; z-index: 500; margin-top: 5em; }
-.user-pop .panel-body{ text-align: center; }
 .user-pop-rides{ height: 10em; overflow: scroll; }
 .user-pop .panel-heading{ text-align: center; }
+.user-pop .panel-footer{ text-align: right; }
 
 .user-pop .table-icon{ width: 5%; }
 .user-pop .table-info{ width: 45%; text-align: left; font-size: 14px; padding-left: 1em; }
@@ -80,5 +83,7 @@
 .bloc-s{ width: 31%; margin-right: 2%; height: 20em; overflow-y: scroll;}
 .bloc-l{ width: 65%; margin-right: 2%; height: 20em; overflow-y: scroll;}
 .bloc-x{ width: 98%; overflow-y: scroll;}
+
+.bloc-x-alt{ width: 98%; overflow-y: scroll; height: 20em;}
 
 .heyyou{ width: 50%; position: fixed; }

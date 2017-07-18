@@ -7,34 +7,42 @@ const router = express.Router();
 
 /**************************GET**************************/
 
-/** Get all sended passenger request | 01-001
-* at this time, need to execute sub request to recover sites and driver
-*/
+/** Get all sended passenger request | 01-001 */
 router.get('/sended/:userID',function(req,res){
   Passenger_Request.findAll({
       where: { user_id: req.params.userID },
-      include: [ models.Ride ]
+      include: [
+                  { model: models.Ride,
+                    as: 'Asks',
+                    include: [
+                                { model: models.Site , as: 'Departure'},
+                                { model: models.Site , as: 'Arrival'},
+                                { model: models.User , as: 'Driver'},
+                                { model: models.User , as: 'Passengers'}
+                             ]
+                  },
+                  { model: models.User }
+                ]
   })
-  .then(function(requests){
-    if(requests){
-      let results = [];
-      for(let req of requests){
-        results.push(req.responsify());
-      }
-      res.json(results);
+  .then(requests => {
+    let results = [];
+    for(let request of requests){
+      results.push(request.responsify());
     }
-    else res.json({error:0, message:'No request found on 01-001'});
-  })
-  .catch(err => { res.json({result:-1, message:'Something went wrong with url 01-001'}); });
 
+    if(results.lenght == 0) res.json({error:0, message:'No request found on 01-001'});
+    else res.json({result:1,content:results});
+  })
+  .catch(err => { res.json({result:-1, message:'Something went wrong with url 01-001', error:err}); });
 });
 
-/** Get all single ride received passenger request | 01-002*/
+/** Get all ride received passenger request | 01-002*/
 router.get('/received/:rideID',function(req,res,next){
   Passenger_Request.findAll({
     where: { ride_id: req.params.rideID },
     include: [
                 { model: models.Ride,
+                  as: 'Asks',
                   include: [
                               { model: models.Site , as: 'Departure'},
                               { model: models.Site , as: 'Arrival'},
@@ -45,36 +53,17 @@ router.get('/received/:rideID',function(req,res,next){
                 { model: models.User }
               ]
   })
-  .then(function(requests){
+  .then(requests => {
       let results = [];
       for(let request of requests){
-        results.push(request);
+        results.push(request.responsify());
       }
-      res.json(results);
+
+      if(results.length == 0) res.json({result:0, message:'No request found w/ url 01-002'});
+      else res.json({result:1, content:results});
+
   })
   .catch(err => { res.json({result:-1, message:'Something went wrong with url 01-002', error:err}); });
-});
-
-/** Get all rides received requests | 01-000 */
-router.get('/received/:userID',function(req,res){
-    Passenger_Request.findAll({
-      where: { user_id: req.params.id },
-      include: [
-                  { model: models.Ride,
-                    include: [
-                                { model: models.Site , as: 'Departure'},
-                                { model: models.Site , as: 'Arrival'},
-                                { model: models.User , as: 'Driver'},
-                                { model: models.User , as: 'Passengers'}
-                             ]
-                  },
-                  { model: models.User }
-                ]
-    })
-    .then(requests => {
-
-    })
-    .catch(err => { });
 });
 
 /** Accept passenger request | 01-003 */
@@ -104,9 +93,13 @@ router.get('/refused/:id',function(req,res,next){
     where: { id: req.params.id }
   })
   .then(request => {
+    request.updateAttributes({
+      refusedDate: new Date()
+    });
 
+    res.json({result:1, message:'Request successfully refused w/ url 01-004'});
   })
-  .catch(err => { });
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 01-004', error:err}); });
 });
 
 /**************************POST**************************/

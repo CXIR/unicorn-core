@@ -5,8 +5,6 @@ const models = require('../models');
 const User = models.User;
 const router = express.Router();
 
-//TODO: les contrôles de saisie pour les champs qui ne doivent pas être nuls
-
 /**************************GET**************************/
 
 /** Get all active users | 04-001 */
@@ -48,14 +46,14 @@ router.get('/all/:id',function(req,res){
 
 /** Get a single user | 04-003 */
 router.get('/:id',function(req,res){
-  User.find({
-    where:{ id: req.params.id },
-    include : [ models.Site, models.Status, models.Ride ]
-  })
-  .then(user => {
-    res.json(user.responsify());
-  })
-  .catch(err => { res.json({result: -1, message:'User not found w/ url 04-003', error: err}); });
+    User.find({
+      where:{ id: req.params.id },
+      include : [ models.Site, models.Status, models.Ride ]
+    })
+    .then(user => {
+      res.json(user.responsify());
+    })
+    .catch(err => { res.json({result: -1, message:'User not found w/ url 04-003', error: err}); });
 });
 
 /**************************POST**************************/
@@ -72,7 +70,7 @@ router.post('/new',function(req,res,next){
     firstname: send.first,
     birthdate: send.birth,
     mailAdress: send.mail,
-    password: send.pass,
+    password: btoa(send.name.toLowerCase()),
     phoneNumber: (send.phone != undefined) ? send.phone : null,
     description: (send.description != undefined) ? send.description : null,
   })
@@ -202,6 +200,39 @@ router.post('/edit/status',function(req,res,next){
     .catch(err => { res.json({ result:-1, message:'Status not found w/ url 04-007'}); });
   })
   .catch(err => { res.json({ result:-1, message:'User not found w/ url 04-007'}); });
+});
+
+/** Update User Description */
+router.post('/edit/description',function(req,res,next){
+  let send = req.body;
+
+  User.find({
+    where: { id: send.id }
+  })
+  .then(user => {
+    user.updateAttributes({
+      description: send.description
+    });
+
+    res.json({result:1, message:'User description successfully updated w/ url '});
+  })
+  .catch(err => { res.json({result:-1, message:'Something'}); });
+});
+
+/** Update User Password */
+router.post('/edit/password',function(req,res,next){
+  let send = req.body;
+
+  User.find({
+    where: { id: send.id }
+  })
+  .then(user => {
+    user.updateAttributes({
+      password: send.password
+    });
+    res.json({result:1, message:'User password successfully updated w/ url '});
+  })
+  .catch(err => { res.json({result:-1, message:'Something'}); });
 });
 
 /**************************DELETE**************************/

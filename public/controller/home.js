@@ -2,53 +2,105 @@
 
 shareAppControllers.controller('homeCtrl',['$scope','$location','$http',
   function($scope,$location,$http){
-    var current = 3;
 
-    $http.get('/users/'+current)
+    var online = 3;
+    var car = null;
+    var valid = 0;
+
+    /** current INFORMATION */
+
+    $http.get('/users/'+online)
     .then(function(res){
-      if(res.data.result == 0){
-
+      if(res.data != 0){
+        $scope.current = res.data;
+        $http.get('/vehicle/byuser/'+res.data.id)
+        .then(function(res){
+          if(res.data.result != 0){
+            $scope.car = res.data;
+            return res.data.result;
+          }
+        },function(res){ console.log('FAIL : '+res.data); });
       }
-      else{
-        $scope.user = res.data;
+    },function(res){ console.log('FAIL : '+res.data); });
+
+    /** COMMING RIDES */
+
+    $http.get('/ride/comming/driver/'+online)
+    .then(function(res){
+      if(res.data.result == 1){
+        var comming = res.data.content;
+        for(var o of comming){
+
+        }
+        $scope.d_comming = comming;
       }
-    },function(res){ console.log('FAIL : '+res.data.message); });
+      else $scope.d_comming = 0;
+    },function(res){ console.log('FAIL : '+res.data); });
 
-    $http.get('/ride/comming/driver/'+current)
+    $http.get('/ride/comming/passenger/'+online)
     .then(function(res){
-      $scope.d_comming = res.data;
-    },function(res){ });
+      if(res.data.result == 1){
+        $scope.p_comming = res.data.content;
+      }
+      else $scope.p_comming = 0;
+    },function(res){ console.log('FAIL : '+res.data); });
 
-    $http.get('ride/comming/passenger/'+current)
+    var getNext = function(){
+      if($scope.d_comming != 0) return $scope.d_comming;
+      else if ($scope.p_comming != 0) return $scope.p_comming;
+      else return 0;
+    }; getNext();
+
+    $scope.next = getNext();
+    console.log($scope.next);
+
+    /** PASSED RIDES */
+
+    $http.get('/ride/passed/driver/'+online)
     .then(function(res){
-      $scope.p_comming = res.data;
-    },function(res){ });
+        if(res.data.result == 1){
+          $scope.d_passed = res.data.content;
+        }
+        else $scope.d_passed = 0;
+    },function(res){ console.log('FAIL : '+res.data); });
 
-    $http.get('ride/passed/driver'+current)
+    $http.get('/ride/passed/passenger/'+online)
     .then(function(res){
-      $scope.passed = res.data;
-      $http.get('/ride/passed/passenger/'+current)
-      .then(function(res){
-        $scope.passed.push(res.data);
-      },function(res){ });
-    },function(res){ });
+      if(res.data.result == 1){
+        $scope.p_passed = res.data.content;
+      }
+      else $scope.p_passed = 0;
+    },function(res){ console.log('FAIL : '+res.data); });
 
-    $http.get('passenger_request/sended'+current)
+    /** RIDES REQUESTS */
+
+    $http.get('passenger_request/sended/'+online)
     .then(function(res){
+      if(res.data.result == 1){
+        $scope.s_requests = res.data.content;
+      }
+    },function(res){  console.log('FAIL : '+res.data); });
 
-    },function(res){  });
-
-    $http.get('passenger_request/sended'+current)
+    $http.get('passenger_request/received/'+online)
     .then(function(res){
+      if(res.data.result == 1){
+        $scope.r_requests = res.data.content;
+      }
+    },function(res){ console.log('FAIL : '+res.data); });
 
-    },function(res){ });
-
-    $scope.ridePop =  function(ride){
-      $scope.r_pop = {
-
-                      };
+    $scope.proposeRide = function(){
+      $location.path('/proposal/'+online);
     }
 
+    /** POP */
+
+    $scope.userPop = function(user){
+
+    }
+
+    $scope.ridePop = function(ride){
+
+    }
 
   }
 ]);

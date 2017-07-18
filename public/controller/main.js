@@ -80,10 +80,6 @@ shareApp.config(['$routeProvider','$locationProvider',
           templateUrl: 'views/profil.html',
           controller: 'profilCtrl'
         })
-        .when('/message',{
-          templateUrl: 'views/message.html',
-          controller: 'messageCtrl'
-        })
         .when('/init', {
           templateUrl: 'views/init.html',
           controller : 'initCtrl'
@@ -122,12 +118,6 @@ shareApp.directive('myNav',['$location',function($location){
         else if(current[1] == 'rides') angular.element(document.querySelector('#rides')).addClass('active');
         else if(current[1] == 'message') angular.element(document.querySelector('#message')).addClass('active');
         else if(current[1] == 'home') angular.element(document.querySelector('#home')).addClass('active');
-        /*
-        $http.get(node_url)
-        .then(fucntion(res){
-          scope.unread = res.data;
-        },function(res){ console.log('FAIL : '+res.data); });
-        */
     }
   };
 }]);
@@ -158,6 +148,9 @@ shareApp.directive('notif',[
       transclude: true,
       templateUrl: 'views/notification.html',
       link:function(scope, element, attrs){
+        scope.close = function(){
+          scope.notif = {};
+        }
 
       }
     };
@@ -185,7 +178,7 @@ shareApp.directive('dialog',[
 * User Report
 */
 shareApp.directive('userReport',[
-  function(){
+  function($http){
     return{
       restrict: 'A',
       replace: true,
@@ -195,6 +188,18 @@ shareApp.directive('userReport',[
         scope.close = function(){
           scope.report = {};
         }
+
+        $scope.report = function(report){
+          var post = {
+
+          };
+
+          $http.post('/report/new',post)
+          .then(function(res){
+
+          },function(res){ console.log('FAIL : '+res.data); });
+        }
+
       }
     };
   }

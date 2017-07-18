@@ -1,5 +1,7 @@
 <title>PTC | Nouveau Trajet</title>
 
+<div notif></div>
+
 <section>
   <div my-nav></div>
 
@@ -10,6 +12,8 @@
       </div>
       <div style="clear:both"></div>
     </div>
+
+    <p class="text-error" ng-show="error.show" ng-bind="error.message"></p>
 
   <div class="home">
 
@@ -25,7 +29,7 @@
       <div ng-show="d_pro">
         <div class="form-group">
           <div class="col-lg-10">
-            <select class="form-control" id="select">
+            <select class="form-control" id="select" ng-model="proposal.d_site" ng-options="site.name for site in sites">
               <option value="">-- Sélectionnez un Site --</option>
             </select>
           </div>
@@ -34,35 +38,35 @@
       <div ng-hide="d_pro">
         <div class="form-group">
           <div class="col-lg-10">
-            <input type="text" class="form-control"placeholder="Adresse">
+            <input type="text" class="form-control"placeholder="Adresse" ng-model="proposal.d_address">
           </div>
         </div>
         <div class="form-group">
           <div class="col-lg-10">
-            <input type="text" class="form-control"placeholder="Code Postal">
+            <input type="text" class="form-control"placeholder="Code Postal" ng-model="proposal.d_postal">
           </div>
         </div>
         <div class="form-group">
           <div class="col-lg-10">
-            <input type="text" class="form-control"placeholder="Ville">
+            <input type="text" class="form-control"placeholder="Ville" ng-model="proposal.d_city">
           </div>
         </div>
       </div>
-        <div class="form-group">
+        <div id="ddate" class="form-group">
           <div class="col-lg-10">
-
+            <input type="text" class="form-control" placeholder="Date JJ/MM/AAAA" ng-model="proposal.d_date" ng-change="validateDate(proposal.d_date,1)">
           </div>
         </div>
         <div class="form-group">
           <div class="col-lg-10">
-            <select class="form-control" id="select">
+            <select class="form-control" id="select" ng-model="proposal.d_hours" ng-options="value for (key,value) in d_hours">
               <option value="">-- Heure --</option>
             </select>
           </div>
         </div>
         <div class="form-group">
           <div class="col-lg-10">
-            <select class="form-control" id="select">
+            <select class="form-control" id="select" ng-model="proposal.d_minutes" ng-options="value for (key,value) in d_minutes">
               <option value="">-- Minutes --</option>
             </select>
           </div>
@@ -84,7 +88,7 @@
         <div ng-show="a_pro">
           <div class="form-group">
             <div class="col-lg-10">
-              <select class="form-control" id="select">
+              <select class="form-control" id="select" ng-model="proposal.a_site" ng-options="site.name for site in sites">
                 <option value="">-- Sélectionnez un Site --</option>
               </select>
             </div>
@@ -93,35 +97,35 @@
         <div ng-hide="a_pro">
           <div class="form-group">
             <div class="col-lg-10">
-              <input type="text" class="form-control"placeholder="Adresse">
+              <input type="text" class="form-control"placeholder="Adresse" ng-model="proposal.a_address">
             </div>
           </div>
           <div class="form-group">
             <div class="col-lg-10">
-              <input type="text" class="form-control"placeholder="Code Postal">
+              <input type="text" class="form-control"placeholder="Code Postal" ng-model="proposal.a_postal">
             </div>
           </div>
           <div class="form-group">
             <div class="col-lg-10">
-              <input type="text" class="form-control"placeholder="Ville">
+              <input type="text" class="form-control"placeholder="Ville" ng-model="proposal.a_city">
             </div>
           </div>
         </div>
-          <div class="form-group">
+          <div id="adate" class="form-group">
             <div class="col-lg-10">
-
+              <input type="text" class="form-control" placeholder="Date JJ/MM/AAAA" ng-model="proposal.a_date" ng-change="validateDate(proposal.a_date,2)">
             </div>
           </div>
           <div class="form-group">
             <div class="col-lg-10">
-              <select class="form-control" id="select">
+              <select class="form-control" id="select" ng-model="proposal.a_hours" ng-options="value for (key,value) in a_hours">
                 <option value="">-- Heure --</option>
               </select>
             </div>
           </div>
           <div class="form-group">
             <div class="col-lg-10">
-              <select class="form-control" id="select">
+              <select class="form-control" id="select" ng-model="proposal.a_minutes" ng-options="value for (key,value) in a_minutes">
                 <option value="">-- Minutes --</option>
               </select>
             </div>
@@ -133,7 +137,7 @@
   </div>
 
   <a href="" class="btn btn-danger" ng-click="">Effacer</a>
-  <a href="" class="btn btn-success" ng-click="">Proposer</a>
+  <a href="" class="btn btn-success" ng-click="proposeRide(proposal)">Proposer</a>
 </div>
 
 </section>
