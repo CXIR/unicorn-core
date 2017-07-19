@@ -99,17 +99,17 @@ module.exports = function(sequelize, DataTypes) {
         if(this.Driver){
           result.driver = this.Driver.responsify();
         }
-        if(this.Passengers){
-          result.passengers = this.Passengers;
-        }
         if(this.Departure){
           result.departure = this.Departure.responsify();
         }
         if(this.Arrival){
           result.arrival = this.Arrival.responsify();
         }
-        if(this.Ask){
-          result.ask = this.Ask.responsify();
+        if(this.Passengers){
+          result.passengers = this.Passengers;
+        }
+        if(this.Asks){
+          result.asks = this.Asks;
         }
         return result;
       }

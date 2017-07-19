@@ -1,0 +1,83 @@
+<div class="panel panel-info ride-pop">
+  <div class="panel-heading">
+    <h3 class="panel-title">DETAILS DU TRAJET</h3>
+  </div>
+  <div class="panel-body">
+    <h4></h4>
+    <i class="fa fa-car fa-2x"></i>
+    <table>
+      <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+      </tr>
+    </table>
+
+    <h4>DÉPART</h4>
+    <table class="table">
+      <tr>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+
+    <h4>ARRIVÉE</h4>
+    <table class="table">
+      <tr>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+
+    <h4>PASSAGERS</h4>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>NOM COMPLET</th>
+          <th>MAIL</th>
+          <th>BUREAU</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="passenger in ride.passengers">
+          <td ng-bind="passenger.lastname | uppercase +' '+ passenger.firstname"></td>
+          <td ng-bind="passenger.mailAdress"></td>
+          <td ng-bind="passenger.site.name"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table>
+      <tr>
+        <td>
+          <p ng-bind=""></p>
+        </td>
+        <td>
+          <i class="fa fa-"></i>
+        </td>
+        <td>
+          <p ng-bind=""></p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p ng-bind=""></p>
+        </td>
+        <td>
+          <i class="fa fa-"></i>
+        </td>
+        <td>
+          <p ng-bind=""></p>
+        </td>
+      </tr>
+    </table>
+    <h4>CONDUCTEUR</h4>
+  </div>
+</div>

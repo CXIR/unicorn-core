@@ -17,7 +17,7 @@ router.get('/comming',function(req,res){
                   { model: models.Site, as:'Arrival' },
                   { model: models.User, as: 'Driver'},
                   { model: models.User, as: 'Passengers'},
-                  { model: models.Passenger_Request, as: 'Asks' }
+                  { model: models.Passenger_Request, as: 'Asks', include: [ models.User ] }
                 ]
   })
   .then(function(rides){
@@ -237,6 +237,30 @@ router.get('/:rideID/users/:userID',function(req,res,next){
     .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-010', error: err}); } );
 });
 
+/** Add a request Passenger to a Ride | 02-00? */
+router.get('/:rideID/passenger_request/:requestID',function(req,res,next){
+    Ride.find({
+        where:{
+            id: req.params.rideID
+        }
+    })
+    .then(function(ride){
+        if(ride){
+           return models.Passenger_Request.find({
+              where:{
+                      id: req.params.requestID
+                    }
+            })
+            .then(function(request){
+              request.addRide(ride);
+              res.json({result: 1 });
+            })
+            .catch(err => { res.json({ result: -2, error: err }); });
+        }
+    })
+    .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-010', error: err}); } );
+});
+
 /**************************POST**************************/
 
 /** Create a new ride | 02-010 */
@@ -244,7 +268,7 @@ router.post('/new',function(req,res,next){
   let send = req.body;
 
   Ride.create({
-    ad_date: send.date,
+    ad_date: new Date(),
     ad_message: send.message,
     depature_date: send.dep_date,
     departure_time: send.dep_time,

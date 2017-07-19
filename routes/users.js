@@ -70,7 +70,7 @@ router.post('/new',function(req,res,next){
     firstname: send.first,
     birthdate: send.birth,
     mailAdress: send.mail,
-    password: btoa(send.name.toLowerCase()),
+    password: new Buffer(send.name.toLowerCase()).toString('base64'),
     phoneNumber: (send.phone != undefined) ? send.phone : null,
     description: (send.description != undefined) ? send.description : null,
   })

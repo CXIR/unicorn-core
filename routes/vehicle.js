@@ -10,7 +10,12 @@ const router = express.Router();
 /** Get all cars | 06-001 */
 router.get('/',function(req,res){
   Vehicle.findAll({
-    include: [ models.User ]
+    include: [
+                {
+                  model:models.User,
+                  include: [ models.Status, models.Site ]
+                }
+             ]
   })
   .then(function(vehicles){
     let results = [];

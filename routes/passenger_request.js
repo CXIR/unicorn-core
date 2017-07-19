@@ -66,27 +66,6 @@ router.get('/received/:rideID',function(req,res,next){
   .catch(err => { res.json({result:-1, message:'Something went wrong with url 01-002', error:err}); });
 });
 
-/** Accept passenger request | 01-003 */
-router.get('/accept/:id',function(req,res,next){
-  Passenger_Request.find({
-    where: { id: req.params.id }
-  })
-  .then(function(request){
-    if(request){
-      if(req.delete_at == null){
-        request.updateAttributes({
-          acceptedDate: new Date()
-        });
-
-        res.redirect('/ride/'+request.ride_id+'/users/'+request.user_id);
-      }
-      else res.json({result:2, message:'This request has been already treated'});
-    }
-    else res.json({result:0, message:'No request found on 01-003'})
-  })
-  .catch(err => { res.json({result:-1, message:'Something went wrong with url 01-003'}); });
-});
-
 /** Refuse passenger request | 01-004 */
 router.get('/refused/:id',function(req,res,next){
   Passenger_Request.find({
@@ -104,6 +83,27 @@ router.get('/refused/:id',function(req,res,next){
 
 /**************************POST**************************/
 
+/** Accept passenger request | 01-003 */
+router.post('/accept',function(req,res,next){
+  let send = req.body;
+  Passenger_Request.find({
+    where: { id: send.request }
+  })
+  .then(request => {
+    if(request.refusedDate == null){
+      if(request.acceptedDate == null){
+        request.updateAttributes({
+          acceptedDate: new Date()
+        });
+        res.redirect('/ride/'+send.ride+'/users/'+request.user_id);
+      }
+      else res.json({result:0, message:'Request has already been treated w/ url '});
+    }
+    else res.json({result:0, message:'Request has been refused w/ url '});
+  })
+  .catch(err => { res.json({result:-1, message:'Something went wrong with url 01-003'}); });
+});
+
 /** Create a passenger request | 01-005 */
 router.post('/new',function(req,res,next){
   let send = req.body;
@@ -117,22 +117,17 @@ router.post('/new',function(req,res,next){
     })
     .then(user => {
       request.setUser(user)
-      .then(user => { console.log('User successfully added to the request w/ url 01-005');})
+      .then(user => {
+
+      })
       .catch(err => { res.json({result:-2, message:'Unable to set User on request w/ url 01-005', error:err}); });
+
+      res.redirect('/ride/'+send.ride+'/passenger_request/'+request.id);
+
     })
     .catch(err => { res.json({result:-1, message:'User not found w/ url 01-005', error:err}); });
 
-    models.Ride.find({
-      where: { id: send.ride }
-    })
-    .then(ride => {
-      request.setRide(ride)
-      .then(ride => { console.log('Ride successfully added to the request w/ url 01-005');})
-      .catch(err => { res.json({result:-2, message:'Unable to set Ride to request w/ url 01-005', error:err}); });
-    })
-    .catch(err => { res.json({result:-1, message:'Ride not found w/ url 01-005', error:err}); });
-
-    res.json({result:1, message:'Request successfully created w/ url 01-005'});
+    //res.json({result:1, message:'Request successfully created w/ url 01-005'});
   })
   .catch(err => { res.json({result:-1, message:'Something went wrong with url 01-005'})});
 

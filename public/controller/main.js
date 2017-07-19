@@ -122,7 +122,9 @@ shareApp.directive('myNav',['$location',function($location){
   };
 }]);
 
-// User Pop
+/**
+* USER POP
+*/
 shareApp.directive('userPop',['$location',function($location){
   return {
     restrict: 'A',
@@ -136,6 +138,44 @@ shareApp.directive('userPop',['$location',function($location){
     }
   };
 }]);
+
+/**
+* RIDE POP
+*/
+shareApp.directive('ridePop',[
+  function(){
+    return{
+      restrict: 'A',
+      replace: true,
+      transclude: true,
+      templateUrl: 'views/ridepop.html',
+      link: function (scope, element, attrs) {
+          scope.close = function(){
+              scope.pop = {};
+          }
+      }
+    };
+  }
+]);
+
+/**
+* RIDE POP SPECIAL
+*/
+shareApp.directive('ridePopSpecial',[
+  function(){
+    return{
+      restrict: 'A',
+      replace: true,
+      transclude: true,
+      templateUrl: 'views/ridepopspecial.html',
+      link: function (scope, element, attrs) {
+          scope.close = function(){
+              scope.pop = {};
+          }
+      }
+    };
+  }
+]);
 
 /**
 * SIMPLE NOTIFICATION
