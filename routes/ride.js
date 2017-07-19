@@ -379,9 +379,9 @@ router.post('/search',function(req,res){
 
   Ride.findAll({
     where:  {
-              departure_idSite: send.departure,
-              arrival_idSite: send.arrival,
-              departure_date: send.date
+              departure_id: (send.departure == undefined) ? { $gt: 0} : send.departure,
+              arrival_id: (send.arrival == undefined) ? { $gt: 0 } : send.arrival,
+              depature_date: (send.date == undefined) ? { $gt: new Date() } : send.date+'T00:00:00Z'
             },
     include:  [
                 { model: models.User, as: 'Driver' },

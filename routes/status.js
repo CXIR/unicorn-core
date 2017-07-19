@@ -63,14 +63,14 @@ router.post('/new',function(req,res,next){
 router.post('/edit',function(req,res,next){
   let send = req.body;
 
-  Site.find({
+  Status.find({
     where:{
             id: send.id
           }
   })
-  .then(function(site){
-    if(site){
-      site.updateAttributes({ label: send.label });
+  .then(status => {
+    if(status){
+      status.updateAttributes({ label: send.label });
       res.json({ result: 1 });
     }
     else res.json({ result: 0, message: 'No status found w/ url 07-004' });

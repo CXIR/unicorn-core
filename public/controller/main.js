@@ -103,8 +103,9 @@ shareApp.config(['$routeProvider','$locationProvider',
 */
 
 
-
-// Navigation Bar
+/**
+* NAVIGATION BAR
+*/
 shareApp.directive('myNav',['$location',function($location){
   return {
     restrict: 'A',
@@ -142,15 +143,20 @@ shareApp.directive('userPop',['$location',function($location){
 /**
 * RIDE POP
 */
-shareApp.directive('ridePop',[
-  function(){
+shareApp.directive('ridePop',['$location',
+  function($location){
     return{
       restrict: 'A',
       replace: true,
       transclude: true,
       templateUrl: 'views/ridepop.html',
       link: function (scope, element, attrs) {
-          scope.close = function(){
+
+          scope.profil = function(user){
+            $location.path('/profil/'+user.id);
+          }
+
+          scope.popClose = function(){
               scope.pop = {};
           }
       }
