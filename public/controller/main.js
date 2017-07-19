@@ -38,6 +38,14 @@ var shareApp = angular.module('shareApp',[
 
 
 /**
+* GLOBAL VARIABLES / ANGULAR SESSION HANDLING
+*/
+shareApp.value('Current',{
+  user: { info: {id:3}, valid: 1}
+});
+
+
+/**
 *
 * APP ROUTE
 *
@@ -56,7 +64,7 @@ shareApp.config(['$routeProvider','$locationProvider',
             templateUrl: 'views/home.html',
             controller: 'homeCtrl'
         })
-        .when('/edit/:id',{
+        .when('/edit',{
           templateUrl: 'views/edit.html',
           controller: 'editCtrl'
         })
@@ -133,8 +141,12 @@ shareApp.directive('userPop',['$location',function($location){
     transclude: true,
     templateUrl: 'views/userpop.html',
   link: function (scope, element, attrs) {
-        scope.close = function(){
-            scope.pop = {};
+        scope.closeUpop = function(){
+            scope.upop = {};
+        }
+
+        scope.profile = function(user){
+          $location.path('/profil/'+user.id);
         }
     }
   };
@@ -156,7 +168,7 @@ shareApp.directive('ridePop',['$location',
             $location.path('/profil/'+user.id);
           }
 
-          scope.popClose = function(){
+          scope.closeRidePop = function(){
               scope.pop = {};
           }
       }
@@ -175,7 +187,7 @@ shareApp.directive('ridePopSpecial',[
       transclude: true,
       templateUrl: 'views/ridepopspecial.html',
       link: function (scope, element, attrs) {
-          scope.close = function(){
+          scope.closeRidePop = function(){
               scope.pop = {};
           }
       }
@@ -194,7 +206,7 @@ shareApp.directive('notif',[
       transclude: true,
       templateUrl: 'views/notification.html',
       link:function(scope, element, attrs){
-        scope.close = function(){
+        scope.closeNotif = function(){
           scope.notif = {};
         }
 
@@ -221,9 +233,9 @@ shareApp.directive('dialog',[
 ]);
 
 /**
-* User Report
+* USER REPORT
 */
-shareApp.directive('userReport',[
+shareApp.directive('userReport',['$http',
   function($http){
     return{
       restrict: 'A',
@@ -231,21 +243,9 @@ shareApp.directive('userReport',[
       transclude: true,
       templateUrl : 'views/report.html',
       link:function(scope,element,attrs){
-        scope.close = function(){
+        scope.closeReport = function(){
           scope.report = {};
         }
-
-        $scope.report = function(report){
-          var post = {
-
-          };
-
-          $http.post('/report/new',post)
-          .then(function(res){
-
-          },function(res){ console.log('FAIL : '+res.data); });
-        }
-
       }
     };
   }

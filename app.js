@@ -25,7 +25,6 @@ models.sequelize.sync();
         models.sequelize.sync({force: true});
 });*/
 
-
 var app = express();
 
 // view engine setup

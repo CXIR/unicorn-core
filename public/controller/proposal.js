@@ -1,7 +1,7 @@
 'use strict';
 
-shareAppControllers.controller('proposalCtrl',['$scope','$location','$http','$routeParams',
-  function($scope,$location,$http,$routeParams){
+shareAppControllers.controller('proposalCtrl',['$scope','$location','$http','$routeParams','Current',
+  function($scope,$location,$http,$routeParams,Current){
     var user = {};
     var minutes = [];
     var hours = [];
@@ -76,7 +76,7 @@ shareAppControllers.controller('proposalCtrl',['$scope','$location','$http','$ro
       else if(proposal.arrival == undefined && proposal.a_address == undefined) $scope.error = {show:true, message:'Vous devez choisir un site d\'arrivée, ou renseigner une adresse'};
       else if(proposal.arrival == null && proposal.a_address == null) $scope.error = {show:true, message:'Vous devez choisir un site d\'arrivée, ou renseigner une adresse'};
       else if(proposal.d_hour == undefined || proposal.d_hour == null) $scope.error = {show:true, message:'Vous devez choisir une heure de départ'};
-      else if(proposal.a_hour == undefined || proposal.a_hour = null) $scope.error = {show:true, message:'Vous devez choisir une heure de d\'arrivée'};
+      else if(proposal.a_hour == undefined || proposal.a_hour == null) $scope.error = {show:true, message:'Vous devez choisir une heure de d\'arrivée'};
       else{
         var d_time = (proposal.d_minutes == undefined || proposal.d_minutes == null) ? proposal.d_hour+':00' : proposal.d_hour+':'+proposal.d_minutes;
         var a_time = (proposal.a_minutes == undefined || proposal.a_minutes == null) ? proposal.a_hour+':00' : proposal.a_hour+':'+proposal.a_minutes;

@@ -4,6 +4,7 @@ const express = require('express');
 const models = require('../models');
 const User = models.User;
 const router = express.Router();
+const Base64 = require('js-base64').Base64;
 
 /**************************GET**************************/
 
@@ -32,7 +33,7 @@ router.get('/all/:id',function(req,res){
                   $ne: req.params.id
                 }
           },
-    include: [ models.Site, models.Status, models.Ride, models.Vehicle ]
+    include: [ models.Site, models.Status, models.Ride ]
   })
   .then(function(users){
     let results = [];
@@ -70,7 +71,7 @@ router.post('/new',function(req,res,next){
     firstname: send.first,
     birthdate: send.birth,
     mailAdress: send.mail,
-    password: new Buffer(send.name.toLowerCase()).toString('base64'),
+    password: Base64.encode(send.name),
     phoneNumber: (send.phone != undefined) ? send.phone : null,
     description: (send.description != undefined) ? send.description : null,
   })

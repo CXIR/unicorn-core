@@ -1,22 +1,24 @@
 <div class="panel panel-danger report" ng-show="report.show">
   <div class="panel-heading">
-    <a class="close" aria-hidden="true" ng-click="close()">&times;</a>
+    <a class="close" aria-hidden="true" ng-click="closeReport()">&times;</a>
     <h3 class="panel-title">SIGNALER CET UTILISATEUR</h3>
   </div>
   <div class="panel-body">
     <b class="text-primary">
       Vous êtes sur le point de signaler cet utilisateur.
-      Décrivez-nous le problème que vous avez rencontré avec cette personne</b>
+      Décrivez-nous le problème que vous avez rencontré avec cette personne.
+      Quelque soit le problème, restez courtoi et n'utilisez pas de mot grossier.</b>
+      <br/>
       <br/>
       <div class="form-group">
         <div class="col-lg-10 description">
-          <textarea class="form-control" rows="7" id="textArea" ng-model="report.message"></textarea>
+          <textarea class="form-control" rows="7" id="textArea" ng-model="message"></textarea>
         </div>
       </div>
 
       <div class="report-action">
-        <a href="" class="btn btn-danger" ng-click="close()">Annuler</a>
-        <a href="" class="btn btn-primary" ng-click="report(report)">Signaler</a>
+        <a href="" class="btn btn-danger" ng-click="closeReport()">Annuler</a>
+        <a href="" class="btn btn-primary" ng-click="sendReport(message)">Signaler</a>
       </div>
   </div>
 </div>

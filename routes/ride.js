@@ -15,7 +15,7 @@ router.get('/comming',function(req,res){
       include : [
                   { model: models.Site, as:'Departure' },
                   { model: models.Site, as:'Arrival' },
-                  { model: models.User, as: 'Driver'},
+                  { model: models.User, as: 'Driver', include: [ models.Site, models.Status ] },
                   { model: models.User, as: 'Passengers'},
                   { model: models.Passenger_Request, as: 'Asks', include: [ models.User ] }
                 ]

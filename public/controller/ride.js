@@ -3,8 +3,8 @@
 /**
 * View : Rides
 */
-shareAppControllers.controller('ridesCtrl',['$scope','$location','$http','$timeout',
-    function($scope,$location,$http,$timeout){
+shareAppControllers.controller('ridesCtrl',['$scope','$location','$http','$timeout','Current',
+    function($scope,$location,$http,$timeout,Current){
 
       $scope.loaded = false;
       var rides = {};
@@ -121,7 +121,7 @@ shareAppControllers.controller('ridesCtrl',['$scope','$location','$http','$timeo
       }
 
       $scope.userPop = function(user){
-        $scope.user = { show:true, display:}
+        $scope.upop = { show:true, display:'opacify', user:user }
       }
     }
 ]);

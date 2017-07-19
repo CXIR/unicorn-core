@@ -1,7 +1,7 @@
-<div class="panel panel-primary user-pop" ng-show="user.show">
+<div class="panel panel-primary user-pop" ng-show="upop.show">
 
   <div class="panel-heading">
-    <a class="close" aria-hidden="true" ng-click="close()">&times;</a>
+    <a class="close" aria-hidden="true" ng-click="closeUpop()">&times;</a>
     <h3 class="panel-title">CARTE D'IDENTITE</h3>
   </div>
   <div class="panel-body">
@@ -11,39 +11,46 @@
           <img src="toolbox/asset/images/default.png" width="100"/>
         </td>
         <td>
-          <p class="text-success">{{ user.lastname | uppercase }} {{ user.firstname }}</p>
+          <h4 class="text-success">{{ upop.user.lastname | uppercase }} {{ upop.user.firstname }}</h4>
         </td>
         <td>
-          <p>{{ user.birthdate | date:'dd/MM/yyyy'}} ({{ user.birthdate | age:'user.birthdate'}} ans)</p>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>{{ user.mailAdress }}</p>
-        </td>
-        <td>
-          <p>{{ user.phoneNumber }}</p>
+          <p>{{ upop.user.birthdate | date:'dd/MM/yyyy'}} ({{ upop.user.birthdate | age:'upop.user.birthdate'}} ans)</p>
         </td>
       </tr>
       <tr>
         <td>
-          <i class="fa fa-thumbs-up fa-2x text-success" ng-bind="user.positiveRating"></i>
-          <i class="fa fa-thumbs-down fa-2x text-danger" ng-bind="user.negativeRating"></i>
+          <p>{{ upop.user.mailAdress }}</p>
+        </td>
+        <td>
+          <p>{{ upop.user.phoneNumber }}</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <i class="fa fa-thumbs-up fa-2x text-success" ng-bind="upop.user.positiveRating"></i>
+          <i class="fa fa-thumbs-down fa-2x text-danger" ng-bind="upop.user.negativeRating"></i>
         </td>
         <td>
         </td>
       </tr>
     </table>
     <blockquote>
-      <em ng-bind="(user.description == null) ? 'Pas de description' : user.description"></em>
+      <em ng-bind="(upop.user.description == null) ? 'Pas de description' : upop.user.description"></em>
     </blockquote>
-    <h4>Bureau</h4>
-    <p ng-bind="user.site.name"></p>
-    <p ng-bind="user.site.adress"></p>
-    <p ng-bind="user.site.city +'('+user.site.postalCode+')'"></p>
+    <h4 class="text-success"><i class="fa fa-map-marker"></i>Bureau</h4>
+    <table class="table">
+      <tr>
+        <td ng-bind="upop.user.site.name"></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td ng-bind="upop.user.site.adress"></td>
+        <td ng-bind="upop.user.site.city +'('+upop.user.site.postalCode+')'"></td>
+      </tr>
+    </table>
   </div>
   <div class="panel-footer">
-    <a href="" ng-click="seeProfil(user.id)">Profil <i class="fa fa-chevron-right"></i></a>
+    <a href="" ng-click="profile(upop.user)">Profil <i class="fa fa-chevron-right"></i></a>
   </div>
 
 </div>

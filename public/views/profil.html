@@ -1,8 +1,10 @@
 <title>PTC | {{ user.lastname | uppercase }} {{ user.firstname }}</title>
 
 <div user-report></div>
+<div notif></div>
+<div ride-pop></div>
 
-<section>
+<section class="{{ report.display }} {{ pop.display }}">
   <div my-nav></div>
 
   <div class="main-wrapper">
@@ -35,19 +37,91 @@
         <em ng-bind="(user.description == null) ? 'Pas de description' : user.description"></em>
       </blockquote>
 
-      <a href="" class="btn btn-success">Contacter</a>
-      <a href="" class="btn btn-danger">Signaler</a>
+      <a href="" class="btn btn-danger" ng-click="reportUser()">Signaler</a>
     </div>
 
     <div class="well bloc bloc-s">
       <h4>VEHICULE</h4>
+      <div ng-hide="car != null">
+        <p class="text-primary">Cet utilisateur n'a pas renseigné de véhicule</p>
+      </div>
+      <div ng-show="car != null">
+        <p>Marque : <b ng-bind="car.brand"></b></p>
+        <p>Modele : <b ng-bind="car.model"></b></p>
+        <p>Immatriculation: <b ng-bind="car.registrationNumber"></b></p>
+        <p>Capacité : <b ng-bind="car.placesNumber"></b></p>
+      </div>
     </div>
   </div>
 
   <!-- Comming Rides -->
   <div class="home">
-    <div class="well bloc bloc-x">
-      <h4>SES TRAJETS À VENIR</h4>
+    <div class="well bloc bloc-m">
+      <h4>SES TRAJETS À VENIR : PASSAGER</h4>
+      <p ng-show="p_comming == 0">Cet utilisateur ne participe à aucun trajet dans les jours à venir.</p>
+      <div class="panel panel-primary content" ng-repeat="ride in p_comming">
+        <div class="panel-heading">
+        </div>
+        <div class="panel-body">
+          <table class="table-inbox">
+            <tr>
+              <td class="cell-s">
+                <a href="" ng-click="currentPop(ride.driver)">
+                  <img src="toolbox/asset/images/default.png" width="100" height="100"/>
+                </a>
+              </td>
+              <td>
+                <p>
+                  <b ng-bind="(ride.departure.name != null) ? ride.departure.name : ride.departure_city"></b>
+                  <i class="fa fa-arrow-right fa-1x"></i>
+                  <b ng-bind="(ride.arrival.name != null) ? ride.arrival.name : ride.arrival_city"></b></p>
+                <p>Le {{ ride.departure_date | date:'dd/MM/yyyy' }}</p>
+                <p class="text-success">Votre demande a été acceptée pour ce trajet</p>
+                <p></p>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="panel-footer">
+          <a href="" ng-click="ridePop(ride)">Détails</a>
+        </div>
+      </div>
+
+    </div>
+    <div class="well bloc bloc-m">
+      <h4>SES TRAJETS À VENIR : CONDUCTEUR</h4>
+      <p ng-show="d_comming == 0">Cet utilisateur ne propose aucun trajet dans les jours à venir.</p>
+      <div class="panel panel-success in-container" ng-repeat="ride in d_comming">
+        <div class="panel-heading">
+        </div>
+        <div class="panel-body">
+          <table class="table-inbox">
+            <tr>
+              <td class="cell-s">
+                <i class="fa fa-users fa-2x text-primary"></i>
+                <p ng-bind="ride.passengers.length"></p>
+              </td>
+              <td>
+                <p>
+                  <b ng-bind="(ride.departure.name != null) ? ride.departure.name : departure_city"></b>
+                  <i class="fa fa-arrow-right fa-1x"></i>
+                  <b ng-bind="(ride.arrival.name != null) ? ride.arrival.name : arrival_city"></b></p>
+                <p>Le <b ng-bind="ride.departure_date | date:'dd/MM/yyyy'"></b> à <b ng-bind="ride.departure_time"></b></p>
+                <p>L'Utilisateur propose <b ng-bind="ride.remain"></b> places.</p>
+              </td>
+              <td>
+                <a href="" class="btn btn-primary" ng-click="requestSeat(ride)" ng-show="ride.remain > 0 && !ride.notif">Je m'inscris !</a>
+                <a href="" class="btn btn-primary disabled" ng-show="ride.remain == 0 && !ride.notif">Complet</a>
+                <span class="label label-success" ng-show="ride.notif">Demande Envoyée !</span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="panel-footer">
+          <a href="" ng-click="ridePop(ride)">Détails <i class="fa fa-chevron-right"></i></a>
+        </div>
+      </div>
+
     </div>
   </div>
 
