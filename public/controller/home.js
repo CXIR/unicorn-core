@@ -1,15 +1,14 @@
 'use strict';
 
-shareAppControllers.controller('homeCtrl',['$scope','$location','$http',
-  function($scope,$location,$http){
+shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current',
+  function($scope,$location,$http,Current){
 
-    var online = 3;
     var car = null;
     var valid = 0;
 
     /** current INFORMATION */
 
-    $http.get('/users/'+online)
+    $http.get('/users/'+Current.user.info.id)
     .then(function(res){
       if(res.data != 0){
         $scope.current = res.data;
@@ -25,19 +24,15 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http',
 
     /** COMMING RIDES */
 
-    $http.get('/ride/comming/driver/'+online)
+    $http.get('/ride/comming/driver/'+Current.user.info.id)
     .then(function(res){
       if(res.data.result == 1){
-        var comming = res.data.content;
-        for(var o of comming){
-
-        }
-        $scope.d_comming = comming;
+        $scope.d_comming = res.data.content;
       }
       else $scope.d_comming = 0;
     },function(res){ console.log('FAIL : '+res.data); });
 
-    $http.get('/ride/comming/passenger/'+online)
+    $http.get('/ride/comming/passenger/'+Current.user.info.id)
     .then(function(res){
       if(res.data.result == 1){
         $scope.p_comming = res.data.content;
@@ -51,12 +46,9 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http',
       else return 0;
     }; getNext();
 
-    $scope.next = getNext();
-    console.log($scope.next);
-
     /** PASSED RIDES */
 
-    $http.get('/ride/passed/driver/'+online)
+    $http.get('/ride/passed/driver/'+Current.user.info.id)
     .then(function(res){
         if(res.data.result == 1){
           $scope.d_passed = res.data.content;
@@ -64,7 +56,7 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http',
         else $scope.d_passed = 0;
     },function(res){ console.log('FAIL : '+res.data); });
 
-    $http.get('/ride/passed/passenger/'+online)
+    $http.get('/ride/passed/passenger/'+Current.user.info.id)
     .then(function(res){
       if(res.data.result == 1){
         $scope.p_passed = res.data.content;
@@ -74,14 +66,14 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http',
 
     /** RIDES REQUESTS */
 
-    $http.get('passenger_request/sended/'+online)
+    $http.get('passenger_request/sended/'+Current.user.info.id)
     .then(function(res){
       if(res.data.result == 1){
         $scope.s_requests = res.data.content;
       }
     },function(res){  console.log('FAIL : '+res.data); });
 
-    $http.get('passenger_request/received/'+online)
+    $http.get('passenger_request/received/'+Current.user.info.id)
     .then(function(res){
       if(res.data.result == 1){
         $scope.r_requests = res.data.content;
@@ -89,7 +81,7 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http',
     },function(res){ console.log('FAIL : '+res.data); });
 
     $scope.proposeRide = function(){
-      $location.path('/proposal/'+online);
+      $location.path('/proposal/'+Current.user.info.id);
     }
 
     /** POP */

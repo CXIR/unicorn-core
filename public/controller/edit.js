@@ -1,8 +1,8 @@
 'use strict';
 
 /** Edit User Information **/
-shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams',
-  function($scope,$http,$routeParams){
+shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Current',
+  function($scope,$http,$routeParams,Current){
 
     var car = {};
     var pass = 0;

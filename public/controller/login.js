@@ -3,8 +3,8 @@
 /**
 *View : login
 */
-shareAppControllers.controller('loginCtrl',['$scope','$http',
-    function($scope,$http){
+shareAppControllers.controller('loginCtrl',['$scope','$http','Current',
+    function($scope,$http,Current){
         $scope.reset = function(){
             $scope.log = {};
             $scope.error = {};
