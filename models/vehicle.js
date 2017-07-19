@@ -54,7 +54,7 @@ module.exports = function(sequelize, DataTypes) {
         result.vehicleType = this.vehicleType;
         result.isVehicleOK = this.isVehicleOK;
         if(this.User){
-          result.driver = this.User.responsify();
+          result.user = this.User.responsify();
         }
         return result;
       }

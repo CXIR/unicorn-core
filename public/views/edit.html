@@ -1,0 +1,78 @@
+<title>PTC | Éditer</title>
+
+<div notif></div>
+
+<section>
+    <div my-nav></div>
+
+    <div class="main-wrapper">
+
+    <div class="home">
+      <div class="well bloc bloc-x">
+        <h2>Modifier mes Informations</h2>
+        <em class="text-success">Vos informations de bases sont enregistrées par votre entreprise et ne
+        peuvent être modifiées.</em>
+      </div>
+    </div>
+
+    <div class="home">
+      <div class="well bloc bloc-l" ng-init="description = current.description">
+        <h4>Ma description</h4>
+        <div class="form-group">
+          <div class="col-lg-10 description">
+            <textarea class="form-control" rows="7" id="textArea" ng-model="description"></textarea>
+          </div>
+        </div>
+        <a href="" class="btn btn-danger" ng-click="description = current.description">Annuler</a>
+        <a href="" class="btn btn-success" ng-click="editDescription(description)">Enregistrer</a>
+      </div>
+      <div class="well bloc bloc-s">
+        <h4>Mon Mot de Passe</h4>
+        <div id="fpass"class="form-group">
+          <input type="text" placeholder="Ancien Mot de Passe" class="form-control" ng-model="former" ng-change="verifyPassword(former)">
+        </div>
+        <div id="npass" class="form-group">
+          <input type="text" placeholder="Nouveau Mot de Passe" class="form-control" ng-model="password.one">
+        </div>
+        <div id="npass" class="form-group">
+          <input type="text" placeholder="Confirmez le nouveau Mot de Passe" class="form-control" ng-model="password.two">
+        </div>
+        <a href="" class="btn btn-danger" ng-click="clearPassword()">Annuler</a>
+        <a href="" class="btn btn-success" ng-click="editPassword(password)">Enregistrer</a>
+      </div>
+    </div>
+
+    <div class="home">
+      <div class="well bloc bloc-m">
+        <h4>Ma Voiture</h4>
+        <em class="text-warning">En attente de validation</em>
+        <em class="text-success">Ce véhicule est validé</em>
+        <em class="text-danger">Ce véhicule a été refusé par la Gestion</em>
+
+        <div class="form-group">
+          <input type="text" placeholder="Marque" class="form-control" ng-model="car.brand">
+        </div>
+        <div class="form-group">
+          <input type="text" placeholder="Modèle" class="form-control" ng-model="car.model">
+        </div>
+        <div class="form-group">
+          <input type="text" placeholder="Immatriculation" class="form-control" ng-model="car.registration">
+        </div>
+        <div class="form-group">
+          <input type="text" placeholder="Nombre de Places (hors conducteur)" class="form-control" ng-model="car.seats">
+        </div>
+        <div class="form-group">
+          <div class="col-lg-10 select-l">
+            <select class="form-control" id="select" ng-model="car.type" ng-options="value for (key,value) in types">
+              <option value="">-- Type --</option>
+            </select>
+          </div>
+        </div>
+        <a href="" class="btn btn-danger" ng-click="clearCar()">Annuler</a>
+        <a href="" class="btn btn-success" ng-click="editCar(car)">Enregistrer</a>
+      </div>
+
+    </div>
+
+    </div>
+</section>

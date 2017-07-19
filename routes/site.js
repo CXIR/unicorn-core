@@ -9,12 +9,16 @@ const router = express.Router();
 
 /** Get all sites | 05-001 */
 router.get('/',function(req,res){
-  Site.findAll().then(function(sites){
+  Site.findAll()
+  .then(sites => {
     let results = [];
     for(let site of sites){
       results.push(site.responsify());
     }
-    res.json(results);
+
+    if(results.length == 0) res.json({result:0, message:'No site found w/ url 05-001'});
+    else res.json({result:1, content:results});
+
   }).catch(err => { res.json({result:-1, message:'Somthing went wrong w/ url 05-001', error:err}); });
 
 });

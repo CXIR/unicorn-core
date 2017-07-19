@@ -11,8 +11,16 @@ const router = express.Router();
 router.get('/',function(req,res,next){
   Report.findAll({
     include:  [
-                { model: models.User, as: 'Plaintiff' },
-                { model: models.User, as: 'Reported' }
+                {
+                  model: models.User,
+                  as: 'Plaintiff',
+                  include: [ models.Site, models.Status ]
+                },
+                {
+                  model: models.User,
+                  as: 'Reported',
+                  include: [ models.Site, models.Status ]
+                }
               ]
   })
   .then(function(reports){
@@ -32,8 +40,16 @@ router.get('/:id',function(req,res){
             id: req.params.id
           },
     include: [
-                { model: models.User, as: 'Plaintiff' },
-                { model: models.User, as: 'Reported' }
+                {
+                  model: models.User,
+                  as: 'Plaintiff',
+                  include: [ models.Site, models.Status ]
+                 },
+                {
+                  model: models.User,
+                  as: 'Reported',
+                  include: [ models.Site, models.Status ]
+                }
              ]
   })
   .then(function(report){

@@ -56,6 +56,14 @@ shareApp.config(['$routeProvider','$locationProvider',
             templateUrl: 'views/home.html',
             controller: 'homeCtrl'
         })
+        .when('/edit/:id',{
+          templateUrl: 'views/edit.html',
+          controller: 'editCtrl'
+        })
+        .when('/proposal/:id',{
+          templateUrl: 'views/proposal.html',
+          controller: 'proposalCtrl'
+        })
         .when('/users',{
             templateUrl: 'views/users.html',
             controller: 'usersCtrl'
@@ -71,10 +79,6 @@ shareApp.config(['$routeProvider','$locationProvider',
         .when('/profil/:user',{
           templateUrl: 'views/profil.html',
           controller: 'profilCtrl'
-        })
-        .when('/message',{
-          templateUrl: 'views/message.html',
-          controller: 'messageCtrl'
         })
         .when('/init', {
           templateUrl: 'views/init.html',
@@ -99,8 +103,9 @@ shareApp.config(['$routeProvider','$locationProvider',
 */
 
 
-
-// Navigation Bar
+/**
+* NAVIGATION BAR
+*/
 shareApp.directive('myNav',['$location',function($location){
   return {
     restrict: 'A',
@@ -114,17 +119,13 @@ shareApp.directive('myNav',['$location',function($location){
         else if(current[1] == 'rides') angular.element(document.querySelector('#rides')).addClass('active');
         else if(current[1] == 'message') angular.element(document.querySelector('#message')).addClass('active');
         else if(current[1] == 'home') angular.element(document.querySelector('#home')).addClass('active');
-        /*
-        $http.get(node_url)
-        .then(fucntion(res){
-          scope.unread = res.data;
-        },function(res){ console.log('FAIL : '+res.data); });
-        */
     }
   };
 }]);
 
-// User Pop
+/**
+* USER POP
+*/
 shareApp.directive('userPop',['$location',function($location){
   return {
     restrict: 'A',
@@ -139,7 +140,52 @@ shareApp.directive('userPop',['$location',function($location){
   };
 }]);
 
-// Simple Notification
+/**
+* RIDE POP
+*/
+shareApp.directive('ridePop',['$location',
+  function($location){
+    return{
+      restrict: 'A',
+      replace: true,
+      transclude: true,
+      templateUrl: 'views/ridepop.html',
+      link: function (scope, element, attrs) {
+
+          scope.profil = function(user){
+            $location.path('/profil/'+user.id);
+          }
+
+          scope.popClose = function(){
+              scope.pop = {};
+          }
+      }
+    };
+  }
+]);
+
+/**
+* RIDE POP SPECIAL
+*/
+shareApp.directive('ridePopSpecial',[
+  function(){
+    return{
+      restrict: 'A',
+      replace: true,
+      transclude: true,
+      templateUrl: 'views/ridepopspecial.html',
+      link: function (scope, element, attrs) {
+          scope.close = function(){
+              scope.pop = {};
+          }
+      }
+    };
+  }
+]);
+
+/**
+* SIMPLE NOTIFICATION
+*/
 shareApp.directive('notif',[
   function(){
     return {
@@ -148,9 +194,10 @@ shareApp.directive('notif',[
       transclude: true,
       templateUrl: 'views/notification.html',
       link:function(scope, element, attrs){
-        scope.closeNotif = function(){
-          scope.notif =  {};
+        scope.close = function(){
+          scope.notif = {};
         }
+
       }
     };
   }
@@ -168,6 +215,37 @@ shareApp.directive('dialog',[
         scope.closeDialog = function(){
           scope.dialog =  {};
         }
+      }
+    };
+  }
+]);
+
+/**
+* User Report
+*/
+shareApp.directive('userReport',[
+  function($http){
+    return{
+      restrict: 'A',
+      replace: true,
+      transclude: true,
+      templateUrl : 'views/report.html',
+      link:function(scope,element,attrs){
+        scope.close = function(){
+          scope.report = {};
+        }
+
+        $scope.report = function(report){
+          var post = {
+
+          };
+
+          $http.post('/report/new',post)
+          .then(function(res){
+
+          },function(res){ console.log('FAIL : '+res.data); });
+        }
+
       }
     };
   }

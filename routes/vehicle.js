@@ -10,7 +10,12 @@ const router = express.Router();
 /** Get all cars | 06-001 */
 router.get('/',function(req,res){
   Vehicle.findAll({
-    include: [ models.User ]
+    include: [
+                {
+                  model:models.User,
+                  include: [ models.Status, models.Site ]
+                }
+             ]
   })
   .then(function(vehicles){
     let results = [];
@@ -40,6 +45,23 @@ router.get('/:id',function(req,res){
   .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 06-002', error: err}); });
 });
 
+/** Get a single car by User | 06-007 */
+router.get('/byuser/:id',function(req,res){
+  Vehicle.find({
+    where:{
+            user_id: req.params.id
+          },
+    include: [ models.User ]
+  })
+  .then(function(vehicle){
+    if(vehicle) {
+      res.json(vehicle.responsify());
+    }
+    else res.json({result: 0, message:'No vehicle found w/ url 06-007'});
+  })
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 06-007', error: err}); });
+});
+
 /** Make Vehicle valid | 06-003 */
 router.get('/validate/:id',function(req,res,next){
   let vehicle = req.params.id;
@@ -59,6 +81,20 @@ router.get('/validate/:id',function(req,res,next){
     else res.json({result:0, message:'Vehicle not found w/ url 06-003'});
   })
   .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 06-003', error:err}) });
+});
+
+/** Make Vehicle unvalide | 06-00 */
+router.get('/unvalidate/:id',function(req,res,next){
+  Vehicle.find({
+    where: { id: req.params.id }
+  })
+  .then(vehicle => {
+    vehicle.updateAttributes({
+      isVehiculeOK: 0
+    });
+    res.json({result:1, message:'Vehicle successfully unvalidate w/ url '});
+  })
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url '}); });
 });
 
 /**************************POST**************************/
@@ -110,7 +146,8 @@ router.post('/edit',function(req,res,next){
                                   model: send.model,
                                   registrationNumber: send.registration,
                                   placesNumber: send.seats,
-                                  vehicleType: send.type
+                                  vehicleType: send.type,
+                                  isVehiculeOK: 0
                               });
       res.json({result:1});
     }

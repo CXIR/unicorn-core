@@ -19,6 +19,10 @@ module.exports = function(sequelize, DataTypes) {
       type : DataTypes.DATE,
       allowNull: false
     },
+    departure_time:{
+      type: DataTypes.TIME,
+      allowNull: false
+    },
     departure_adress: {
       type : DataTypes.STRING,
       allowNull: true
@@ -33,6 +37,10 @@ module.exports = function(sequelize, DataTypes) {
     },
     arrival_date: {
       type : DataTypes.DATE,
+      allowNull: false
+    },
+    arrival_time: {
+      type: DataTypes.TIME,
       allowNull: false
     },
     arrival_adress: {
@@ -59,9 +67,14 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Ride.belongsTo(models.User, { as:'Driver'});
         Ride.belongsToMany(models.User, {
-          through:"Passengers",
-          as:'Passengers'
+          through: 'Passengers',
+          as: 'Passengers'
         });
+        Ride.belongsToMany(models.Passenger_Request, {
+          through: 'Asks',
+          as: 'Asks'
+        });
+
         Ride.belongsTo(models.Site, { as: 'Departure'});
         Ride.belongsTo(models.Site, { as: 'Arrival'});
       }
@@ -72,27 +85,31 @@ module.exports = function(sequelize, DataTypes) {
         result.id = this.id;
         result.ad_date = this.ad_date;
         result.ad_message = this.ad_message;
-        result.depature_date = this.depature_date;
+        result.departure_date = this.depature_date;
+        result.departure_time = this.departure_time;
         result.departure_adress = this.departure_adress;
         result.departure_city = this.departure_city;
         result.departure_postalCode = this.departure_postalCode;
-        result.departure_idSite = this.departure_idSite;
         result.arrival_date = this.arrival_date;
+        result.arrival_time = this.arrival_time;
         result.arrival_adress = this.arrival_adress;
         result.arrival_city = this.arrival_city;
         result.arrival_postalCode = this.arrival_postalCode;
-        result.arrival_idSite = this.arrival_idSite;
+        result.remain = this.remain_seats;
         if(this.Driver){
           result.driver = this.Driver.responsify();
-        }
-        if(this.Passengers){
-          result.passengers = this.Passengers;
         }
         if(this.Departure){
           result.departure = this.Departure.responsify();
         }
         if(this.Arrival){
           result.arrival = this.Arrival.responsify();
+        }
+        if(this.Passengers){
+          result.passengers = this.Passengers;
+        }
+        if(this.Asks){
+          result.asks = this.Asks;
         }
         return result;
       }
