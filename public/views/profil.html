@@ -14,21 +14,21 @@
 
 
     <div class="well bloc bloc-l">
-      <h4>{{ user.lastname | uppercase }} {{ user.firstname }}</h4>
+      <h4><b ng-bind="user.lastname | uppercase"></b> <b ng-bind="user.firstname"></b></h4>
       <table class="table">
         <tr>
           <td>
-            <p>Anniversaire : {{ user.birthdate | date:'yyyy-MM-dd'}} ({{ user.birthdate | age:'user.birthdate' }} ans)</p>
+            <p>Anniversaire : <b ng-bind="user.birthdate | date:'yyyy-MM-dd'"></b> (<b ng-bind="user.birthdate | age:'user.birthdate'"></b> ans)</p>
           </td>
           <td>
-            <p>Bureau : {{ user.site.name }}</p>
+            <p>Bureau :  <b ng-bind="user.site.name"></b></p>
           </td>
         </tr>
           <td>
-            <p>Mail : {{ user.mailAdress }}</p>
+            <p>Mail : <b ng-bind="user.mailAdress"></b></p>
           </td>
           <td>
-            <p ng-init="phone = (user.phoneNumber == null) ? 'Non renseigné' : user.phoneNumber">Téléphone : {{ phone }}</p>
+            <p ng-init="phone = (user.phoneNumber == null) ? 'Non renseigné' : user.phoneNumber">Téléphone : <b ng-bind="phone"></b></p>
           </td>
         </tr>
       </table>
@@ -58,7 +58,9 @@
   <div class="home">
     <div class="well bloc bloc-m">
       <h4>SES TRAJETS À VENIR : PASSAGER</h4>
+
       <p ng-show="p_comming == 0">Cet utilisateur ne participe à aucun trajet dans les jours à venir.</p>
+
       <div class="panel panel-primary content" ng-repeat="ride in p_comming">
         <div class="panel-heading">
         </div>
@@ -90,7 +92,9 @@
     </div>
     <div class="well bloc bloc-m">
       <h4>SES TRAJETS À VENIR : CONDUCTEUR</h4>
+
       <p ng-show="d_comming == 0">Cet utilisateur ne propose aucun trajet dans les jours à venir.</p>
+
       <div class="panel panel-success in-container" ng-repeat="ride in d_comming">
         <div class="panel-heading">
         </div>
@@ -110,7 +114,7 @@
                 <p>L'Utilisateur propose <b ng-bind="ride.remain"></b> places.</p>
               </td>
               <td>
-                <a href="" class="btn btn-primary" ng-click="requestSeat(ride)" ng-show="ride.remain > 0 && !ride.notif">Je m'inscris !</a>
+                <a href="" class="btn btn-primary" ng-class="already" ng-click="requestSeat(ride)" ng-show="ride.remain > 0 && !ride.notif">Je m'inscris !</a>
                 <a href="" class="btn btn-primary disabled" ng-show="ride.remain == 0 && !ride.notif">Complet</a>
                 <span class="label label-success" ng-show="ride.notif">Demande Envoyée !</span>
               </td>

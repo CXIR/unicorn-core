@@ -5,21 +5,22 @@
 */
 shareAppControllers.controller('profilCtrl',['$scope','$location','$http','$routeParams','$timeout','Current',
     function($scope,$location,$http,$routeParams,$timeout,Current){
-        var user = $routeParams.user;
+        var url = $location.path().split(/\//g);
+        var user = url[2];
 
         /** USER INFORMATION */
         $http.get('/users/'+user)
         .then(function(res){
-          if(res.data != 0){
-            $scope.user = res.data;
-            $http.get('/vehicle/byuser/'+res.data.id)
+          if(res.data.result == 1){
+            $scope.user = res.data.content;
+            $http.get('/vehicle/byuser/'+user)
             .then(function(res){
-              if(res.data.result != 0){
-                $scope.car = res.data;
-                return res.data.result;
+              if(res.data.result == 1){
+                $scope.car = res.data.content;
               }
             },function(res){ console.log('FAIL : '+res.data); });
           }
+          else $location.path('/users');
         },function(res){ console.log('FAIL : '+res.data); });
 
 
@@ -47,7 +48,7 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$http','$rout
         $scope.sendReport = function(message){
           var post = {
                         message: message,
-                        request: 3,
+                        request: Current.user.info.id,
                         reported: user
                       };
           $http.post('/report/new',post)
@@ -58,6 +59,14 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$http','$rout
                                 show:true,
                                 title:'Enregistré !',
                                 message:'Votre signalisation a bien été prise en compte.'
+                              };
+            }
+            else if(res.data.result == 0){
+              $scope.notif = {
+                                type:'alert-warning',
+                                show:true,
+                                title:'Déjà Fait !',
+                                message:'Vous avez déjà signalé cet utilisateur.'
                               };
             }
             else{
@@ -78,11 +87,20 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$http','$rout
         }
 
         $scope.requestSeat = function(ride){
-          var post = {ride: ride.id, user: 3};
+          var post = {ride: ride.id, user: Current.user.info.id};
           $http.post('/passenger_request/new',post)
           .then(function(res){
             if(res.data.result == 1){
               ride.notif = true;
+            }
+            else if(res.data.result == 0){
+              $scope.notif = {
+                                type:'alert-warning',
+                                show:true,
+                                title:'Déjà fait !',
+                                message:'Vous avez déjà envoyé une demande pour ce trajet'
+                              };
+              $scope.already = 'disabled';
             }
             else{
               $scope.notif = {
@@ -92,7 +110,7 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$http','$rout
                                 message:'Un problème est survenu lors de l\'enregistrement.'
                               };
             }
-            $timeout(closeNotif(),3000);
+            $timeout(function(){ $scope.notif = {}; },3000);
           },function(res){ console.log('FAIL  : '+res.data); });
         }
     }

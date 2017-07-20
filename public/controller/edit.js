@@ -1,41 +1,40 @@
 'use strict';
 
 /** Edit User Information **/
-shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Current',
-  function($scope,$http,$routeParams,Current){
+shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Current','$timeout',
+  function($scope,$http,$routeParams,Current,$timeout){
 
     var car = {};
-    var pass = 0;
-
-    $scope.types = ['Citadine','Berline','4x4','SUV','Utilitaire','Scooter'];
-
-    var closeNotif = function(){
-      $scope.notif = {};
-    }
+    var user = {};
+    var valid = 0;
 
     var getCurrent = function(){
-      $http.get('/users/'+$routeParams.id)
+      $http.get('/users/'+Current.user.info.id)
       .then(function(res){
         if(res.data.result == 1){
-          $scope.current = res.data.content;
+          user = res.data.content;
+          $scope.current = user;
         }
       },function(res){ console.log('FAIL : '+res.data); });
     }; getCurrent();
 
     var getCar = function(){
-      $http.get('/vehicle/byuser/'+id)
+      $http.get('/vehicle/byuser/'+Current.user.info.id)
       .then(function(res){
         if(res.data.result == 1){
-          $scope.car = res.data.content;
           car = res.data.content;
+          $scope.car = res.data.content;
         }
-        else return null;
+        else {
+          car = 0;
+        }
       },function(res){ console.log('FAIL : '+res.data); });
     }; getCar();
 
     $scope.verifyPassword = function(pass){
       angular.element(document.querySelector('#fpass')).removeClass('has-error');
-      if(btoa(pass) == current.pass){
+      angular.element(document.querySelector('#fpass')).removeClass('has-success');
+      if(btoa(pass) == user.password){
         angular.element(document.querySelector('#fpass')).removeClass('has-error');
         angular.element(document.querySelector('#fpass')).addClass('has-success');
         valid = 1;
@@ -47,13 +46,19 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
     }
 
     $scope.editPassword = function(pass){
+      angular.element(document.querySelector('#npass')).removeClass('has-error');
       if(valid == 1){
         if(pass.one == pass.two){
-            var post = { id:current.id, password:atob(pass) }
-            http.post('/users/pass/',post)
+            var post = {
+                          user: user.id,
+                          password: btoa(pass.one)
+                        };
+
+            $http.post('/users/edit/password',post)
             .then(function(res){
               if(res.data.result == 1){
-                getcurrent();
+                getCurrent();
+                resetPassword();
                 $scope.notif = {
                                   type:'alert-success',
                                   show:true,
@@ -69,15 +74,30 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
                                   message:'Un problème est survenu à l\'enregistrement...'
                                 };
               }
-              $timeout(closeNotif(),3000);
+              $timeout(function(){ $scope.notif == {}; },3000);
             },function(res){ console.log('FAIL : '+res.data); });
         }
+        else{
+          $scope.error = { show:true, message:'Les nouveaux mots de passe ne sont pas identiques.' };
+          angular.element(document.querySelector('#npass')).addClass('has-error');
+        }
       }
+      else $scope.error = { show:true, message:'Votre ancien mot de passe n\'est pas correct.' };
+    }
+
+    $scope.resetPassword = function(){
+      $scope.pass = {};
+      angular.element(document.querySelector('#npass, #fpass')).removeClass('has-error');
+      angular.element(document.querySelector('#npass, #fpass')).removeClass('has-success');
+    }
+
+    $scope.resetDescription = function(){
+      getCurrent();
     }
 
     $scope.editDescription = function(description){
       var post = {
-	                 id: 2,
+	                 user: user.id,
                    description: description
                  };
       $http.post('/users/edit/description',post)
@@ -99,26 +119,51 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
                             message:'Un problème est survenu à l\'enregistrement...'
                           };
         }
-        $timeout(closeNotif(),3000);
+        $timeout(function(){ $scope.notif = {}; },3000);
       },function(res){ console.log('FAIL : '+res.data); });
     }
 
-    $scope.editCar = function(car){
-      if(!car.registration.match(/[A-Z][A-Z]\-[0-9][0-9][0-9]\-[A-Z][A-Z]/g)){
-        $scope.car_error = {show:true,message:'Votre Plaque d\'Immatriculation n\'est pas valide'}
+    $scope.verifyRegistration = function(registration){
+      angular.element(document.querySelector('#registration')).removeClass('has-error');
+      angular.element(document.querySelector('#registration')).removeClass('has-success');
+      if(!registration.match(/[A-Z][A-Z]\-[0-9][0-9][0-9]\-[A-Z][A-Z]/g)){
+        angular.element(document.querySelector('#registration')).addClass('has-error');
+      }
+      else{
+        angular.element(document.querySelector('#registration')).addClass('has-success');
+      }
+    }
+
+    $scope.editCar = function(ncar){
+      $scope.snap = {};
+      if(!ncar.registrationNumber.match(/[A-Z][A-Z]\-[0-9][0-9][0-9]\-[A-Z][A-Z]/g)){
+        $scope.snap = {show:true,message:'Votre Plaque d\'Immatriculation n\'est pas valide.'};
+      }
+      else if(ncar.brand.match(/\s+/g) || ncar.brand == undefined){
+        $scope.snap = {show:true,message:'Veuillez renseigner une Marque.'};
+      }
+      else if(ncar.model.match(/\s+/g) || ncar.model == undefined){
+        $scope.snap = {show:true,message:'Veuillez renseigner un Modèle.'};
+      }
+      else if(ncar.placesNumber.match(/\s+/g) || ncar.placesNumber == undefined){
+        $scope.snap = {show:true,message:'Veuillez renseigner le nombre de Places passagères.'};
+      }
+      else if(ncar.vehicleType == undefined || ncar.vehicleType == ''){
+        $scope.snap = {show:true,message:'Veuillez renseigner le Type de Véhicule.'};
       }
       else{
         var post = {
-                      user:current.id,
-                      brand:car.brand,
-                      model:car.model,
-                      type:car.type,
-                      seats:car.seats,
-                      registration:car.registration
+                      user:user.id,
+                      brand:ncar.brand,
+                      model:ncar.model,
+                      type:ncar.vehicleType,
+                      seats:ncar.placesNumber,
+                      registration:ncar.registrationNumber
                    };
-        if(car == null){
+        if(car == 0){
           $http.post('/vehicle/new',post)
           .then(function(res){
+            console.log(res.data);
             if(res.data.result == 1){
               getCar();
               $scope.notif = {
@@ -136,10 +181,11 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
                                 message:'Un problème est survenu à l\'enregistrement...'
                               };
             }
-            $timeout(closeNotif(),3000);
+            $scope.snap = {};
+            $timeout(function(){ $scope.notif = {}; },3000);
           },function(res){ console.log('FAIL : '+res.data); });
         }
-        else if(car != null){
+        else if(car != 0){
           $http.post('/vehicle/edit',post)
           .then(function(res){
             if(res.data.result == 1){
@@ -160,6 +206,7 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
                               };
             }
             $timeout(closeNotif(),3000);
+            $scope.snap = {};
           },function(res){ console.log('FAIL : '+res.data); });
         }
       }

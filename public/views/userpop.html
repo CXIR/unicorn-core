@@ -10,38 +10,36 @@
         <td rowspan="3">
           <img src="toolbox/asset/images/default.png" width="100"/>
         </td>
-        <td>
-          <h4 class="text-success">{{ upop.user.lastname | uppercase }} {{ upop.user.firstname }}</h4>
-        </td>
-        <td>
-          <p>{{ upop.user.birthdate | date:'dd/MM/yyyy'}} ({{ upop.user.birthdate | age:'upop.user.birthdate'}} ans)</p>
+        <td colspan="2">
+          <h4 class="text-success"><b ng-bind="upop.user.lastname | uppercase"></b> <b ng-bind="upop.user.firstname"></b></h4>
         </td>
       </tr>
       <tr>
         <td>
-          <p>{{ upop.user.mailAdress }}</p>
+          <p><b ng-bind="upop.user.mailAdress"></b></p>
         </td>
         <td>
-          <p>{{ upop.user.phoneNumber }}</p>
+          <p><b ng-bind="(upop.user.phoneNumber == null) ? 'Pas de téléphone' : upop.user.phoneNumber"></b></p>
         </td>
       </tr>
       <tr>
         <td>
-          <i class="fa fa-thumbs-up fa-2x text-success" ng-bind="upop.user.positiveRating"></i>
+          <p><b ng-bind="upop.user.birthdate | date:'dd/MM/yyyy'"></b> (<b ng-bind="upop.user.birthdate | age:'upop.user.birthdate'"></b> ans)</p>
+        </td>
+        <td>
+          <i class="fa fa-thumbs-up fa-2x text-success" ng-bind="upop.user.positiveRating"></i>&nbsp;&nbsp;&nbsp;
           <i class="fa fa-thumbs-down fa-2x text-danger" ng-bind="upop.user.negativeRating"></i>
-        </td>
-        <td>
         </td>
       </tr>
     </table>
     <blockquote>
       <em ng-bind="(upop.user.description == null) ? 'Pas de description' : upop.user.description"></em>
     </blockquote>
-    <h4 class="text-success"><i class="fa fa-map-marker"></i>Bureau</h4>
+    <hr/>
+    <h4 class="text-success"><i class="fa fa-map-marker"></i> Bureau</h4>
     <table class="table">
       <tr>
-        <td ng-bind="upop.user.site.name"></td>
-        <td></td>
+        <td colspan="2"><b ng-bind="upop.user.site.name"></b></td>
       </tr>
       <tr>
         <td ng-bind="upop.user.site.adress"></td>

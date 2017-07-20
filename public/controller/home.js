@@ -1,25 +1,38 @@
 'use strict';
 
-shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current',
-  function($scope,$location,$http,Current){
+shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current','$timeout',
+  function($scope,$location,$http,Current,$timeout){
 
     var car = null;
     var valid = 0;
 
-    /** current INFORMATION */
+    /** USER INFORMATION */
 
     $http.get('/users/'+Current.user.info.id)
     .then(function(res){
-      if(res.data != 0){
-        $scope.current = res.data;
-        $http.get('/vehicle/byuser/'+res.data.id)
+      if(res.data.result == 1){
+        $scope.current = res.data.content;
+        $http.get('/vehicle/byuser/'+res.data.content.id)
         .then(function(res){
-          if(res.data.result != 0){
-            $scope.car = res.data;
-            return res.data.result;
+          if(res.data.result == 1){
+            $scope.car = res.data.content;
           }
+          else if(res.data.result == 0){
+            $scope.car = 0;
+          }
+          else{
+            $scope.car = 0;
+            $scope.notif = {
+                              type:'alert-danger',
+                              show:true,
+                              title:'Oupss !',
+                              message:'Nous ne parvenons pas à récupérer votre véhicule.'
+                            };
+          }
+          $timeout(function(){ $scope.notif = {}; },3000);
         },function(res){ console.log('FAIL : '+res.data); });
       }
+      else $scope.logout();
     },function(res){ console.log('FAIL : '+res.data); });
 
     /** COMMING RIDES */
@@ -81,7 +94,7 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
     },function(res){ console.log('FAIL : '+res.data); });
 
     $scope.proposeRide = function(){
-      $location.path('/proposal/'+Current.user.info.id);
+      $location.path('/proposal');
     }
 
     /** POP */
@@ -91,6 +104,10 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
     }
 
     $scope.ridePop = function(ride){
+
+    }
+
+    $scope.ridePopSpecial = function(ride){
 
     }
 

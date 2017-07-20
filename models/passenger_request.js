@@ -40,6 +40,9 @@ module.exports = function(sequelize, DataTypes) {
         if (this.User) {
           result.user = this.User.responsify();
         }
+        if(this.Rides){
+          result.ride = this.Rides[0];
+        }
         return result;
       }
     }

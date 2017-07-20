@@ -30,7 +30,7 @@
 .description{ width: 100%; margin-bottom: 1em; }
 .description textarea{ max-width: 100%; }
 
-.notif{ position: fixed; right:1em; bottom: 1em; }
+.notif{ position: fixed; right:1em; bottom: 1em; z-index: 1; }
 
 .opacify{ filter: blur(5px) opacity(0.5); }
 

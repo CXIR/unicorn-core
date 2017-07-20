@@ -4,24 +4,30 @@
 * View : users
 */
 
-shareAppControllers.controller('usersCtrl',['$scope','$location','$http','Current',
-    function($scope,$location,$http,Current){
+shareAppControllers.controller('usersCtrl',['$scope','$location','$http','Current','$timeout',
+    function($scope,$location,$http,Current,$timeout){
         $scope.loaded = false;
 
         /** Get all users */
         var getUsers = function(){
           $http.get('/users/all/'+Current.user.info.id)
           .then(function(res){
-            if(res.data.result == 0){
-              console.log('FAIL : '+res.data.message);
+            if(res.data.result == 1){
+              $scope.users = res.data.content;
             }
-            else if(res.data.result == -1){
-              console.log('FAIL :'+res.data.message);
+            else if(res.data.result == 0){
+              $scope.message = { show:true, message:'Vous semblez être le seul utilisateur enregistré!'};
             }
             else{
-              $scope.users = res.data;
-              $scope.loaded = true;
+              $scope.notif = {
+                                type:'alert-danger',
+                                show:true,
+                                title:'Oupss !',
+                                message:'Un problème est survenu lors de la récupération des utilisateurs.'
+                              };
             }
+            $timeout(function(){ $scope.notif = {}; },3000);
+            $scope.loaded = true;
           },function(res){ console.log('FAIL : '+res.data); });
         }; getUsers();
 
@@ -30,7 +36,7 @@ shareAppControllers.controller('usersCtrl',['$scope','$location','$http','Curren
         }
 
         $scope.userPop = function(user){
-
+          $scope.upop = { show:true, display:'opacify', user:user }
         }
     }
 ]);

@@ -55,7 +55,7 @@ router.get('/:id',function(req,res){
   })
   .then(function(report){
     if(report) {
-      res.json(report.responsify());
+      res.json({result:1, content:report.responsify()});
     }
     else res.json({result: 0, message:'No report found w/ url 03-002'});
   })
@@ -68,37 +68,47 @@ router.get('/:id',function(req,res){
 router.post('/new',function(req,res,next){
   let send = req.body;
 
-  Report.create({
-    message: send.message
+  Report.find({
+    where: { plaintiff_id: send.request }
   })
   .then(report => {
-
-    models.User.find({
-      where: { id: send.request }
-    })
-    .then(request => {
-
-      report.setPlaintiff(request)
-      .then(plaintiff => {
+    if(report) res.json({result:0, message:'User already reported by this plaintiff w/ url 03-003'});
+    else if(send.request == send.reported) res.json({result:-1, message:'User reported and who is reporting are the same w/ url 03-003'});
+    else{
+      Report.create({
+        message: send.message
+      })
+      .then(report => {
 
         models.User.find({
-          where: { id: send.reported }
+          where: { id: send.request }
         })
-        .then(reported => {
+        .then(request => {
 
-          report.setReported(reported)
-          .then(reported => {
-            res.json({result: 1, message:'Report successfully created w/ url '});
+          report.setPlaintiff(request)
+          .then(plaintiff => {
+
+            models.User.find({
+              where: { id: send.reported }
+            })
+            .then(reported => {
+
+              report.setReported(reported)
+              .then(reported => {
+                res.json({result: 1, message:'Report successfully created w/ url 03-003'});
+              })
+              .catch(err => { res.json({result:-1, message:'Unable to set Reported to report w/ url 03-003', error:err}); })
+            })
+            .catch(err => { res.json({result:-1, message:'Unable to find user w/ url 03-003', error:err}); });
           })
-          .catch(err => { })
+          .catch(err => { res.json({result:-1, message:'Unable to set Plaintiff on report w/ url 03-003', error:err}); });
         })
-        .catch(err => { });
+        .catch(err => { res.json({result:-1, message:'Unable to find user w/ url 03-003', error:err}); });
       })
-      .catch(err => { });
-    })
-    .catch(err => { });
+      .catch(err => { res.json({result:-1, message:'Something went wrong went creating report w/ url 03-003', error:err}); });
+    }
   })
-  .catch(err => { });
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 03-003', error:err}); });
 
 });
 
