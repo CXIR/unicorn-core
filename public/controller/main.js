@@ -41,7 +41,7 @@ var shareApp = angular.module('shareApp',[
 * GLOBAL VARIABLES / ANGULAR SESSION HANDLING
 */
 shareApp.value('Current',{
-  user: { info: {id:3}, valid: 1}
+  user: { info: {id:4}, valid: 1}
 });
 
 
@@ -68,7 +68,7 @@ shareApp.config(['$routeProvider','$locationProvider',
           templateUrl: 'views/edit.html',
           controller: 'editCtrl'
         })
-        .when('/proposal/:id',{
+        .when('/proposal',{
           templateUrl: 'views/proposal.html',
           controller: 'proposalCtrl'
         })
@@ -164,7 +164,7 @@ shareApp.directive('ridePop',['$location',
       templateUrl: 'views/ridepop.html',
       link: function (scope, element, attrs) {
 
-          scope.profil = function(user){
+          scope.profile = function(user){
             $location.path('/profil/'+user.id);
           }
 

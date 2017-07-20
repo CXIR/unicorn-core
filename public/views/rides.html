@@ -19,17 +19,17 @@
       <p class="text-danger" ng-show="error.show" ng-bind="error.message"></p>
       <form>
         <fieldset>
-          <div class="s-component">
+          <div class="s-component" ng-init="search.departure = 0">
             <select class="form-control" ng-model="search.departure" ng-options="departure.name for departure in sites">
               <option value="">-- Lieu de Départ --</option>
             </select>
           </div>
-          <div class="s-component">
+          <div class="s-component" ng-init="search.arrival = 0">
             <select class="form-control" ng-model="search.arrival" ng-options="arrival.name for arrival in sites">
               <option value="">-- Lieu d'Arrivée --</option>
             </select>
           </div>
-          <div class="s-component">
+          <div class="s-component" ng-init="dt = 1">
             <div datepicker></div>
           </div>
       </fieldset>
@@ -55,6 +55,9 @@
     <h4 class="text-warning" ng-show="message.show" ng-bind="message.message"></h4>
 
     <div class="panel panel-default content" ng-repeat="ride in rides | filter:rideFilter">
+      <div class="panel-heading">
+        <h4 ng-bind="ride.ad_message"></h4>
+      </div>
       <div class="panel-body">
         <table class="table-inbox">
           <tr>
@@ -66,7 +69,7 @@
             <td>
               <p>Proposé par : <b ng-bind="ride.driver.lastname +' '+ride.driver.firstname"></b></p>
               <p><b ng-bind="ride.departure.name"></b> <i class="fa fa-arrow-right fa-1x"></i> <b ng-bind="ride.arrival.name"></b></p>
-              <p>Le : <b ng-bind="ride.departure_date | date:'yyyy-MM-dd'"></b> à <b ng-bind="ride.departure_time"></b></p>
+              <p>Le : <b ng-bind="ride.departure_date | date:'dd MMMM yyyy'"></b> à <b ng-bind="ride.departure_time"></b></p>
               <p>Places Disponibles : <b ng-bind="ride.remain"></b></p>
             </td>
             <td>

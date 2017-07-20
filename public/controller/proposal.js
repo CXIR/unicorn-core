@@ -2,35 +2,12 @@
 
 shareAppControllers.controller('proposalCtrl',['$scope','$location','$http','$routeParams','Current',
   function($scope,$location,$http,$routeParams,Current){
-    var user = {};
-    var minutes = [];
-    var hours = [];
-
-    var i = 0;
-    var j = 0;
-
-    while(i < 60) {
-      minutes[i] = i+1;
-    }
-
-    while(j < 59){
-      hours[j] = j+1;
-    }
-
-    var closeNotif = function(){
-      $scope.notif = {};
-    }
 
     var clearProposal = function(){
       $scope.proposal = {};
       angular.element(document.querySelector('#ddate, #adate')).removeClass('has-error');
       angular.element(document.querySelector('#ddate, #adate')).removeClass('has-success');
     }
-
-    $http.get('/users/'+$routeParams.id)
-    .then(function(res){
-      if(res.data.result == 1) user = res.data.content;
-    },function(res){ console.log('FAIL : '+res.data); });
 
     /** Date Input Verification */
     var dateVerify = function(dt){
@@ -65,6 +42,29 @@ shareAppControllers.controller('proposalCtrl',['$scope','$location','$http','$ro
       }
     }
 
+    var validateHour = function(hour){
+      if(angular.isNumber(parseInt(hour))){
+        if(parseInt(hour) >= 0 && parseInt(hour) < 24) return 1;
+      }
+      return 0;
+    }
+
+    var validateMinutes = function(minutes){
+      if(angular.isNumber(parseInt(hour))){
+        if(parseInt(hour) >= 0 && parseInt(hour) < 60) return 1;
+      }
+      return 0;
+    }
+
+    var constructHour = function(hour,minutes){
+      if(validateHour(hour) == 1 && validateMinutes(minues) == 1){
+        if(hour.length == 1) hour = '0'+hour;
+        if(minutes.length == 1) minutes = '0'+minutes;
+        return hour+':'+minutes;
+      }
+      return 0;
+    }
+
     $scope.proposeRide = function(proposal){
       var date1 = dateVerify(proposal.d_date);
       var date2 = dateVerify(proposal.a_date);
@@ -96,7 +96,7 @@ shareAppControllers.controller('proposalCtrl',['$scope','$location','$http','$ro
                       arr_postal: (proposal.a_postal == undefined) ? null : proposal.a_postal,
                       arr_city: (proposal.a_city == undefined) ? null : proposal.a_city,
                       arr_site: (proposal.arrival == undefined) ? null : proposal.arrival.id,
-                      driver: user.id,
+                      driver: Current.user.info.id,
                       seats: user.car.seats
                    };
         $http.post('/ride/new',post)

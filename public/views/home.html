@@ -13,46 +13,36 @@
     <div class="well bloc bloc-s">
       <h4>NOTIFICATIONS</h4>
 
-        <div class="alert alert-dismissible alert-success">
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
-          <strong>Well done!</strong> You successfully read <a href="#" class="alert-link">this important alert message</a>.
-        </div>
-
-        <div class="alert alert-dismissible alert-warning">
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
-          <strong>Well done!</strong> You successfully read <a href="#" class="alert-link">this important alert message</a>.
-        </div>
-
-        <div class="alert alert-dismissible alert-danger">
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
-          <strong>Well done!</strong> You successfully read <a href="#" class="alert-link">this important alert message</a>.
+        <div class="alert alert-dismissible alert-success" ng-repeat="notif in notifications" ng-class="notif.class">
+          <button type="button" class="readNotif(notif)" data-dismiss="alert">&times;</button>
+          <strong ng-bind="notif.title"></strong> <p ng-bind="notif.text"></p>
         </div>
 
     </div>
     <div class="well bloc bloc-l">
-      <h4 class="text-success">{{ current.lastname | uppercase }} {{ current.firstname }}</h4>
+      <h4 class="text-success"><b ng-bind="current.lastname | uppercase"></b> <b ng-bind="current.firstname"></b></h4>
       <table class="table">
         <tr>
           <td>
-            <p>Anniversaire : {{ current.birthdate | date:'yyyy-MM-dd'}} ({{ current.birthdate | age:'current.birthdate' }} ans)</p>
+            <p>Anniversaire : <b ng-bind="current.birthdate | date:'yyyy-MM-dd'"></b> <b ng-bind="current.birthdate | age:'current.birthdate'"></b> ans)</p>
           </td>
           <td>
-            <p>Bureau : {{ current.site.name }}</p>
+            <p>Bureau : <b ng-bind="current.site.name"></b></p>
           </td>
         </tr>
         <tr>
           <td>
-            <p>Mail : {{ current.mailAdress }}</p>
+            <p>Mail : <b ng-bind="current.mailAdress"></b></p>
           </td>
           <td>
-            <p ng-init="phone = (current.phoneNumber == null) ? 'Non renseigné' : current.phoneNumber">Téléphone : {{ phone }}</p>
+            <p ng-init="phone = (current.phoneNumber == null) ? 'Non renseigné' : current.phoneNumber">Téléphone : <b ng-bind="phone"></b></p>
           </td>
         </tr>
       </table>
       <blockquote>
         <em ng-bind="(current.description == null) ? 'Pas de description' : current.description"></em>
       </blockquote>
-      <i class="fa fa-thumbs-up fa-2x text-success" ng-bind="current.positiveRating"></i>
+      <i class="fa fa-thumbs-up fa-2x text-success" ng-bind="current.positiveRating"></i>&nbsp;&nbsp;&nbsp;
       <i class="fa fa-thumbs-down fa-2x text-danger" ng-bind="current.negativeRating"></i>
     </div>
   </div>
@@ -60,7 +50,7 @@
   <div class="home">
     <div class="well bloc bloc-x">
       <h4>ACTIONS</h4>
-      <a href="" class="btn" ng-class="(car != null && car.isVehicleOK == 1) ? 'btn-success' : 'btn-default disabled'" ng-click="proposeRide()">Proposer un Trajet</a>
+      <a href="#/proposal" class="btn" ng-class="(car != null && car.isVehicleOK == 1) ? 'btn-success' : 'btn-default disabled'">Proposer un Trajet</a>
       <a href="#/edit" class="btn btn-primary">Modifier mes Infos</a>
       <a href="#/edit" class="btn btn-primary">Modifier ma Voiture</a>
     </div>
@@ -103,11 +93,11 @@
 
     <div class="well bloc bloc-s">
       <h4>MA VOITURE</h4>
-      <p ng-hide="car != null" class="text-success">Vous n'avez pas renseigner de voiture.
+      <p ng-show="car == 0" class="text-success">Vous n'avez pas renseigner de voiture.
         Pour proposer un trajet, il faut renseigné un véhicule, et attendre sa validation par la Gestion.</p>
-      <p class="text-warning" ng-show="car.isVehicleOK == 0 && car != null">Ce véhicule n'a pas encore été validé!</p>
-      <p class="text-success" ng-show="car.isVehicleOK == 1 && car != null">Ce véhicule a été validé !</p>
-      <div ng-show="car != null">
+      <p class="text-warning" ng-show="car.isVehicleOK == 0 && car != 0">Ce véhicule n'a pas encore été validé!</p>
+      <p class="text-success" ng-show="car.isVehicleOK == 1 && car != 0">Ce véhicule a été validé !</p>
+      <div ng-show="car != 0">
         <p>Marque : <b ng-bind="car.brand"></b></p>
         <p>Modele : <b ng-bind="car.model"></b></p>
         <p>Immatriculation: <b ng-bind="car.registrationNumber"></b></p>
@@ -120,6 +110,8 @@
   <div class="home">
     <div class="well bloc bloc-m">
       <h4>MES TRAJETS À VENIR : CONDUCTEUR</h4>
+
+      <p ng-show="d_comming == 0">Vous ne proposez aucun trajet dans les jours à venir.</p>
 
       <div class="panel panel-success in-container" ng-repeat="ride in d_comming">
         <div class="panel-heading">
@@ -154,6 +146,7 @@
 
     <div class="well bloc bloc-m">
       <h4>MES TRAJETS À VENIR : PASSAGER</h4>
+      <p ng-show="p_comming == 0">Vous ne participez à aucun trajet dans les jours à venir.</p>
 
       <div class="panel panel-primary content" ng-repeat="ride in p_comming">
         <div class="panel-heading">
@@ -288,12 +281,12 @@
             <tbody>
               <tr ng-repeat="request in s_requests">
                 <td ng-click="">
-                  <p> {{ (request.ride.departure.name != null) ? request.ride.departure.name : request.ride.departure_city }}
+                  <p> {{ (request.ride.Departure.name != null) ? request.ride.Departure.name : request.ride.departure_city }}
                   <i class="fa fa-arrow-right fa-1x"></i>
-                  {{ (request.ride.arrival.name != null) ? request.ride.arrival.name : request.ride.arrival_city }}</p>
+                  {{ (request.ride.Arrival.name != null) ? request.ride.Arrival.name : request.ride.arrival_city }}</p>
                 </td>
                 <td ng-bind="request.ride.departure_date | date:'dd/MM/yyyy'"></td>
-                <td>{{ request.ride.driver.lastname | uppercase }} {{ request.ride.driver.firstname }}</td>
+                <td>{{ request.ride.Driver.lastname | uppercase }} {{ request.ride.Driver.firstname }}</td>
                 <td>
                   <i ng-show="request.acceptedDate != null" class="fa fa-check-circle text-success fa-2x"></i>
                   <i ng-show="request.refusedDate != null" class="fa fa-times-circle text-danger fa-2x"></i>

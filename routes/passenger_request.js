@@ -13,7 +13,7 @@ router.get('/sended/:userID',function(req,res){
       where: { user_id: req.params.userID },
       include: [
                   { model: models.Ride,
-                    as: 'Asks',
+
                     include: [
                                 { model: models.Site , as: 'Departure'},
                                 { model: models.Site , as: 'Arrival'},
@@ -42,7 +42,6 @@ router.get('/received/:rideID',function(req,res,next){
     where: { ride_id: req.params.rideID },
     include: [
                 { model: models.Ride,
-                  as: 'Asks',
                   include: [
                               { model: models.Site , as: 'Departure'},
                               { model: models.Site , as: 'Arrival'},
@@ -66,22 +65,37 @@ router.get('/received/:rideID',function(req,res,next){
   .catch(err => { res.json({result:-1, message:'Something went wrong with url 01-002', error:err}); });
 });
 
+/**************************POST**************************/
+
 /** Refuse passenger request | 01-004 */
-router.get('/refused/:id',function(req,res,next){
+router.post('/refuse',function(req,res,next){
+  let send = req.body;
+
   Passenger_Request.find({
-    where: { id: req.params.id }
+    where: { id: send.request }
   })
   .then(request => {
-    request.updateAttributes({
-      refusedDate: new Date()
-    });
+    if(request.refusedDate == null && request.acceptedDate == null){
+      request.updateAttributes({
+        refusedDate: new Date()
+      });
 
-    res.json({result:1, message:'Request successfully refused w/ url 01-004'});
+      models.Ride.find({
+        where: {id: send.ride }
+      })
+      .then(ride => {
+        if(ride){
+          ride.increment('remain_seats');
+          res.json({result:1, message:'Request successfully refused w/ url 01-004'})
+        }
+        else res.json({result:-1, message:'No ride found w/ url 01-004'});
+      })
+      .catch(err => { res.json({result:-1, message:'Unable to find ride w/ url 01-004', error:err}); });
+    }
+    else res.json({result:0, message:'Request has already been treated w/ ulr 01-004'});
   })
   .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 01-004', error:err}); });
 });
-
-/**************************POST**************************/
 
 /** Accept passenger request | 01-003 */
 router.post('/accept',function(req,res,next){
@@ -108,28 +122,32 @@ router.post('/accept',function(req,res,next){
 router.post('/new',function(req,res,next){
   let send = req.body;
 
-  Passenger_Request.create({
-    requestDate: new Date(),
+  Passenger_Request.find({
+    where: { user_id: send.user }
   })
-  .then(function(request){
-    models.User.find({
-      where: { id: send.user }
-    })
-    .then(user => {
-      request.setUser(user)
-      .then(user => {
-
+  .then(req => {
+    if(req) res.json({result:0, message:'Already requested for this ride w/ url 01-005'});
+    else{
+      Passenger_Request.create({
+        requestDate: new Date()
       })
-      .catch(err => { res.json({result:-2, message:'Unable to set User on request w/ url 01-005', error:err}); });
-
-      res.redirect('/ride/'+send.ride+'/passenger_request/'+request.id);
-
-    })
-    .catch(err => { res.json({result:-1, message:'User not found w/ url 01-005', error:err}); });
-
-    //res.json({result:1, message:'Request successfully created w/ url 01-005'});
+      .then(request => {
+        models.User.find({
+          where: { id: send.user }
+        })
+        .then(user => {
+          request.setUser(user)
+          .then(user =>{
+            res.redirect('/ride/'+send.ride+'/passenger_request/'+request.id);
+          })
+          .catch(err => { res.json({result:-1, message:'Something went wrong when setting user on request w/ url 01-005', error:err}); });
+        })
+        .catch(err => { res.json({result:-1, message:'Something went wrong when searching user w/ url 01-005', error:err}); });
+      })
+      .catch(err => { res.json({result:-1, message:'Something went wrong when creating request w/ url 01-005', error:err}); });
+    }
   })
-  .catch(err => { res.json({result:-1, message:'Something went wrong with url 01-005'})});
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 01-005', error:err}); });
 
 });
 

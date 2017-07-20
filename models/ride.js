@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
       type : DataTypes.STRING,
       allowNull: true
     },
-    depature_date: {
+    departure_date: {
       type : DataTypes.DATE,
       allowNull: false
     },
@@ -85,7 +85,7 @@ module.exports = function(sequelize, DataTypes) {
         result.id = this.id;
         result.ad_date = this.ad_date;
         result.ad_message = this.ad_message;
-        result.departure_date = this.depature_date;
+        result.departure_date = this.departure_date;
         result.departure_time = this.departure_time;
         result.departure_adress = this.departure_adress;
         result.departure_city = this.departure_city;
