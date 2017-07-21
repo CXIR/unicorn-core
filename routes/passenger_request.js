@@ -109,7 +109,7 @@ router.post('/accept',function(req,res,next){
         request.updateAttributes({
           acceptedDate: new Date()
         });
-        res.redirect('/ride/'+send.ride+'/users/'+request.user_id);
+        res.redirect('/ride/'+send.ride+'/users/'+request.user);
       }
       else res.json({result:0, message:'Request has already been treated w/ url '});
     }

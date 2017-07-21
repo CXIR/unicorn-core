@@ -1,22 +1,22 @@
-<div class="panel panel-primary ride-pop" ng-show="pop.show">
+<div class="panel panel-primary ride-pop" ng-show="special.show">
   <div class="panel-heading">
-    <a class="close" aria-hidden="true" ng-click="close()">&times;</a>
+    <a class="close" aria-hidden="true" ng-click="closeSpecial()">&times;</a>
     <h3 class="panel-title">DETAILS DU TRAJET</h3>
   </div>
   <div class="panel-body">
-    <h4 ng-bind="pop.ride.driver.lastname | uppercase +' '+ pop.ride.driver.firstname"></h4>
+    <h4 ng-bind="special.ride.ad_message"></h4>
     <hr/>
 
     <b class="text-success"><i class="fa fa-map-marker"></i> DÉPART</b>
     <table class="table">
       <tr>
         <td colspan="2">
-          <p class="text-primary" ng-bind="(pop.ride.departure == undefined) ? pop.ride.dep_city : pop.ride.departure.name"></p>
+          <p class="text-primary" ng-bind="(special.ride.departure == undefined) ? special.ride.dep_city : special.ride.departure.name"></p>
         </td>
       </tr>
       <tr>
-        <td ng-bind="(pop.ride.departure == undefined) ? pop.ride.dep_adress : pop.ride.departure.adress"></td>
-        <td ng-bind="(pop.ride.departure == undefined) ? pop.ride.dep_city+'-'+pop.ride.dep_postalCode : pop.ride.departure.city+'-'+pop.ride.departure.postalCode"></td>
+        <td ng-bind="(special.ride.departure == undefined) ? special.ride.dep_adress : special.ride.departure.adress"></td>
+        <td ng-bind="(special.ride.departure == undefined) ? special.ride.dep_city+'-'+special.ride.dep_postalCode : special.ride.departure.city+'-'+special.ride.departure.postalCode"></td>
       </tr>
     </table>
 
@@ -24,44 +24,52 @@
     <table class="table">
       <tr>
         <td colspan="2">
-          <p class="text-primary" ng-bind="(pop.ride.arrival == undefined) ? pop.ride.arr_city : pop.ride.arrival.name"></p>
+          <p class="text-primary" ng-bind="(special.ride.arrival == undefined) ? special.ride.arr_city : special.ride.arrival.name"></p>
         </td>
       </tr>
       <tr>
-        <td ng-bind="(pop.ride.arrival == undefined) ? pop.ride.arr_adress : pop.ride.arrival.adress"></td>
-        <td ng-bind="(pop.ride.arrival == undefined) ? pop.ride.arr_city+'-'+pop.ride.arr_postalCode : pop.ride.arrival.city+'-'+pop.ride.arrival.postalCode"></td>
+        <td ng-bind="(special.ride.arrival == undefined) ? special.ride.arr_adress : special.ride.arrival.adress"></td>
+        <td ng-bind="(special.ride.arrival == undefined) ? special.ride.arr_city+'-'+special.ride.arr_postalCode : special.ride.arrival.city+'-'+special.ride.arrival.postalCode"></td>
       </tr>
     </table>
-
+    <hr/>
     <b class="text-success"><i class="fa fa-users"></i> PASSAGERS</b>
-    <table class="table">
-      <tr>
-        <th>NOM COMPLET</th>
-        <th>MAIL</th>
-        <th>BUREAU</th>
-      </tr>
-      <tr ng-repeat="passenger in pop.ride.passengers">
-        <td ng-bind="passenger.lastname | uppercase +' '+ passenger.firstname"></td>
-        <td ng-bind="passenger.mailAdress"></td>
-        <td ng-bind="passenger.site.name"></td>
-      </tr>
-    </table>
-
-    <b class="text-success"><i class="fa fa-hourglass"></i> DEMANDES</b>
-    <table class="table">
+    <p ng-show="special.ride.passengers.length == 0">Pas de Passager pour le moment</p>
+    <table class="table" ng-show="special.ride.passengers.length != 0">
       <tr>
         <td>NOM COMPLET</td>
-        <td>MAIL</td>
         <td>BUREAU</td>
+        <td>STATUT</td>
+      </tr>
+      <tr ng-repeat="passenger in special.ride.passengers">
+        <td ng-bind="passenger.lastname | uppercase +' '+ passenger.firstname"></td>
+        <td ng-bind="passenger.site.name"></td>
+        <td><i class="fa fa-check-square-o text-success"></i></td>
+      </tr>
+    </table>
+    <hr/>
+    <b class="text-success"><i class="fa fa-hourglass"></i> DEMANDES</b>
+    <p ng-show="special.ride.asks == 0">Pas de Demande pour le moment</p>
+    <table class="table" ng-show="special.ride.asks != 0">
+      <tr>
+        <td>NOM COMPLET</td>
+        <td>BUREAU</td>
+        <td>STATUT</td>
         <td>ACTION</td>
       </tr>
-      <tr ng-repeat="ask in ride.asks">
-        <td ng-bind="ask.lastname | uppercase +' '+ ask.firstname"></td>
-        <td ng-bind="ask.mailAdress"></td>
-        <td ng-bind="ask.site.name"></td>
+      <tr ng-repeat="ask in special.ride.asks">
+        <td ng-bind="ask.user.lastname | uppercase +' '+ ask.user.firstname"></td>
+        <td ng-bind="ask.user.Site.name"></td>
         <td>
-          <i class="fa fa-check fa-2x text-success" ng-click="acceptAsk(ask,ride)"></i>
-          <i class="fa fa-times fa-2x text-danger" ng-click="refuseAsk(ask,ride)"></i>
+          <i ng-show="ask.acceptedDate != null" class="fa fa-check-circle text-success fa-2x"></i>
+          <i ng-show="ask.refusedDate != null" class="fa fa-times-circle text-danger fa-2x"></i>
+          <i ng-show="ask.acceptedDate == null && ask.refusedDate == null" class="fa fa-exclamation-circle text-warning fa-2x"></i>
+        </td>
+        <td>
+          <p ng-show="ask.acceptedDate == null || ask.refusedDate == null">
+            <i class="fa fa-check fa-2x text-success" ng-click="acceptAsk(ask,ride)"></i>
+            <i class="fa fa-times fa-2x text-danger" ng-click="refuseAsk(ask,ride)"></i>
+          </p>
         </td>
       </tr>
     </table>

@@ -10,10 +10,9 @@
       <div class="well bloc bloc-x">
         <h2>Proposer un Trajet</h2>
       </div>
-      <div style="clear:both"></div>
     </div>
 
-    <p class="text-error" ng-show="error.show" ng-bind="error.message"></p>
+    <p class="text-danger" ng-show="error.show" ng-bind="error.message"></p>
 
   <div class="home">
 
@@ -46,7 +45,7 @@
           <input type="text" class="form-control" placeholder="Date JJ/MM/AAAA" ng-model="proposal.d_date" ng-change="validateDate(proposal.d_date,1)">
         </div>
         <div id="dhour" class="form-group">
-          <input type="text" class="form-control" placeholder="Heure (HH:MM)" ng-model="proposal.d_hour" ng-change="validateHour(proposal.d_hour,1)">
+          <input type="text" class="form-control" placeholder="Heure (HH:MM)" ng-model="proposal.d_hour">
         </div>
     </div>
 
@@ -80,7 +79,7 @@
             <input type="text" class="form-control" placeholder="Date JJ/MM/AAAA" ng-model="proposal.a_date" ng-change="validateDate(proposal.a_date,2)">
           </div>
           <div id="ahour" class="form-group">
-            <input type="text" class="form-control" placeholder="Heure HH:MM" ng-model="proposal.a_hour" ng-change="validateDate(proposal.a_hour,2)">
+            <input type="text" class="form-control" placeholder="Heure HH:MM" ng-model="proposal.a_hour">
           </div>
 </div>
   </div>
@@ -88,21 +87,34 @@
   <div class="home">
     <div class="well bloc bloc-s">
       <h4>NOMBRE DE PLACES PROPOSEES</h4>
-      <table class="table" ng-init="places = 0">
+      <br/>
+      <br/>
+      <table class="table">
         <tr>
-          <td><i class="fa fa-minus"></i></td>
-          <td><h1 ng-model="places" ng-bind="places"></h1></td>
-          <td><i class="fa fa-plus"></i></td>
+          <td>
+            <a href="" class="btn btn-primary btn-lg" ng-click="seats = (seats == 0) ? 0 : seats - 1">&nbsp;&nbsp;-&nbsp;&nbsp;</a>
+          </td>
+          <td>
+            <a class="btn btn-default btn-lg disabled" ng-bind="seats"></a>
+          </td>
+          <td>
+            <a href="" class="btn btn-success btn-lg" ng-click="seats = (seats == max) ? max : seats + 1">&nbsp;&nbsp;+&nbsp;&nbsp;</a>
+          </td>
         </tr>
       </table>
     </div>
     <div class="well bloc bloc-l">
       <h4>TITRE DU TRAJET</h4>
+      <br/>
+      <br/>
+      <br/>
+      <div class="form-group description">
+        <input type="text" class="form-control" placeholder="Titre..." ng-model="proposal.title">
     </div>
   </div>
 
-  <a href="" class="btn btn-danger" ng-click="">Effacer</a>
-  <a href="" class="btn btn-success" ng-click="proposeRide(proposal)">Proposer</a>
+  <a href="" class="btn btn-danger" ng-click="clearProposal()">Effacer</a>
+  <a href="" class="btn btn-success" ng-click="proposeRide(proposal,seats)">Proposer</a>
 </div>
 
 </section>

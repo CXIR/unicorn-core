@@ -5,8 +5,16 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
 
     var car = null;
     var valid = 0;
+    var driveFirst = 0;
 
-    /** USER INFORMATION */
+    $scope.next = 0;
+
+
+
+
+    /*************************** USER INFORMATION ******************************/
+
+
 
     $http.get('/users/'+Current.user.info.id)
     .then(function(res){
@@ -35,12 +43,20 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
       else $scope.logout();
     },function(res){ console.log('FAIL : '+res.data); });
 
-    /** COMMING RIDES */
+
+
+
+    /***************************** COMMING RIDES ******************************/
+
+
 
     $http.get('/ride/comming/driver/'+Current.user.info.id)
     .then(function(res){
       if(res.data.result == 1){
         $scope.d_comming = res.data.content;
+        $scope.next = res.data.content[0];
+        $scope.next.driver = true;
+        driveFirst = 1;
       }
       else $scope.d_comming = 0;
     },function(res){ console.log('FAIL : '+res.data); });
@@ -49,17 +65,20 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
     .then(function(res){
       if(res.data.result == 1){
         $scope.p_comming = res.data.content;
+        if(driveFirst == 0){
+          $scope.next = res.data.content[0];
+          $scope.next.driver = false;
+        }
       }
       else $scope.p_comming = 0;
     },function(res){ console.log('FAIL : '+res.data); });
 
-    var getNext = function(){
-      if($scope.d_comming != 0) return $scope.d_comming;
-      else if ($scope.p_comming != 0) return $scope.p_comming;
-      else return 0;
-    }; getNext();
 
-    /** PASSED RIDES */
+
+
+    /***************************** PASSED RIDES *******************************/
+
+
 
     $http.get('/ride/passed/driver/'+Current.user.info.id)
     .then(function(res){
@@ -97,18 +116,76 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
       $location.path('/proposal');
     }
 
-    /** POP */
 
-    $scope.userPop = function(user){
 
-    }
+    /***************************** SHOW POP ***********************************/
+
+
 
     $scope.ridePop = function(ride){
+      $scope.pop = { display:'opacify', show:true, ride:ride };
+    }
 
+    $scope.userPop = function(user){
+      $scope.upop = { show:true, display:'opacify', user:user }
     }
 
     $scope.ridePopSpecial = function(ride){
+      $scope.special = { show:true, display:'opacify', ride:ride };
+    }
 
+
+
+    /*********************** TREATE PASSENGER REQUEST *************************/
+
+
+
+    $scope.acceptAsk = function(ask,ride){
+      var post = { request:ask.id, ride:ride.id, user:ask.user.id };
+
+      $http.post('/passenger_request/accept',post)
+      .then(function(res){
+        if(res.data.result == 1){
+          ask.acceptedDate = new Date();
+        }
+        else{
+          $scope.special = {};
+          $scope.notif = {
+                            type:'alert-danger',
+                            show:true,
+                            title:'Oupsss !',
+                            message:'Nous rencontrons des problèmes lors du traitement des requêtes.'
+                          };
+          $timeout(function(){ $scope.notif = {}; },3000);
+        }
+      },function(res){ console.log('FAIL : '+res.data); });
+    }
+
+    $scope.refuseAsk = function(ask,ride){
+      var post = { request:ask.id, ride:ride.id };
+
+      $http.post('/passenger_request/refuse',post)
+      .then(function(res){
+        if(res.data.result == 1){
+          ask.refusedDate = new Date();
+        }
+        else{
+          $scope.special = {};
+          $scope.notif = {
+                            type:'alert-danger',
+                            show:true,
+                            title:'Oupsss !',
+                            message:'Nous rencontrons des problèmes lors du traitement des requêtes.'
+                          };
+          $timeout(function(){ $scope.notif = {}; },3000);
+        }
+      },function(res){ console.log('FAIL : '+res.data); });
+    }
+
+    /***************************** MARK A DRIVER ******************************/
+
+    $scope.mark = function(){
+      
     }
 
   }

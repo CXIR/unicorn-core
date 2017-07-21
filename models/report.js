@@ -18,8 +18,8 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
-        Report.belongsTo(models.User, {as:'Plaintiff'});
-        Report.belongsTo(models.User, {as:'Reported'});
+        Report.belongsTo(models.User, { as:'Plaintiff' });
+        Report.belongsTo(models.User, { as:'Reported' });
       }
     },
     instanceMethods: {

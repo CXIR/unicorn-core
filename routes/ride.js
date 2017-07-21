@@ -272,59 +272,215 @@ router.get('/:rideID/passenger_request/:requestID',function(req,res,next){
 router.post('/new',function(req,res,next){
   let send = req.body;
 
-  Ride.create({
-    ad_date: new Date(),
-    ad_message: send.message,
-    departure_date: send.dep_date,
-    departure_time: send.dep_time,
-    departure_adress: (send.dep_adress == undefined) ? null : send.dep_adress,
-    departure_postalCode: (send.dep_postal == undefined) ? null : send.dep_postal,
-    departure_city: (send.dep_city == undefined) ? null : send.dep_city,
-    arrival_date: send.arr_date,
-    arrival_time: send.arr_time,
-    arrival_adress: (send.arr_adress == undefined) ? null : send.arr_adress,
-    arrival_postalCode: (send.arr_postal == undefined) ? null : send.arr_postal,
-    arrival_city: (send.arr_city == undefined) ? null : send.arr_city,
-    remain_seats: send.seats
-  })
-  .then(ride => {
-      if(send.dep_site != undefined){
-        models.Site.find({
-          where: { id: send.dep_site}
-        })
-        .then(site => {
-          ride.setDeparture(site)
-          .then(site => { console.log('Departure Site successfully added to the ride w/ url 02-010'); })
-          .catch(err => { res.json({result:-2, message:'Unable to set Departure Site w/ url 02-010', error:err}); });
-        })
-        .catch(err => { res.json({result:-1, message:'Site not found w/ url 02-010', error:err}); });
-      }
-      if(send.arr_site != undefined){
-        models.Site.find({
-          where: { id: send.arr_site }
-        })
-        .then(site => {
-          ride.setArrival(site)
-          .then(site => { console.log('Arrival site successfully added to the ride w/ url 02-010');})
-          .catch(err => { res.json({result:-2, message:'Unable to set Arrival Site w/ url 02-010', error:err}); });
-        })
-        .catch(err => { res.json({result:-1, message:'Site not found w/ url 02-010', error:err}); });
-      }
+  if(send.dep_date < new Date()) res.json({result:0, message:'Departure date could not be before today w/ url'});
+  else if(send.arr_date < new Date()) res.json({result:0, message:'Arrival date could not be before today w/ url'});
+  else if(send.dep_date > send.arr_date) res.json({result:0, message:'Departure could not be after Arrival w/ url'});
+  else if(send.dep_site == undefined && send.arr_site == undefined){
+    if((send.dep_adress == send.arr_adress) && (send.dep_postal == send.arr_postal)) res.json({result:0, message:'Departure and Arrival addresses could not be the same w/ url '});
+    else{
+      models.User.find({
+        where: { id: send.driver }
+      })
+      .then(driver => {
+        if(driver){
+
+          Ride.create({
+            ad_date: new Date(),
+            ad_message: send.message,
+            departure_date: send.dep_date,
+            departure_time: send.dep_time,
+            departure_adress: send.dep_adress,
+            departure_postalCode: send.dep_postal,
+            departure_city: send.dep_city,
+            arrival_date: send.arr_date,
+            arrival_time: send.arr_time,
+            arrival_adress: send.arr_adress,
+            arrival_postalCode: send.arr_postal,
+            arrival_city: send.arr_city,
+            remain_seats: send.seats
+          })
+          .then(ride => {
+            ride.setDriver(driver)
+            .then(driver =>{
+              if(ride) res.json({result:1, message:'Ride successfully created w/ url '});
+              else res.json({result:0, message:'Ride not created w/ url '});
+            })
+            .catch(err => { res.json({result:-1, message:'Unable to set User to the Ride w/ url 02-010',error:err}); });
+          })
+          .catch(err => { res.json({result:-1, message:'Unable to create Ride w/ url ', error:err}); });
+        }
+        else res.json({result:0, message:'User not found w/ url 02-010'});
+      })
+      .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-010', error:err}); });
+    }
+  }
+  else if(send.dep_site != undefined && send.arr_site != undefined){
+    if(send.dep_site == send.arr_site) res.json({result:0, message:'Departure and Arrival Sites could not be the same w/ url'});
+    else{
 
       models.User.find({
         where: { id: send.driver }
       })
-      .then(user => {
-        ride.setDriver(user)
-        .then(user => { console.log('User successfully added as Driver to the ride w/ url 02-010'); })
-        .catch(err => { res.json({result:-2, message:'Unable to set Driver w/ url 02-010', error:err}); });
+      .then(driver => {
+        if(driver){
+
+          models.Site.find({
+            where: { id: send.dep_site }
+          })
+          .then(departure =>  {
+            if(departure){
+
+              models.Site.find({
+                where : { id: send.arr_site }
+              })
+              .then(arrival => {
+
+                Ride.create({
+                  ad_date: new Date(),
+                  ad_message: send.message,
+                  departure_date: send.dep_date,
+                  departure_time: send.dep_time,
+                  arrival_date: send.arr_date,
+                  arrival_time: send.arr_time,
+                  remain_seats: send.seats
+                })
+                .then(ride => {
+                  if(ride){
+
+                    ride.setDeparture(departure)
+                    .then(departure => {
+
+                      ride.setArrival(arrival)
+                      .then(arrival => {
+
+                        ride.setDriver(driver)
+                        .then(driver => {
+                          res.json({result:1, message:'Ride successfully created w/ url '});
+                        })
+                        .catch(err => { res.json({result:-1, message:'Unable to set User to the Ride w/ url 02-010', error:err}); });
+                      })
+                      .catch(err => { res.json({result:-1, message:'Unable to set Arrival to the Ride w/ url ', error:err}); });
+                    })
+                    .catch(err => { res.json({result:-1, message:'Unable to set Departure to the Ride w/ url ', error:err}); });
+                  }
+                  else res.json({result:0, message:'Ride not created w/ url '});
+                })
+                .catch(err => { res.json({result:-1, message:'Unable to create Ride w/ url ', error:err}); });
+              })
+              .catch(err => { res.json({result:-1, message:'Unable to find Arrival w/ url ', error:err}); });
+            }
+            else res.json({result:0, message:'Departure Site not found w/ url '});
+          })
+          .catch(err => { res.json({result:-1, message:'Unable to find Departure w/ url ', error:err}); });
+        }
+        else res.json({result:0, message:'User not found w/ url 02-010'});
       })
-      .catch(err => { res.json({result:-1, message:'User not found w/ url 02-010', error:err}); });
+      .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-010', error:err}); });
 
-      res.json({result:1, object:ride});
-   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-010', error: err}); } );
+    }
+  }
+  else if(send.dep_site != undefined && send.arr_site == undefined){
+    models.User.find({
+      where: { id: send.driver }
+    })
+    .then(driver => {
+      if(driver){
 
+        models.Site.find({
+          where: { id: send.dep_site }
+        })
+        .then(departure => {
+          if(departure){
+
+            Ride.create({
+              ad_date: new Date(),
+              ad_message: send.message,
+              departure_date: send.dep_date,
+              departure_time: send.dep_time,
+              arrival_date: send.arr_date,
+              arrival_time: send.arr_time,
+              arrival_adress: send.arr_adress,
+              arrival_postalCode: send.arr_postal,
+              arrival_city: send.arr_city,
+              remain_seats: send.seats
+            })
+            .then(ride => {
+              if(ride){
+                ride.setDeparture(departure)
+                .then(departure => {
+
+                  ride.setDriver(driver)
+                  .then(driver => {
+                    res.json({result:1, message:'Ride successfully created w/ url'});
+                  })
+                  .catch(err => { res.json({result:-1, message:'Unable to set User to the Ride w/ url 02-010', error:err}); });
+                })
+                .catch(err => { res.json({result:-1, message:'Unable to set departure w/ url ', error:err}); });
+              }
+              else res.json({result:0, message:'Ride not created w/ url '});
+            })
+            .catch(err => { res.json({result:-1, message:'Unable to create Ride w/ url ', error:err}); });
+          }
+          else res.json({result:0, message:'Departure not found w/ url'});
+        })
+        .catch(err => { res.json({result:-1, message:'Unable to find Site w/ url ', error:err}); });
+      }
+      else res.json({result:0, message:'User not found w/ url 02-010'});
+    })
+    .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-010', error:err}); });
+  }
+  else if(send.dep_site == undefined && send.arr_site != undefined){
+    models.User.find({
+      where: { id: send.driver }
+    })
+    .then(driver => {
+      if(driver){
+
+        models.Site.find({
+          where: { id: send.arr_site }
+        })
+        .then(arrival => {
+          if(arrival){
+
+            Ride.create({
+              ad_date: new Date(),
+              ad_message: send.message,
+              departure_date: send.dep_date,
+              departure_time: send.dep_time,
+              departure_adress: (send.dep_adress == undefined) ? null : send.dep_adress,
+              departure_postalCode: (send.dep_postal == undefined) ? null : send.dep_postal,
+              departure_city: (send.dep_city == undefined) ? null : send.dep_city,
+              arrival_date: send.arr_date,
+              arrival_time: send.arr_time,
+              remain_seats: send.seats
+            })
+            .then(ride => {
+              if(ride){
+                ride.setDeparture(arrival)
+                .then(arrival => {
+
+                  ride.setDriver(driver)
+                  .then(driver => {
+                    res.json({result:1, message:'Ride successfully created w/ url'});
+                  })
+                  .catch(err => { res.json({result:-1, message:'Unable to set Driver to the Ride w/ url 02-10', error:err}); });
+                })
+                .catch(err => { res.json({result:-1, message:'Unable to set departure w/ url ', error:err}); });
+              }
+              else res.json({result:0, message:'Ride not created w/ url '});
+            })
+            .catch(err => { res.json({result:-1, message:'Unable to create Ride w/ url ', error:err}); });
+          }
+          else res.json({result:0, message:'Departure not found w/ url'});
+        })
+        .catch(err => { res.json({result:-1, message:'Unable to find Site w/ url ', error:err}); });
+      }
+      else res.json({result:0, message:'User not found w/ url 02-010'});
+    })
+    .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-010', error:err}); });
+
+  }
+  else res.json({result:0, message:'Ride informations do not match prerequesits w/ url '});
 });
 
 /** Update single ride | 02-011 */
