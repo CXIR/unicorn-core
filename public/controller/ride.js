@@ -117,6 +117,9 @@ shareAppControllers.controller('ridesCtrl',['$scope','$location','$http','$timeo
 
       $scope.requestSeat = function(ride){
         var post = {ride: ride.id, user: Current.user.info.id};
+        $scope.rides = {};
+        $scope.loaded = false;
+
         $http.post('/ride/request',post)
         .then(function(res){
           if(res.data.result == 1){
@@ -128,6 +131,14 @@ shareAppControllers.controller('ridesCtrl',['$scope','$location','$http','$timeo
                             };
             getRides();
           }
+          else if(res.data.result == 0){
+            $scope.notif = {
+                              type:'alert-warning',
+                              show:true,
+                              title:'Déjà Fait !',
+                              message:'Vous avez déjà demandé une place pour ce trajet.'
+                            };
+          }
           else{
             $scope.notif = {
                               type:'alert-danger',
@@ -137,6 +148,7 @@ shareAppControllers.controller('ridesCtrl',['$scope','$location','$http','$timeo
                             };
           }
           $timeout(function(){ $scope.notif = {}; },3000);
+          getRides();
         },function(res){ console.log('FAIL  : '+res.data); });
       }
 

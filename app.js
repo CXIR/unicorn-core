@@ -4,7 +4,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session');
 
 var index = require('./routes/index');
 var media = require('./routes/media');
@@ -19,8 +18,8 @@ var notif = require('./routes/notif');
 var models = require('./models');
 
 models.sequelize.sync();
-//models.sequelize.sync({force:true});
 
+//models.sequelize.sync({force:true});
 /*
 models.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', {raw: true}).then(function(results) {
         models.sequelize.sync({force: true});
@@ -33,17 +32,6 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-/** Session Handling */
-app.use(session({
-                  secret: 'eleanor',
-                  resave: false,
-                  saveUninitialized: true,
-                  cookie: {
-                            path: '/',
-                            secure: false,
-                            maxAge: 6000
-                          }
-}));
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -53,13 +41,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-/*
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  next();
-});
-*/
 
 app.use('/', index);
 app.use('/media', media);
@@ -71,13 +52,24 @@ app.use('/users', users);
 app.use('/vehicle', vehicle);
 app.use('/notif',notif);
 
-var session;
 
-app.get('/',function(req,res){
-    session = req.session;
-});
-
+/** SESSION SARTER */
 app.post('/login',function(req,res){
+  let send = req.body;
+
+  models.User.find({
+    where: { mailAdress: send.mail }
+  })
+  .then(user => {
+    if(user){
+      if(user.password == send.pass){
+        res.json({result:1, object:user});
+      }
+      else res.json({result:0, message:'Wrong password at login'});
+    }
+    else res.json({result:0, message:'User not found at login'});
+  })
+  .catch(err => { res.json({result:-1, message:'Unable to find User at login', error:err}); });
 
 });
 

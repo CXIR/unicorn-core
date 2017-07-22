@@ -63,6 +63,7 @@ router.get('/all/:id',function(req,res){
 
 /** Get a single user | 04-003 */
 router.get('/:id',function(req,res){
+
     User.find({
       where:{ id: req.params.id },
       include : [
@@ -76,6 +77,19 @@ router.get('/:id',function(req,res){
       else res.json({result:0, message:'User not found w/ url 04-003'});
     })
     .catch(err => { res.json({result: -1, message:'Unable to find User w/ url 04-003', error: err}); });
+});
+
+/** Get a single User by mail | 04-003 */
+router.get('/mail/:mailAdress',function(req,res){
+    User.find({
+      where:{ mailAdress: req.params.mailAdress },
+      include : [ models.Site, models.Status, models.Ride ]
+    })
+    .then(user => {
+      if(user) res.json({result:1, content:user.responsify()});
+      else res.json({result:0, message:'User not found w/ url 04-003'});
+    })
+    .catch(err => { res.json({result: -1, message:'User not found w/ url 04-003', error: err}); });
 });
 
 /**************************POST**************************/

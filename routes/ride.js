@@ -8,7 +8,7 @@ const router = express.Router();
 
 /**************************GET**************************/
 
-/** Get all comming rides w/ all users | 02-001 */
+/** Get full Comming Rides | 02-001 */
 router.get('/comming',function(req,res){
   Ride.findAll({
       where: { departure_date: { $gte: new Date() } },
@@ -139,16 +139,19 @@ router.get('/comming/passenger/:id',function(req,res){
 router.get('/passed/driver/:id',function(req,res){
 
   Ride.findAll({
-    where: {  departure_date: { $lt: new Date() },
-              driver_id: req.params.id
-           },
-    include : [
-                { model: models.Site, as: 'Departure' },
-                { model: models.Site, as: 'Arrival' },
-                { model: models.User, as: 'Driver'},
-                { model: models.User, as: 'Passengers', include: [ models.Site, models.Status ]},
-                { model: models.user, as: 'Requests', include: [ models.Site, models.Status ] }
-              ]
+      where: {
+                departure_date: {
+                                  $lt: new Date()
+                                },
+                driver_id: req.params.id
+             },
+      include : [
+                  { model: models.Site, as: 'Departure' },
+                  { model: models.Site, as: 'Arrival' },
+                  { model: models.User, as: 'Driver' },
+                  { model: models.User, as: 'Passengers', include: [ models.Site, models.Status ] },
+                  { model: models.User, as: 'Requests', include: [ models.Site, models.Status ] }
+                ]
   })
   .then(function(rides){
     let results = [];
@@ -156,10 +159,11 @@ router.get('/passed/driver/:id',function(req,res){
       results.push(ride.responsify());
     }
 
-    if(results.length == 0) res.json({result:0, message:'No ride found w/ url 02-004'});
-    else res.json({result:1, content:results});
+    if(results.length == 0) res.json({ result:0, message:'No rides found' });
+    else res.json({result:1,content:results});
+
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong with url 02-004', error: err}); });
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-002', error: err}); });
 });
 
 /** Get all single user passed rides as passenger | 02-005 */
@@ -169,18 +173,18 @@ router.get('/passed/passenger/:id',function(req,res){
     where: { id: req.params.id },
     include: [
                 {
-                  model: Ride,
+                  model: models.Ride,
                   as: 'Passengers',
                   include: [
                               { model: models.Site, as: 'Departure' },
                               { model: models.Site, as: 'Arrival' },
-                              { model: models.User, as: 'Driver', include: [ models.Site, models.Status ]}
+                              { model: models.User, as: 'Driver', include: [ models.Site, models.Status ] }
                             ]
                 }
              ]
   })
   .then(user => {
-    let rides = user.Rides;
+    let rides = user.Passengers;
     let results = [];
     for(let ride of rides){
       let elem = ride.responsify();
@@ -189,10 +193,10 @@ router.get('/passed/passenger/:id',function(req,res){
       }
     }
 
-    if(results.length == 0) res.json({result:0, message:'No ride found w/ url 02-006'});
-    else res.json({result:1, content:results});
+    if(results.length == 0) res.json({result:0, message:'No ride found w/ 02-003'});
+    else res.json({result:1,content:results});
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong with url 02-006', error: err}); });
+  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 02-003', error:err}); });
 });
 
 /** Get a single ride | 02-007 */
@@ -216,38 +220,85 @@ router.get('/:id',function(req,res){
 
 });
 
+/** Get full User sended request | */
+router.get('/sended/:userID',function(req,res){
+
+  models.User.find({
+    where: { id: req.params.userID },
+    include: [
+                {
+                  model: models.Ride,
+                  as: 'Requests',
+                  include: [
+                              { model: models.Site, as: 'Departure' },
+                              { model: models.Site, as: 'Arrival' },
+                              { model: models.User, as: 'Driver', include: [ models.Site, models.Status ]}
+                            ]
+                }
+             ]
+  })
+  .then(user => {
+    if(user){
+      let requests = user.Requests;
+      let results = [];
+
+      for(let request of requests){
+        let elem = request.responsify();
+        results.push(elem);
+      }
+      if(results.length == 0) res.json({result:0, message:'No ride found w/ url '});
+      else res.json({result:1, content:results});
+    }
+    else res.json({result:0, message:'User not found w/ url '});
+  })
+  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url ', error:err}); });
+});
+
 /**************************POST**************************/
 
 /** Create new Request for a Ride | */
 router.post('/request',function(req,res,next){
   let send = req.body;
 
-  Ride.find({
-    where: { id: send.ride }
-  })
-  .then(ride => {
-    if(ride){
-
-      models.User.find({
-        where: { id: send.user }
-      })
-      .then(user => {
-        if(user){
-
-          ride.addRequest(user, { requestDate: new Date() })
-          .then(user => {
-            ride.decrement('remain_seats');
-            res.json({result:1, message:'User successfully set to Ride Requests w/ url '});
-          })
-          .catch(err => { res.json({result:-1, message:'Unable to set User to Ride Request w/ url ', error:err}); });
-        }
-        else res.json({result:0, message:'User not found w/ url '});
-      })
-      .catch(err => { res.json({result:-1, message:'Unable to find User w/ url ', error:err}); });
+  models.Requests.find({
+    where:{
+      ride_id: send.ride,
+      user_id: send.user
     }
-    else res.json({result:0, message:'Ride not found w/ url '});
   })
-  .catch(err => { res.json({result:-1, message:'Unable to find ride w/ url ', error:err}); });
+  .then(request => {
+    if(request) res.json({result:0, message:'User has already requested for this ride w/ url '});
+    else{
+
+      Ride.find({
+        where: { id: send.ride }
+      })
+      .then(ride => {
+        if(ride){
+
+          models.User.find({
+            where: { id: send.user }
+          })
+          .then(user => {
+            if(user){
+
+              ride.addRequest(user, { requestDate: new Date() })
+              .then(user => {
+                ride.decrement('remain_seats');
+                res.json({result:1, message:'User successfully set to Ride Requests w/ url '});
+              })
+              .catch(err => { res.json({result:-1, message:'Unable to set User to Ride Request w/ url ', error:err}); });
+            }
+            else res.json({result:0, message:'User not found w/ url '});
+          })
+          .catch(err => { res.json({result:-1, message:'Unable to find User w/ url ', error:err}); });
+        }
+        else res.json({result:0, message:'Ride not found w/ url '});
+      })
+      .catch(err => { res.json({result:-1, message:'Unable to find ride w/ url ', error:err}); });
+    }
+  })
+  .catch(err => { res.json({result:-1, message:'Unable to find Request w/ url ', error:err}); });
 });
 
 /** Accept Request and add Passenger to Ride | */
@@ -568,40 +619,10 @@ router.post('/edit',function(req,res,next){
   .then(ride => {
       if(ride){
         ride.updateAttributes({
-          ad_date: send.date,
-          ad_message: send.message,
           departure_date: send.dep_date,
-          departure_adress: (send.dep_adress == undefined) ? null : send.dep_adress,
-          departure_postalCode: (send.dep_postal == undefined) ? null : send.dep_postal,
-          departure_city: (send.dep_city == undefined) ? null : send.dep_city,
           arrival_date: send.arr_date,
-          arrival_adress: (send.arr_adress == undefined) ? null : send.arr_adress,
-          arrival_postalCode: (send.arr_postal == undefined) ? null : send.arr_postal,
-          arrival_city: (send.arr_city == undefined) ? null : send.arr_city
         });
 
-        if(send.dep_site != undefined){
-          models.Site.find({
-            where: { id: send.dep_site}
-          })
-          .then(site => {
-            ride.setDeparture(site)
-            .then(site => { console.log('Departure Site successfully added to the ride w/ url 02-011'); })
-            .catch(err => { res.json({result:-2, message:'Unable to set Departure Site w/ url 02-011', error:err}); });
-          })
-          .catch(err => { res.json({result:-1, message:'Site not found w/ url 02-011', error:err}); });
-        }
-        if(send.arr_site != undefined){
-          models.Site.find({
-            where: { id: send.arr_site }
-          })
-          .then(site => {
-            ride.setArrival(site)
-            .then(site => { console.log('Arrival site successfully added to the ride w/ url 02-011');})
-            .catch(err => { res.json({result:-2, message:'Unable to set Arrival Site w/ url 02-011', error:err}); });
-          })
-          .catch(err => { res.json({result:-1, message:'Site not found w/ url 02-011', error:err}); });
-        }
         res.json({result:1, message:'Ride successfully updated w/ url 02-011'});
       }
       else res.json({result:0, message:'Ride not found w/ url 02-011'});

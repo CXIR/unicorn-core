@@ -24,7 +24,7 @@
       </tr>
       <tr>
         <td>
-          <p><b ng-bind="upop.user.birthdate | date:'dd/MM/yyyy'"></b> (<b ng-bind="upop.user.birthdate | age:'upop.user.birthdate'"></b> ans)</p>
+          <p><b ng-bind="upop.user.birthdate | date:'dd MMMM yyyy'"></b> (<b ng-bind="upop.user.birthdate | age:'upop.user.birthdate'"></b> ans)</p>
         </td>
         <td>
           <i class="fa fa-thumbs-up fa-2x text-success" ng-bind="upop.user.positiveRating"></i>&nbsp;&nbsp;&nbsp;
@@ -37,7 +37,16 @@
     </blockquote>
     <hr/>
     <h4 class="text-success"><i class="fa fa-map-marker"></i> Bureau</h4>
-    <table class="table">
+    <table class="table" ng-show="upop.user.Site != undefined">
+      <tr>
+        <td colspan="2"><b ng-bind="upop.user.Site.name"></b></td>
+      </tr>
+      <tr>
+        <td ng-bind="upop.user.Site.adress"></td>
+        <td ng-bind="upop.user.Site.city +'('+upop.user.Site.postalCode+')'"></td>
+      </tr>
+    </table>
+    <table class="table" ng-show="upop.user.site != undefined">
       <tr>
         <td colspan="2"><b ng-bind="upop.user.site.name"></b></td>
       </tr>

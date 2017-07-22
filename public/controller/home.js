@@ -9,7 +9,9 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
 
     $scope.next = 0;
 
-
+    $scope.proposeRide = function(){
+      $location.path('/proposal');
+    }
 
 
     /*************************** USER INFORMATION ******************************/
@@ -49,79 +51,72 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
     /***************************** COMMING RIDES ******************************/
 
 
-
-    $http.get('/ride/comming/driver/'+Current.user.info.id)
-    .then(function(res){
-      if(res.data.result == 1){
-        $scope.d_comming = res.data.content;
-        $scope.next = res.data.content[0];
-        $scope.next.drive = true;
-        driveFirst = 1;
-      }
-      else $scope.d_comming = 0;
-    },function(res){ console.log('FAIL : '+res.data); });
-
-    $http.get('/ride/comming/passenger/'+Current.user.info.id)
-    .then(function(res){
-      if(res.data.result == 1){
-        $scope.p_comming = res.data.content;
-        if(driveFirst == 0){
+    var getCommingRidesDriver = function(){
+      $http.get('/ride/comming/driver/'+Current.user.info.id)
+      .then(function(res){
+        if(res.data.result == 1){
+          $scope.d_comming = res.data.content;
           $scope.next = res.data.content[0];
-          $scope.next.drive = false;
+          $scope.next.drive = true;
+          driveFirst = 1;
         }
-      }
-      else $scope.p_comming = 0;
-    },function(res){ console.log('FAIL : '+res.data); });
+        else $scope.d_comming = 0;
+      },function(res){ console.log('FAIL : '+res.data); });
+    }; getCommingRidesDriver();
 
-
+    var getCommingRidePassenger = function(){
+      $http.get('/ride/comming/passenger/'+Current.user.info.id)
+      .then(function(res){
+        if(res.data.result == 1){
+          $scope.p_comming = res.data.content;
+          if(driveFirst == 0){
+            $scope.next = res.data.content[0];
+            $scope.next.drive = false;
+          }
+        }
+        else $scope.p_comming = 0;
+      },function(res){ console.log('FAIL : '+res.data); });
+    }; getCommingRidePassenger();
 
 
     /***************************** PASSED RIDES *******************************/
 
 
+    var getPassedRidesDriver = function(){
+      $http.get('/ride/passed/driver/'+Current.user.info.id)
+      .then(function(res){
+          if(res.data.result == 1){
+            $scope.d_passed = res.data.content;
+          }
+          else $scope.d_passed = 0;
+        },function(res){ console.log('FAIL : '+res.data); });
+    }; getPassedRidesDriver();
 
-    $http.get('/ride/passed/driver/'+Current.user.info.id)
-    .then(function(res){
+    var getPassedRidesPassenger = function(){
+      $http.get('/ride/passed/passenger/'+Current.user.info.id)
+      .then(function(res){
         if(res.data.result == 1){
-          $scope.d_passed = res.data.content;
+          $scope.p_passed = res.data.content;
         }
-        else $scope.d_passed = 0;
-    },function(res){ console.log('FAIL : '+res.data); });
-
-    $http.get('/ride/passed/passenger/'+Current.user.info.id)
-    .then(function(res){
-      if(res.data.result == 1){
-        $scope.p_passed = res.data.content;
-      }
-      else $scope.p_passed = 0;
-    },function(res){ console.log('FAIL : '+res.data); });
-
+        else $scope.p_passed = 0;
+      },function(res){ console.log('FAIL : '+res.data); });
+    }; getPassedRidesPassenger();
 
     /***************************** RIDES REQUESTS *****************************/
 
-
+    /* Get sended requests */
     $http.get('/ride/sended/'+Current.user.info.id)
     .then(function(res){
       if(res.data.result == 1){
         $scope.s_requests = res.data.content;
       }
+      else $scope.s_requests = 0;
     },function(res){  console.log('FAIL : '+res.data); });
 
-    $http.get('/ride/received/'+Current.user.info.id)
-    .then(function(res){
-      if(res.data.result == 1){
-        $scope.r_requests = res.data.content;
-      }
-    },function(res){ console.log('FAIL : '+res.data); });
-
-    $scope.proposeRide = function(){
-      $location.path('/proposal');
-    }
-
+    /* Received requests table is based on comming rides */
 
 
     /***************************** SHOW POP ***********************************/
-
 
 
     $scope.ridePop = function(ride){
@@ -148,11 +143,23 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
       $http.post('/ride/passenger',post)
       .then(function(res){
         if(res.data.result == 1){
-          request.Requests.acceptedDate = new Date();
+          $scope.notif = {
+                            type:'alert-success',
+                            show:true,
+                            title:'Enregistré !',
+                            message:'Ce passager a bien été ajouté.'
+                          };
+          getCommingRidesDriver();
         }
         else{
-
+          $scope.notif = {
+                            type:'alert-danger',
+                            show:true,
+                            title:'Oupss !',
+                            message:'Nous ne parvenons pas à enregistrer ce passager.'
+                          };
         }
+        $timeout(function(){ $scope.notif = {}; },3000);
       },function(res){ console.log('FAIL : '+res.data); });
     }
 
@@ -162,17 +169,67 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
       $http.post('/ride/refuse',post)
       .then(function(res){
         if(res.data.result == 1){
-          request.Requests.refusedDate = new Date();
+          $scope.notif = {
+                            type:'alert-warning',
+                            show:true,
+                            title:'Enregistré !',
+                            message:'Votre refus a bien été enregistré.'
+                          };
+          getCommingRidesDriver();
         }
         else{
-
+          $scope.notif = {
+                            type:'alert-danger',
+                            show:true,
+                            title:'Oupss !',
+                            message:'Nous ne parvenons pas à enregistrer votre refus.'
+                          };
         }
+        $timeout(function(){ $scope.notif = {}; },3000);
       },function(res){ console.log('FAIL : '+res.data); });
     }
 
-    /***************************** MARK A DRIVER ******************************/
+    /************************** MARK A DRIVER BY RIDE ***************************/
 
-    $scope.mark = function(){
+    $scope.mark = function(ride,type){
+      var post = {
+                    rated:ride.driver.id,
+                    rater:Current.user.info.id,
+                    ride:ride.id,
+                    type: (type == 1) ? 'positive' : 'negative'
+                  };
+      $http.post('/ride/mark',post)
+      .then(function(res){
+        if(res.data.result == 1){
+          $scope.notif = {
+                            type:'alert-success',
+                            show:true,
+                            title:'Oupss !',
+                            message:'Votre note a bien été enregistrée.'
+                          };
+          getPassedRidesPassenger();
+        }
+        else{
+          $scope.notif = {
+                            type:'alert-danger',
+                            show:true,
+                            title:'Oupss !',
+                            message:'Nous ne parvenons pas à enregistrer votre note.'
+                          };
+        }
+        $timeout(function(){ $scope.notif = {}; },3000);
+      },function(res){ console.log('FAIL : '+res.data); });
+    }
+
+
+    /**************************** DELETE A RIDE *******************************/
+
+
+    $scope.dropRide = function(ride){
+
+    }
+
+    $scope.dropRideConfirmed = function(ride){
 
     }
 
