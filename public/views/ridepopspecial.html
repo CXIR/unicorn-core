@@ -1,69 +1,71 @@
-<div class="panel panel-primary ride-pop" ng-show="pop.show">
+<div class="panel panel-primary ride-pop" ng-show="special.show">
   <div class="panel-heading">
-    <a class="close" aria-hidden="true" ng-click="close()">&times;</a>
+    <a class="close" aria-hidden="true" ng-click="closeSpecial()">&times;</a>
     <h3 class="panel-title">DETAILS DU TRAJET</h3>
   </div>
   <div class="panel-body">
-    <h4 ng-bind="pop.ride.driver.lastname | uppercase +' '+ pop.ride.driver.firstname"></h4>
+    <h4 ng-bind="special.ride.ad_message"></h4>
     <hr/>
 
     <b class="text-success"><i class="fa fa-map-marker"></i> DÉPART</b>
     <table class="table">
       <tr>
-        <td colspan="2">
-          <p class="text-primary" ng-bind="(pop.ride.departure == undefined) ? pop.ride.dep_city : pop.ride.departure.name"></p>
+        <td>
+          <b class="text-primary" ng-bind="(special.ride.departure_city == null) ? special.ride.departure.name : special.ride.departure_city"></b>
+        </td>
+        <td>
+          <p ng-bind="special.ride.departure_time"></p>
         </td>
       </tr>
       <tr>
-        <td ng-bind="(pop.ride.departure == undefined) ? pop.ride.dep_adress : pop.ride.departure.adress"></td>
-        <td ng-bind="(pop.ride.departure == undefined) ? pop.ride.dep_city+'-'+pop.ride.dep_postalCode : pop.ride.departure.city+'-'+pop.ride.departure.postalCode"></td>
+        <td ng-bind="(special.ride.departure_adress == null) ? special.ride.departure.adress : special.ride.departure_adress"></td>
+        <td ng-bind="(special.ride.departure_city == null) ? special.ride.departure.city+'-'+special.ride.departure.postalCode : special.ride.departure_city+'-'+special.ride.departure_postalCode"></td>
       </tr>
     </table>
 
     <b class="text-success"><i class="fa fa-map-marker"></i> ARRIVÉE</b>
     <table class="table">
       <tr>
-        <td colspan="2">
-          <p class="text-primary" ng-bind="(pop.ride.arrival == undefined) ? pop.ride.arr_city : pop.ride.arrival.name"></p>
-        </td>
-      </tr>
-      <tr>
-        <td ng-bind="(pop.ride.arrival == undefined) ? pop.ride.arr_adress : pop.ride.arrival.adress"></td>
-        <td ng-bind="(pop.ride.arrival == undefined) ? pop.ride.arr_city+'-'+pop.ride.arr_postalCode : pop.ride.arrival.city+'-'+pop.ride.arrival.postalCode"></td>
-      </tr>
-    </table>
-
-    <b class="text-success"><i class="fa fa-users"></i> PASSAGERS</b>
-    <table class="table">
-      <tr>
-        <th>NOM COMPLET</th>
-        <th>MAIL</th>
-        <th>BUREAU</th>
-      </tr>
-      <tr ng-repeat="passenger in pop.ride.passengers">
-        <td ng-bind="passenger.lastname | uppercase +' '+ passenger.firstname"></td>
-        <td ng-bind="passenger.mailAdress"></td>
-        <td ng-bind="passenger.site.name"></td>
-      </tr>
-    </table>
-
-    <b class="text-success"><i class="fa fa-hourglass"></i> DEMANDES</b>
-    <table class="table">
-      <tr>
-        <td>NOM COMPLET</td>
-        <td>MAIL</td>
-        <td>BUREAU</td>
-        <td>ACTION</td>
-      </tr>
-      <tr ng-repeat="ask in ride.asks">
-        <td ng-bind="ask.lastname | uppercase +' '+ ask.firstname"></td>
-        <td ng-bind="ask.mailAdress"></td>
-        <td ng-bind="ask.site.name"></td>
         <td>
-          <i class="fa fa-check fa-2x text-success" ng-click="acceptAsk(ask,ride)"></i>
-          <i class="fa fa-times fa-2x text-danger" ng-click="refuseAsk(ask,ride)"></i>
+          <b class="text-primary" ng-bind="(special.ride.arrival_city == null) ? special.ride.arrival.name : special.ride.arrival_city"></b>
+        </td>
+        <td>
+          <p ng-bind="special.ride.arrival_time"></p>
         </td>
       </tr>
+      <tr>
+        <td ng-bind="(special.ride.arrival_adress == null) ? special.ride.arrival.adress : special.ride.arrival_adress"></td>
+        <td ng-bind="(special.ride.arrival_city == null) ? special.ride.arrival.city+'-'+special.ride.arrival.postalCode : special.ride.arrival_city+'-'+special.ride.arrival_postalCode"></td>
+      </tr>
     </table>
+    <hr/>
+    <b class="text-success"><i class="fa fa-users"></i> PASSAGERS</b>
+    <p ng-show="special.ride.passengers.length == 0">Pas de Passager pour le moment</p>
+    <table class="table" ng-show="special.ride.passengers.length != 0">
+      <thead>
+        <tr>
+          <th>Nom Complet</th>
+          <th>Bureau</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="passenger in special.ride.passengers">
+          <td ng-bind="passenger.lastname+' '+passenger.firstname"></td>
+          <td ng-bind="passenger.Site.name"></td>
+          <td><i class="fa fa-check-square-o text-success fa-2x"></i></td>
+        </tr>
+      </tbody>
+    </table>
+    <hr/>
+      <b class="text-success"><i class="fa fa-hourglass"></i> DEMANDES</b>
+      <p ng-show="special.ride.requests.length == 0">Pas de Nouvelle Demande pour le moment</p>
+      <p ng-hide="special.ride.requests.length == 0">
+        Vous avez <b ng-bind="special.ride.requests.length"></b> en attente de traitement.
+        Rendez vous dans le bloc MES DEMANDES.
+      </p>
+  </div>
+  <div class="panel-footer">
+    <a href="" class="btn btn-danger" ng-click="deleteRide(ride)">SUPPRIMER</a>
   </div>
 </div>

@@ -139,13 +139,13 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
       if(!ncar.registrationNumber.match(/[A-Z][A-Z]\-[0-9][0-9][0-9]\-[A-Z][A-Z]/g)){
         $scope.snap = {show:true,message:'Votre Plaque d\'Immatriculation n\'est pas valide.'};
       }
-      else if(ncar.brand.match(/\s+/g) || ncar.brand == undefined){
+      else if(ncar.brand.match(/^\s+$/g) || ncar.brand == undefined){
         $scope.snap = {show:true,message:'Veuillez renseigner une Marque.'};
       }
-      else if(ncar.model.match(/\s+/g) || ncar.model == undefined){
+      else if(ncar.model.match(/^\s+$/g) || ncar.model == undefined){
         $scope.snap = {show:true,message:'Veuillez renseigner un Modèle.'};
       }
-      else if(ncar.placesNumber.match(/\s+/g) || ncar.placesNumber == undefined){
+      else if(ncar.placesNumber.match(/^\s+$/g) || ncar.placesNumber == undefined){
         $scope.snap = {show:true,message:'Veuillez renseigner le nombre de Places passagères.'};
       }
       else if(ncar.vehicleType == undefined || ncar.vehicleType == ''){
@@ -163,7 +163,6 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
         if(car == 0){
           $http.post('/vehicle/new',post)
           .then(function(res){
-            console.log(res.data);
             if(res.data.result == 1){
               getCar();
               $scope.notif = {
@@ -183,6 +182,7 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
             }
             $scope.snap = {};
             $timeout(function(){ $scope.notif = {}; },3000);
+            angular.element(document.querySelector('#registration')).removeClass('has-error');
           },function(res){ console.log('FAIL : '+res.data); });
         }
         else if(car != 0){
@@ -207,6 +207,7 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
             }
             $timeout(closeNotif(),3000);
             $scope.snap = {};
+            angular.element(document.querySelector('#registration')).removeClass('has-error');
           },function(res){ console.log('FAIL : '+res.data); });
         }
       }

@@ -88,19 +88,23 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$http','$rout
 
         $scope.requestSeat = function(ride){
           var post = {ride: ride.id, user: Current.user.info.id};
-          $http.post('/passenger_request/new',post)
+          $http.post('/ride/request',post)
           .then(function(res){
             if(res.data.result == 1){
-              ride.notif = true;
+              $scope.notif = {
+                                type:'alert-success',
+                                show:true,
+                                title:'Envoyé !',
+                                message:'Votre demande de place pour ce trajet à bien été envoyée.'
+                              };
             }
             else if(res.data.result == 0){
               $scope.notif = {
                                 type:'alert-warning',
                                 show:true,
-                                title:'Déjà fait !',
-                                message:'Vous avez déjà envoyé une demande pour ce trajet'
+                                title:'Déjà Fait !',
+                                message:'Vous avez déjà demandé une place pour ce trajet.'
                               };
-              $scope.already = 'disabled';
             }
             else{
               $scope.notif = {

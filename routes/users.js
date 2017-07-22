@@ -16,7 +16,11 @@ router.get('/all',function(req,res){
                   $ne: 0
                 }
           },
-    include: [ models.Site, models.Status, models.Ride ]
+          include : [
+                      { model: models.Site },
+                      { model: models.Status },
+                      { model: models.Ride, as: 'Passengers' }
+                    ]
   })
   .then(users => {
     let results = [];
@@ -38,7 +42,11 @@ router.get('/all/:id',function(req,res){
                   $ne: req.params.id
                 }
           },
-    include: [ models.Site, models.Status, models.Ride ]
+          include : [
+                      { model: models.Site },
+                      { model: models.Status },
+                      { model: models.Ride, as: 'Passengers' }
+                    ]
   })
   .then(users => {
     let results = [];
@@ -55,8 +63,26 @@ router.get('/all/:id',function(req,res){
 
 /** Get a single user | 04-003 */
 router.get('/:id',function(req,res){
+
     User.find({
       where:{ id: req.params.id },
+      include : [
+                  { model: models.Site },
+                  { model: models.Status },
+                  { model: models.Ride, as: 'Passengers' }
+                ]
+    })
+    .then(user => {
+      if(user) res.json({result:1, content:user.responsify()});
+      else res.json({result:0, message:'User not found w/ url 04-003'});
+    })
+    .catch(err => { res.json({result: -1, message:'Unable to find User w/ url 04-003', error: err}); });
+});
+
+/** Get a single User by mail | 04-003 */
+router.get('/mail/:mailAdress',function(req,res){
+    User.find({
+      where:{ mailAdress: req.params.mailAdress },
       include : [ models.Site, models.Status, models.Ride ]
     })
     .then(user => {

@@ -14,7 +14,7 @@ router.get('/',function(req,res,next){
                 {
                   model: models.User,
                   as: 'Plaintiff',
-                  include: [ models.Site, models.Status ]
+                  include: [ {model:models.Site}, {model:models.Status} ]
                 },
                 {
                   model: models.User,

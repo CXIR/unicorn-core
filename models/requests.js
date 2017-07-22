@@ -1,6 +1,7 @@
 'use strict';
+
 module.exports = function(sequelize, DataTypes) {
-  var Passenger_Request = sequelize.define('Passenger_Request', {
+  var Requests = sequelize.define('Requests', {
     id: {
       type : DataTypes.BIGINT,
       primaryKey : true,
@@ -24,14 +25,15 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
-        Passenger_Request.belongsTo(models.User);
-        Passenger_Request.belongsToMany(models.Ride,{
+        //Passenger_Request.belongsTo(models.User);
+        /*Passenger_Request.belongsToMany(models.Ride,{
           through: 'Asks'
-        });
+        });*/
       }
     },
     instanceMethods: {
       responsify: function() {
+        /*
         let result = {};
         result.id = this.id;
         result.requestDate = this.requestDate;
@@ -43,9 +45,10 @@ module.exports = function(sequelize, DataTypes) {
         if(this.Rides){
           result.ride = this.Rides[0];
         }
-        return result;
+        return result
+        */
       }
     }
   });
-  return Passenger_Request;
+  return Requests;
 };

@@ -1,16 +1,22 @@
 'use strict';
 
-/*REPORT : signalement utilisateur*/
-
 module.exports = function(sequelize, DataTypes) {
-  var Report = sequelize.define('Report', {
+  var Notif = sequelize.define('Notif', {
     id: {
       type : DataTypes.BIGINT,
       primaryKey : true,
       autoIncrement : true,
     },
+    type: {
+      type : DataTypes.STRING,
+      allowNull: false
+    },
+    title: {
+      type : DataTypes.STRING,
+      allowNull: false
+    },
     message: {
-      type : DataTypes.TEXT
+      type: DataTypes.STRING
     }
   }, {
     paranoid: true,
@@ -18,24 +24,22 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
-        Report.belongsTo(models.User, { as:'Plaintiff' });
-        Report.belongsTo(models.User, { as:'Reported' });
+        Notif.belongsTo(models.User);
       }
     },
     instanceMethods: {
       responsify: function() {
         let result = {};
         result.id = this.id;
+        result.type = this.type;
+        result.title = this.title;
         result.message = this.message;
-        if(this.Plaintiff){
-          result.plaintiff = this.Plaintiff.responsify();
-        }
-        if(this.Reported){
-          result.reported = this.Reported.responsify();
+        if(this.User){
+          result.user = this.User.responsify();
         }
         return result;
       }
     }
   });
-  return Report;
+  return Notif;
 };

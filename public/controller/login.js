@@ -3,43 +3,60 @@
 /**
 *View : login
 */
-shareAppControllers.controller('loginCtrl',['$scope','$http','Current',
-    function($scope,$http,Current){
+shareAppControllers.controller('loginCtrl',['$scope','$http','Current','$location',
+    function($scope,$http,Current,$location){
+
         $scope.reset = function(){
             $scope.log = {};
             $scope.error = {};
-            angular.element(document.querySelector('#pin')).removeClass('has-error');
+            angular.element(document.querySelector('#mail')).removeClass('has-error');
             angular.element(document.querySelector('#pw')).removeClass('has-error');
         }
 
         $scope.login = function(log){
-          angular.element(document.querySelector('#pin')).removeClass('has-error');
+          angular.element(document.querySelector('#mail')).removeClass('has-error');
           angular.element(document.querySelector('#pw')).removeClass('has-error');
 
-          if((log.pin == null && log.pw == null) || (log.pin == '' && log.pw == '')){
-            angular.element(document.querySelector('#pin, #pw')).addClass('has-error');
+          if(log == undefined){
+            angular.element(document.querySelector('#mail')).addClass('has-error');
+            angular.element(document.querySelector('#pw')).addClass('has-error');
             $scope.error = {uncorrect:true,message:'Remplissez les champs ci-dessous'};
           }
-          else if(log.pin.match(/\s+/g) && log.pw.match(/\s+/g)){
-            angular.element(document.querySelector('#pin, #pw')).addClass('has-error');
+          else if(log.mail == undefined){
+            angular.element(document.querySelector('#mail')).addClass('has-error');
+            $scope.error = {uncorrect:true,message:'Votre Adresse Mail est obligatoire'};
+          }
+          else if(log.mail.match(/\s+/g) && log.pw.match(/\s+/g)){
+            angular.element(document.querySelector('#mail')).addClass('has-error');
+            angular.element(document.querySelector('#pw')).addClass('has-error');
             $scope.error = {uncorrect:true,message:'Remplissez les champs ci-dessous'};
           }
-          else if(log.pin.match(/\s+/g) || log.pin == null || log.pin == ''){
-            angular.element(document.querySelector('#pin')).addClass('has-error');
-            $scope.error = {uncorrect:true,message:'Votre identifiant est incorrect'};
-          }
-          else if(log.pw.match(/\s+/g) || log.pw == null || log.pw == ''){
+          else if(log.pw == undefined){
             angular.element(document.querySelector('#pw')).addClass('has-error');
             $scope.error = {uncorrect:true,message:'Le Mot de Passe est obligatoire'};
           }
+          else if(log.pw.match(/\s+/g) || log.pw == ''){
+            angular.element(document.querySelector('#pw')).addClass('has-error');
+            $scope.error = {uncorrect:true,message:'Le Mot de Passe est obligatoire'};
+          }
+          else if(!log.mail.match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/g)){
+            angular.element(document.querySelector('#mail')).addClass('has-error');
+            $scope.error = {uncorrect:true,message:'Votre Adresse Mail est invalide'};
+          }
           else{
-            $scope.loading = true;
-            /*
-            $http.post('/',{'pin':log.pin,'pw':log.pw})
-            .then(function(res){
+            var post = { mail: log.mail, pass:btoa(log.pw) };
+            $scope.error = {};
 
-            }, function(res) { console.log('FAIL : '+res.data); });
-            */
+            $http.post('/login',post)
+            .then(function(res){
+              if(res.data.result == 1){
+                Current.user.info = res.data.object;
+                Current.user.valid = 1;
+                $location.path('/home');
+              }
+              else if(res.data.result == 0) $scope.error = { uncorrect:true, message:'Vos identifiants sont incorrects !'};
+              else $scope.error = {uncorrect:true,message:'Impossible de vous identifier, veuillez retenter plus tard.'};
+            },function(res){ console.log('FAIL : '+res.data); });
           }
         }
     }

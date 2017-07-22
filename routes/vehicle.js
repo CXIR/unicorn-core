@@ -98,7 +98,7 @@ router.get('/unvalidate/:id',function(req,res,next){
   .then(vehicle => {
     if(vehicle){
       vehicle.updateAttributes({
-        isVehiculeOK: 0
+        isVehicleOK: 0
       });
       res.json({result:1, message:'Vehicle successfully unvalidate w/ url '});
     }

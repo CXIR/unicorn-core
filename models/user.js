@@ -57,7 +57,12 @@ module.exports = function(sequelize, DataTypes) {
         User.belongsTo(models.Status);
 
         User.belongsToMany(models.Ride, {
-          through: 'Passengers'
+          through: 'Passengers',
+          as: 'Passengers'
+        });
+        User.belongsToMany(models.Ride,{
+          through: 'Requests',
+          as: 'Requests'
         });
       }
     },

@@ -41,7 +41,7 @@ var shareApp = angular.module('shareApp',[
 * GLOBAL VARIABLES / ANGULAR SESSION HANDLING
 */
 shareApp.value('Current',{
-  user: { info: {id:4}, valid: 1}
+  user: { info: null, valid: 0}
 });
 
 
@@ -114,7 +114,7 @@ shareApp.config(['$routeProvider','$locationProvider',
 /**
 * NAVIGATION BAR
 */
-shareApp.directive('myNav',['$location',function($location){
+shareApp.directive('myNav',['$location','Current',function($location,Current){
   return {
     restrict: 'A',
     replace: true,
@@ -127,6 +127,12 @@ shareApp.directive('myNav',['$location',function($location){
         else if(current[1] == 'rides') angular.element(document.querySelector('#rides')).addClass('active');
         else if(current[1] == 'message') angular.element(document.querySelector('#message')).addClass('active');
         else if(current[1] == 'home') angular.element(document.querySelector('#home')).addClass('active');
+
+        scope.logout = function(){
+            Current.user = {};
+            Current.valid = 0;
+            $location.path('/login');
+        }
     }
   };
 }]);
@@ -187,9 +193,11 @@ shareApp.directive('ridePopSpecial',[
       transclude: true,
       templateUrl: 'views/ridepopspecial.html',
       link: function (scope, element, attrs) {
-          scope.closeRidePop = function(){
-              scope.pop = {};
+          scope.closeSpecial = function(){
+              scope.special = {};
           }
+
+          scope.daaaate = new Date();
       }
     };
   }
@@ -215,22 +223,6 @@ shareApp.directive('notif',[
   }
 ]);
 
-// Dialog Box
-shareApp.directive('dialog',[
-  function(){
-    return {
-      restrict: 'A',
-      replace: true,
-      transclude: true,
-      templateUrl: 'views/dialog.html',
-      link:function(scope, element, attrs){
-        scope.closeDialog = function(){
-          scope.dialog =  {};
-        }
-      }
-    };
-  }
-]);
 
 /**
 * USER REPORT
@@ -252,7 +244,9 @@ shareApp.directive('userReport',['$http',
 ]);
 
 
-// Date Picker
+/**
+* DATE PICKER
+*/
 shareApp.directive('datepicker',[
   function(){
     return{
@@ -359,6 +353,8 @@ shareApp.directive('datepicker',[
     };
   }
 ]);
+
+
 
 /**
 *

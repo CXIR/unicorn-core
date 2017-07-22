@@ -49,8 +49,8 @@
           <em class="text-primary" ng-show="car == 0">Vous n'avez renseigné aucun véhicule pour le moment</em>
           <p class="text-warning" ng-show="car.isVehicleOK == 0 && car != 0">Ce véhicule n'a pas encore été validé!</p>
           <p class="text-success" ng-show="car.isVehicleOK == 1 && car != 0">Ce véhicule a été validé !</p>
-        <div>
-        <p class="text-warning" ng-show="snap.show" ng-bind="snap.message"></p>
+        </div>
+        <p class="text-danger" ng-show="snap.show" ng-bind="snap.message"></p>
 
         <div class="form-group">
           <input type="text" placeholder="Marque" class="form-control" ng-model="car.brand">

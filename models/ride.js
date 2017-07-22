@@ -70,9 +70,9 @@ module.exports = function(sequelize, DataTypes) {
           through: 'Passengers',
           as: 'Passengers'
         });
-        Ride.belongsToMany(models.Passenger_Request, {
-          through: 'Asks',
-          as: 'Asks'
+        Ride.belongsToMany(models.User, {
+          through: 'Requests',
+          as: 'Requests'
         });
 
         Ride.belongsTo(models.Site, { as: 'Departure'});
@@ -108,8 +108,8 @@ module.exports = function(sequelize, DataTypes) {
         if(this.Passengers){
           result.passengers = this.Passengers;
         }
-        if(this.Asks){
-          result.asks = this.Asks;
+        if(this.Requests){
+          result.requests = this.Requests;
         }
         return result;
       }

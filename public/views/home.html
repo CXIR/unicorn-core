@@ -1,8 +1,11 @@
 <title>PTC | Accueil</title>
 
 <div user-pop></div>
+<div ride-pop-special></div>
+<div ride-pop></div>
+<div notif></div>
 
-<section>
+<section class="{{ pop.display }} {{ upop.display }} {{ special.display }}">
 
   <div my-nav></div>
 
@@ -24,7 +27,7 @@
       <table class="table">
         <tr>
           <td>
-            <p>Anniversaire : <b ng-bind="current.birthdate | date:'yyyy-MM-dd'"></b> <b ng-bind="current.birthdate | age:'current.birthdate'"></b> ans)</p>
+            <p>Anniversaire : <b ng-bind="current.birthdate | date:'dd MMMM yyyy'"></b> (<b ng-bind="current.birthdate | age:'current.birthdate'"></b> ans)</p>
           </td>
           <td>
             <p>Bureau : <b ng-bind="current.site.name"></b></p>
@@ -61,27 +64,30 @@
       <h4>MON PROCHAIN TRAJET</h4>
       <p class="text-primary" ng-show="next == 0">Aucun trajet à venir !</p>
       <div ng-hide="next == 0">
-
-        <div class="panel panel-default content" ng-class="(next.driver.id == current.id) ? 'panel-success' : 'panel-primary'">
+        <br/>
+        <br/>
+        <div class="panel panel-default content" ng-class="(next.drive == true) ? 'panel-success' : 'panel-primary'">
           <div class="panel-heading">
-            <h4 class="panel-title" ng-bind="(next.driver.id == current.id) ? 'Conducteur' : 'Passager'"></h4>
+            <h4 class="panel-title" ng-bind="(next.drive == true) ? 'Conducteur' : 'Passager'"></h4>
           </div>
           <div class="panel-body">
+            <b ng-bind="ride.ad_message"></b>
             <table class="table-inbox">
               <tr>
                 <td class="cell-s">
-                  <a href="" ng-click="currentPreview(next.driver)">
-                    <img src="toolbox/asset/images/default.png" width="100" height="100"/>
-                  </a>
+                  <i class="fa fa-users fa-2x text-primary"></i>
+                  <p ng-bind="next.passengers.length"></p>
                 </td>
                 <td>
-                  <p ng-show="next.driver.id != next.id">Proposé par : {{ next.driver.lastname | uppercase }} {{ next.driver.firstname }}</p>
-                  <p><b>{{ next.departure.name }}</b> <i class="fa fa-arrow-right fa-1x"></i> <b>{{  next.arrival.name }}</b></p>
-                  <p>Le : {{  next.departure_date | date:'yyyy-MM-dd' }}, à {{ }}</p>
-                  <p>Places Disponibles : {{  }}</p>
+                  <p>
+                    <b ng-bind="(next.departure_city != null) ? next.departure_city : next.departure.name"></b>
+                    <i class="fa fa-arrow-right fa-1x"></i>
+                    <b ng-bind="(next.arrival_city != null) ? next.arrival_city : next.arrival.name"></b>
+                  </p>
+                  <p>Le <b ng-bind="next.departure_date | date:'dd MMMM yyyy'"></b>, à <b ng-bind="next.departure_time"></b></p>
                 </td>
                 <td>
-                  <a href="" class="btn btn-primary disabled">Complet</a><!-- ng-show="ride.seats == 0 && !current_is_passenger" -->
+                  <a href="" class="btn btn-primary disabled" ng-show="next.remain == 0">Complet</a>
                 </td>
               </tr>
             </table>
@@ -115,30 +121,31 @@
 
       <div class="panel panel-success in-container" ng-repeat="ride in d_comming">
         <div class="panel-heading">
+          <p>
+            <b ng-bind="(ride.departure_city != null) ? ride.departure_city : ride.departure.name"></b>
+            <i class="fa fa-arrow-right fa-1x"></i>
+            <b ng-bind="(ride.arrival_city != null) ? ride.arrival_city : ride.arrival.name"></b>
+          </p>
         </div>
         <div class="panel-body">
           <table class="table-inbox">
             <tr>
               <td class="cell-s">
-                <i class="fa fa-currents fa-2x text-primary"></i>
+                <i class="fa fa-users fa-2x text-primary"></i>
                 <p ng-bind="ride.passengers.length"></p>
               </td>
               <td>
-                <p>
-                  <b ng-bind="(ride.departure.name != null) ? ride.departure.name : departure_city"></b>
-                  <i class="fa fa-arrow-right fa-1x"></i>
-                  <b ng-bind="(ride.arrival.name != null) ? ride.arrival.name : arrival_city"></b></p>
-                <p>Le {{ ride.departure_date | date:'dd/MM/yyyy' }}</p>
-                <p ng-bind="'Vous proposez '+ride.seats+' places.'"></p>
+                <p>Le <b ng-bind="ride.departure_date | date:'dd MMMM yyyy'"></b> à <b ng-bind="ride.departure_time"></b></p>
+                <p>Il reste <b ng-bind="ride.remain"></b> places disponibles.</p>
               </td>
               <td>
-                <a href="" class="btn btn-danger" ng-bind="ride.requests"></a>
+                <a href="#asks" class="btn" ng-class="(ride.requests.length == 0) ? 'btn-default' : 'btn-danger'" ng-bind="ride.requests.length"></a>
               </td>
             </tr>
           </table>
         </div>
         <div class="panel-footer">
-          <a href="" ng-click="ridePop(ride.id)">Détails</a>
+          <a href="" ng-click="ridePopSpecial(ride)">Détails <i class="fa fa-chevron-right"></i></a>
         </div>
       </div>
 
@@ -148,33 +155,34 @@
       <h4>MES TRAJETS À VENIR : PASSAGER</h4>
       <p ng-show="p_comming == 0">Vous ne participez à aucun trajet dans les jours à venir.</p>
 
-      <div class="panel panel-primary content" ng-repeat="ride in p_comming">
+      <div class="panel panel-primary in-container" ng-repeat="ride in p_comming">
         <div class="panel-heading">
+          <p ng-bind="ride.ad_message"></p>
         </div>
         <div class="panel-body">
           <table class="table-inbox">
             <tr>
               <td class="cell-s">
-                <a href="" ng-click="currentPop(ride.driver)">
+                <a href="" ng-click="userPop(ride.driver)">
                   <img src="toolbox/asset/images/default.png" width="100" height="100"/>
                 </a>
               </td>
               <td>
-                <p>
-                  <b ng-bind="(ride.departure.name != null) ? ride.departure.name : ride.departure_city"></b>
-                  <i class="fa fa-arrow-right fa-1x"></i>
-                  <b ng-bind="(ride.arrival.name != null) ? ride.arrival.name : ride.arrival_city"></b></p>
-                <p>Le {{ ride.departure_date | date:'dd/MM/yyyy' }}</p>
-                <p class="text-success">Votre demande a été acceptée pour ce trajet</p>
-                <p></p>
+                <p>Proposé par : <b ng-bind="ride.driver.lastname"></b> <b ng-bind="ride.driver.firstname"></b></p>
+                <p><b ng-bind="ride.departure.name"></b> <i class="fa fa-arrow-right fa-1x"></i> <b ng-bind="ride.arrival.name"></b></p>
+                <p>Le : <b ng-bind="ride.departure_date | date:'dd MMMM yyyy'"></b> à <b ng-bind="ride.departure_time"></b></p>
+                <p>Places Disponibles : <b ng-bind="ride.remain"></b></p>
+              </td>
+              <td>
+                <a href="" class="btn btn-primary disabled" ng-show="ride.remain == 0 && !ride.notif">Complet</a>
               </td>
             </tr>
           </table>
-        </div>
-        <div class="panel-footer">
-          <a href="" ng-click="ridePop(ride)">Détails</a>
-        </div>
       </div>
+      <div class="panel-footer">
+        <a href="" ng-click="ridePop(ride)">Détails <i class="fa fa-chevron-right"></i></a>
+      </div>
+    </div>
 
     </div>
   </div>
@@ -189,42 +197,76 @@
       <br/>
       <!-- As Driver -->
       <div ng-show="driver">
+      <p ng-show="d_passed == 0">Vous n'avez proposé aucun trajet précédemment.</p>
 
+      <div class="panel panel-success content" ng-repeat="ride in d_passed" ng-hide="d_passed == 0">
+        <div class="panel-heading">
+          <p>
+            <b ng-bind="(ride.departure_city != null) ? ride.departure_city : ride.departure.name"></b>
+            <i class="fa fa-arrow-right fa-1x"></i>
+            <b ng-bind="(ride.arrival_city != null) ? ride.arrival_city : ride.arrival.name"></b>
+          </p>
+        </div>
+        <div class="panel-body">
+          <table class="table-inbox">
+            <tr>
+              <td class="cell-s">
+                <i class="fa fa-users fa-2x text-primary"></i>
+                <p ng-bind="ride.passengers.length"></p>
+              </td>
+              <td>
+                <p>Le <b ng-bind="ride.departure_date | date:'dd MMMM yyyy'"></b> à <b ng-bind="ride.departure_time"></b></p>
+                <p>Il restait <b ng-bind="ride.remain"></b> places disponibles.</p>
+              </td>
+              <td>
+                <i class="fa fa-flag-checkered fa-3x text-success"></i>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="panel-footer">
+          <a href="" ng-click="ridePop(ride)">Détails <i class="fa fa-chevron-right"></i></a>
+        </div>
       </div>
+      </div>
+
       <!-- As Passenger -->
       <div ng-hide="driver">
-
-        <div class="panel panel-primary content" ng-repeat="ride in p_passed">
+        <p ng-show="p_passed == 0">Vous n'avez participé à aucun trajet précédemment.</p>
+        <div class="panel panel-primary content" ng-repeat="ride in p_passed" ng-hide="p_passed == 0">
           <div class="panel-heading">
+            <p ng-bind="ride.ad_message"></p>
           </div>
           <div class="panel-body">
             <table class="table-inbox">
               <tr>
                 <td class="cell-s">
-                  <a href="" ng-click="currentPop(ride.driver)">
+                  <a href="" ng-click="userPop(ride.driver)">
                     <img src="toolbox/asset/images/default.png" width="100" height="100"/>
                   </a>
                 </td>
                 <td>
-                  <p>
-                    <b ng-bind="(ride.departure.name != null) ? ride.departure.name : ride.departure_city"></b>
-                    <i class="fa fa-arrow-right fa-1x"></i>
-                    <b ng-bind="(ride.arrival.name != null) ? ride.arrival.name : ride.arrival_city"></b></p>
-                  <p>Le {{ ride.departure_date | date:'dd/MM/yyyy' }}</p>
-                  <p class="text-success">Votre demande a été acceptée pour ce trajet</p>
+                  <p>Proposé par : <b ng-bind="ride.driver.lastname"></b> <b ng-bind="ride.driver.firstname"></b></p>
+                  <p><b ng-bind="ride.departure.name"></b> <i class="fa fa-arrow-right fa-1x"></i> <b ng-bind="ride.arrival.name"></b></p>
+                  <p>Le : <b ng-bind="ride.departure_date | date:'dd MMMM yyyy'"></b> à <b ng-bind="ride.departure_time"></b></p>
                   <p></p>
                 </td>
                 <td>
-                  <i class="fa fa-thumbs-up fa-3x text-success"></i>
-                  <i class="fa fa-thumbs-down fa-3x text-danger"></i>
+                  <p ng-hide="ride.passengers.marked">
+                    <i class="fa fa-thumbs-up fa-3x" ng-click="mark(ride,1)"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <i class="fa fa-thumbs-down fa-3x" ng-click="mark(ride,2)"></i>
+                  </p>
+                  <a ng-show="ride.passengers.marked" class="btn btn-success disabled">
+                    Noté !
+                  </a>
                 </td>
               </tr>
             </table>
-          </div>
-          <div class="panel-footer">
-            <a href="" ng-click="ridePop(ride.id)">Détails</a>
-          </div>
         </div>
+        <div class="panel-footer">
+          <a href="" ng-click="ridePop(ride)">Détails <i class="fa fa-chevron-right"></i></a>
+        </div>
+      </div>
 
       </div>
     </div>
@@ -234,42 +276,48 @@
     <div class="well bloc bloc-l" ng-init="received = true">
       <h4>MES DEMANDES</h4>
       <ul class="nav nav-tabs">
-        <li ng-class="(received == true) ? 'active' : ''"><a href="" ng-click="received = true">Reçue(s)</a></li>
-        <li ng-class="(received == false) ? 'active' : ''"><a href="" ng-click="received = false">Envoyée(s)</a></li>
+        <li ng-class="(received == true) ? 'active' : ''">
+          <a href="" ng-click="received = true">Reçue(s)</a>
+        </li>
+        <li ng-class="(received == false) ? 'active' : ''">
+          <a href="" ng-click="received = false">Envoyée(s)</a>
+        </li>
       </ul>
       <br/>
         <!-- received requests -->
         <div ng-show="received">
-          <table class="table table-striped">
+          <p ng-show="d_comming == 0">Vous n'avez proposé aucun trajet dans les jours à venir.</p>
+          <table class="table table-striped" ng-hide="d_comming == 0">
             <thead>
               <tr>
                 <th>Trajet</th>
                 <th>Date</th>
                 <th>Passager</th>
-                <th>Statut</th>
+                <th>Action</th>
               </tr>
             </thead>
-            <tbody>
-              <tr ng-repeat="request in r_requests">
-                <td ng-click="">
-                  <p> {{ (request.ride.departure.name != null) ? request.ride.departure.name : request.ride.departure_city }}
+            <tbody ng-repeat="ride in d_comming">
+              <tr ng-repeat="request in ride.requests">
+                <td ng-click="ridePopSpecial(request)">
+                  <p> {{ (ride.departure_city == null) ? ride.departure.name : ride.departure_city }}
                   <i class="fa fa-arrow-right fa-1x"></i>
-                  {{ (request.ride.arrival.name != null) ? request.ride.arrival.name : request.ride.arrival_city }}</p>
+                  {{ (ride.arrival_city  == null) ? ride.arrival.name : ride.arrival_city }}</p>
                 </td>
-                <td ng-bind="request.ride.departure_date"></td>
-                <td ng-bind="request.current.lastname | uppercase + ' ' + request.current.firstname"></td>
+                <td ng-bind="ride.departure_date | date:'dd MMMM yyyy'"></td>
+                <td ng-bind="request.lastname+' '+request.firstname" ng-click="userPop(request)"></td>
                 <td>
-                  <i ng-show="request.acceptedDate != null" class="fa fa-check text-success"></i>
-                  <i ng-show="request.refusedDate != null" class="fa fa-times text-danger"></i>
-                  <i ng-show="request.acceptedDate == null && request.refusedDate == null" class="fa fa-exclamation text-warning"></i>
+                  <i class="fa fa-check text-success fa-2x" ng-click="acceptRequest(request,ride)"></i>
+                  <i class="fa fa-times text-danger fa-2x" ng-click="refuseRequest(request,ride)"></i>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
+
         <!-- sended resquests -->
         <div ng-hide="received">
-          <table class="table table-striped">
+          <p ng-show="s_requests == 0">Vous n'avez envoyé aucune demande à ce jour !</p>
+          <table class="table table-striped" ng-hide="s_requests == 0">
             <thead>
               <tr>
                 <th>Trajet</th>
@@ -280,17 +328,17 @@
             </thead>
             <tbody>
               <tr ng-repeat="request in s_requests">
-                <td ng-click="">
-                  <p> {{ (request.ride.Departure.name != null) ? request.ride.Departure.name : request.ride.departure_city }}
+                <td ng-click="ridePop(request)">
+                  <p> {{ (request.departure_city == null) ? request.departure.name : request.departure_city }}
                   <i class="fa fa-arrow-right fa-1x"></i>
-                  {{ (request.ride.Arrival.name != null) ? request.ride.Arrival.name : request.ride.arrival_city }}</p>
+                  {{ (request.arrival_city == null) ? request.arrival.name : request.arrival_city }}</p>
                 </td>
-                <td ng-bind="request.ride.departure_date | date:'dd/MM/yyyy'"></td>
-                <td>{{ request.ride.Driver.lastname | uppercase }} {{ request.ride.Driver.firstname }}</td>
+                <td ng-bind="request.departure_date | date:'dd MMMM yyyy'"></td>
+                <td ng-click="userPop(request.driver)">{{ request.driver.lastname | uppercase }} {{ request.driver.firstname }}</td>
                 <td>
-                  <i ng-show="request.acceptedDate != null" class="fa fa-check-circle text-success fa-2x"></i>
-                  <i ng-show="request.refusedDate != null" class="fa fa-times-circle text-danger fa-2x"></i>
-                  <i ng-show="request.acceptedDate == null && request.refusedDate == null" class="fa fa-exclamation-circle text-warning fa-2x"></i>
+                  <i ng-show="request.requests.acceptedDate != null" class="fa fa-check-circle text-success fa-2x"></i>
+                  <i ng-show="request.requests.refusedDate != null" class="fa fa-times-circle text-danger fa-2x"></i>
+                  <i ng-show="request.requests.acceptedDate == null && request.requests.refusedDate == null" class="fa fa-exclamation-circle text-warning fa-2x"></i>
                 </td>
               </tr>
             </tbody>
@@ -300,7 +348,17 @@
 
     <div class="well bloc bloc-s">
       <h4>À PROPOS</h4>
-
+      <br/>
+      <p>
+        Application réalisée avec amour par la Team Licorne,
+        sauvagement dirigée (tyranisée) par rien de moins que
+        ce petit bout d'humain aux basckets Nike.
+      </p>
+      <br/>
+      <br/>
+      <em>
+        "Jamais ne se plaint ni ne s'explique" EIIR
+      </em>
     </div>
   </div>
 

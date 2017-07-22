@@ -55,14 +55,14 @@ router.post('/new',function(req,res,next){
         label: send.label
       })
       .then(status => {
-        if(status) res.json({result:1, object:site});
+        if(status) res.json({result:1, object:status});
         else res.json({result: 0, message:'Status not created w/ url 07-003'});
       })
       .catch(err => { res.json({result:-1, message:'Unable to create Status w/ url 07-003', error:err}); });
     }
   })
   .catch(err => {  res.json({result:-1, message:'Unable to find Status w/ url 07-003', error:err}); });
-  
+
 });
 
 /** Update on status | 07-004 */
