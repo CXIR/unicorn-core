@@ -47,7 +47,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 0
     }
-
   }, {
     paranoid: true,
     underscored: true,
@@ -58,7 +57,7 @@ module.exports = function(sequelize, DataTypes) {
         User.belongsTo(models.Status);
 
         User.belongsToMany(models.Ride, {
-          through:"Passengers"
+          through: 'Passengers'
         });
       }
     },

@@ -1,31 +1,54 @@
-<div class="panel panel-primary user-pop" ng-show="pop.show">
+<div class="panel panel-primary user-pop" ng-show="upop.show">
 
   <div class="panel-heading">
-    <a class="close" aria-hidden="true" ng-click="close()">&times;</a>
+    <a class="close" aria-hidden="true" ng-click="closeUpop()">&times;</a>
     <h3 class="panel-title">CARTE D'IDENTITE</h3>
   </div>
-
   <div class="panel-body">
-    <img src="toolbox/asset/images/default.png" width="100" height="100"/>
-    <p> {{ pop.lastname | uppercase }} {{ pop.firstname }}, {{ pop.birthdate | date:'yyyy-MM-dd'}} ans</p>
-    <i class="fa fa-thumbs-up fa-2x text-info"><b class="mark">{{ pop.positiveRating }}</b></i>
-    <i class="fa fa-thumbs-down fa-2x text-danger"><b>{{ pop.negativeRating }}</b></i>
-    <table>
+    <table class="table">
       <tr>
-        <td class="table-icon"><i class="fa fa-car fa-2x text-success"></i></td>
-        <td class="table-info">
-          <p>Marque {{ pop.car.brand }}</p>
-          <p>Modèle : {{ pop.car.model }} ({{ pop.car.year }})</p>
+        <td rowspan="3">
+          <img src="toolbox/asset/images/default.png" width="100"/>
         </td>
-        <td class="table-icon"><i class="fa fa-map-marker fa-2x text-success" aria-hidden="true"></i></td>
-        <td class="table-info">{{ pop.site.name }}</td>
+        <td colspan="2">
+          <h4 class="text-success"><b ng-bind="upop.user.lastname | uppercase"></b> <b ng-bind="upop.user.firstname"></b></h4>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p><b ng-bind="upop.user.mailAdress"></b></p>
+        </td>
+        <td>
+          <p><b ng-bind="(upop.user.phoneNumber == null) ? 'Pas de téléphone' : upop.user.phoneNumber"></b></p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p><b ng-bind="upop.user.birthdate | date:'dd/MM/yyyy'"></b> (<b ng-bind="upop.user.birthdate | age:'upop.user.birthdate'"></b> ans)</p>
+        </td>
+        <td>
+          <i class="fa fa-thumbs-up fa-2x text-success" ng-bind="upop.user.positiveRating"></i>&nbsp;&nbsp;&nbsp;
+          <i class="fa fa-thumbs-down fa-2x text-danger" ng-bind="upop.user.negativeRating"></i>
+        </td>
       </tr>
     </table>
-    <div class="panel panel-default pop-rides">
-        <p></p>
-
-    </div>
-    <a href="">Signaler cet utilisateur</a>
+    <blockquote>
+      <em ng-bind="(upop.user.description == null) ? 'Pas de description' : upop.user.description"></em>
+    </blockquote>
+    <hr/>
+    <h4 class="text-success"><i class="fa fa-map-marker"></i> Bureau</h4>
+    <table class="table">
+      <tr>
+        <td colspan="2"><b ng-bind="upop.user.site.name"></b></td>
+      </tr>
+      <tr>
+        <td ng-bind="upop.user.site.adress"></td>
+        <td ng-bind="upop.user.site.city +'('+upop.user.site.postalCode+')'"></td>
+      </tr>
+    </table>
+  </div>
+  <div class="panel-footer">
+    <a href="" ng-click="profile(upop.user)">Profil <i class="fa fa-chevron-right"></i></a>
   </div>
 
 </div>

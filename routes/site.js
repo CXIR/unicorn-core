@@ -9,12 +9,16 @@ const router = express.Router();
 
 /** Get all sites | 05-001 */
 router.get('/',function(req,res){
-  Site.findAll().then(function(sites){
+  Site.findAll()
+  .then(sites => {
     let results = [];
     for(let site of sites){
       results.push(site.responsify());
     }
-    res.json(results);
+
+    if(results.length == 0) res.json({result:0, message:'No site found w/ url 05-001'});
+    else res.json({result:1, content:results});
+
   }).catch(err => { res.json({result:-1, message:'Somthing went wrong w/ url 05-001', error:err}); });
 
 });
@@ -41,19 +45,29 @@ router.get('/:id',function(req,res){
 router.post('/new',function(req,res,next){
   let send = req.body;
 
-  Site.create({
-    name: send.name,
-    adress: send.adress,
-    city: send.city,
-    postalCode: send.postal
+  Site.find({
+    where:{ name: send.name }
   })
-  .then(function(site){
-    if(site){
-      res.json(site);
+  .then(site => {
+    if(site) res.json({result:0, message:'Similar site w/ same name already exists w/ url '});
+    else{
+
+      Site.create({
+        name: send.name,
+        adress: send.adress,
+        city: send.city,
+        postalCode: send.postal
+      })
+      .then(function(site){
+        if(site) res.json({result:1, object:site});
+        else res.json({result: 0, message:'Site not created w/ url 05-003'});
+      })
+      .catch(err => { res.json({result:-1, message:'Unable to create Site w/ url 05-003', error:err}); });
     }
-    else res.json({result: 0, message:'Unable to create Site w/ url 05-003'});
   })
-  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 05-003', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find site w/ url ', error:err}); });
+
+
 });
 
 /** Update on site | 05-004 */
@@ -74,9 +88,9 @@ router.post('/edit',function(req,res,next){
                               postalCode: send.postal
                             });
 
-      res.json({ result: 1 });
+      res.json({result: 1,  message:'Site successfully updated w/ url '});
     }
-    else res.json({ result: 0, message: 'No site found w/ url 05-004' });
+    else res.json({ result: 0, message: 'No site found w/ url 05-004'});
   })
   .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 05-004', error: err}); });
 });
@@ -95,7 +109,7 @@ router.delete('/:id',function(req,res,next){
     if(site){
       site.destroy()
       .then(function(site){
-        res.json({ result: 1 });
+        res.json({ result: 1, message:'Site successfully removed w/ url '});
       })
       .catch(err => { res.json({ result:0, message:'Unable to remove site on url 05-005', error:err}); });
     }

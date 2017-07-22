@@ -1,295 +1,133 @@
-<!-- -->
-<section>
-  <title ng-bind="user.name | uppercase + ' ' + user.first"></title>
+<title>PTC | {{ user.lastname | uppercase }} {{ user.firstname }}</title>
 
-  <!--<div ng-show="false" user-pop></div>-->
-  <div my-nav class="nav-fix"></div>
+<div user-report></div>
+<div notif></div>
+<div ride-pop></div>
+
+<section class="{{ report.display }} {{ pop.display }}">
+  <div my-nav></div>
 
   <div class="main-wrapper">
 
-    <div class="profil-header">
+  <!-- Basic Information -->
+  <div class="home">
 
-      <div class="profil-section">
-          <img src="toolbox/asset/images/default.png" width="150"/>
+
+    <div class="well bloc bloc-l">
+      <h4><b ng-bind="user.lastname | uppercase"></b> <b ng-bind="user.firstname"></b></h4>
+      <table class="table">
+        <tr>
+          <td>
+            <p>Anniversaire : <b ng-bind="user.birthdate | date:'yyyy-MM-dd'"></b> (<b ng-bind="user.birthdate | age:'user.birthdate'"></b> ans)</p>
+          </td>
+          <td>
+            <p>Bureau :  <b ng-bind="user.site.name"></b></p>
+          </td>
+        </tr>
+          <td>
+            <p>Mail : <b ng-bind="user.mailAdress"></b></p>
+          </td>
+          <td>
+            <p ng-init="phone = (user.phoneNumber == null) ? 'Non renseigné' : user.phoneNumber">Téléphone : <b ng-bind="phone"></b></p>
+          </td>
+        </tr>
+      </table>
+
+      <blockquote>
+        <em ng-bind="(user.description == null) ? 'Pas de description' : user.description"></em>
+      </blockquote>
+
+      <a href="" class="btn btn-danger" ng-click="reportUser()">Signaler</a>
+    </div>
+
+    <div class="well bloc bloc-s">
+      <h4>VEHICULE</h4>
+      <div ng-hide="car != null">
+        <p class="text-primary">Cet utilisateur n'a pas renseigné de véhicule</p>
       </div>
-      <div class="profil-section">
-        <blockquote>
-          <p ng-bind="user.name | uppercase + ' ' + user.first"></p>
-          <p ng-bind="user.age + 'ans'"></p>
-          <p ng-bind="'Bureau : ' + user.office"></p>
-          <i class="fa fa-thumbs-up fa-2x text-info" aria-hidden="true" ng-bind="user.mark.up"></i>
-          <i class="fa fa-thumbs-down fa-2x text-danger" aria-hidden="true" ng-bind="user.mark.down"></i>
-        </blockquote>
+      <div ng-show="car != null">
+        <p>Marque : <b ng-bind="car.brand"></b></p>
+        <p>Modele : <b ng-bind="car.model"></b></p>
+        <p>Immatriculation: <b ng-bind="car.registrationNumber"></b></p>
+        <p>Capacité : <b ng-bind="car.placesNumber"></b></p>
       </div>
-      <div class="profil-section">
-        <blockquote>
-          <img src="toolbox/asset/images/car.png" width="50" height="50"/>
-          <p ng-bind="'Marque : ' + user.car.brand"></p>
-          <p ng-bind="'Modèle : ' + user.car.model"></p>
-          <p ng-bind="'Année : ' + user.car.year"></p>
-        </blockquote>
-      </div>
+    </div>
+  </div>
 
-    </div><div style="clear:both;"></div>
+  <!-- Comming Rides -->
+  <div class="home">
+    <div class="well bloc bloc-m">
+      <h4>SES TRAJETS À VENIR : PASSAGER</h4>
 
-    <hr/>
+      <p ng-show="p_comming == 0">Cet utilisateur ne participe à aucun trajet dans les jours à venir.</p>
 
-    <div class="profil">
-      <a href="" class="btn btn-success" ng-click="rideProposal(user)">Proposer un Trajet</a>
-      <a href="#/rides" class="btn btn-primary">Rechercher un Trajet</a>
-      <a href="" class="btn btn-warning" ng-click="">Demandes <span class="badge" ng-bind=""></span></a>
-
-      <!--
-         - Comming Rides
-       -->
-      <div class="panel panel-default"><!--  -->
-        <h3>
-          Trajets à venir
-          <a><i class="fa fa-chevron-down"></i></a>
-          <a><i class="fa fa-chevron-up"></i></a>
-        </h3>
-        <div>
-
-        <!-- Passenger Box -->
-        <div class="panel panel-primary content"><!-- ng-repeat="ride in p_comming_rides" -->
-          <div class="panel-heading">
-            <h4 class="panel-title">Passager</h4>
-          </div>
-          <div class="panel-body">
-            <table class="table-inbox">
-              <tr>
-                <td>
-                  <a href="" ng-click="userPop(ride.user)">
-                    <img src="toolbox/asset/images/default.png" width="100" height="100"/>
-                  </a>
-                </td>
-                <td>
-                  <p ng-bind="'Driver : ' + ride.user.name | uppercase + ' ' + ride.user.first"></p>
-                  <p ng-bind="">{{ ride.departure }} <i class="fa fa-arrow-right fa-1x"></i> {{ ride.arrival }}</p>
-                  <p ng-bind="'Le '+ ride.date + ' à ' + ride.hour"></p>
-                  <p ng-bind="'Places Disponibles : ' + ride.seats"></p>
-                </td>
-                <td>
-                  <i ng-show="false" class="fa fa-check-circle fa-3x text-success"></i>
-                  <i ng-show="true" class="fa fa-exclamation-circle fa-3x text-warning"></i>
-                </td>
-              </tr>
-            </table>
-          </div>
+      <div class="panel panel-primary content" ng-repeat="ride in p_comming">
+        <div class="panel-heading">
         </div>
-
-        <!-- Driver Box -->
-        <div><!-- ng-repeat="ride in d_comming_rides"-->
-
-        <div class="panel panel-success content">
-          <div class="panel-heading">
-            <h4 class="panel-title">Conducteur</h4>
-          </div>
-          <div class="panel-body">
-            <table class="table-inbox">
-              <tr>
-                <td class="cell-s">
-                  <p>Trajet N°</p>
-                  <h2 ng-bind="ride.number"></h2>
-                </td>
-                <td>
-                  <p><b ng-bind="ride.departure"></b><i class="fa fa-arrow-right fa-1x"></i><b ng-bind="ride.arrival"></b></p>
-                  <p ng-bind="'Le '+ride.date+' à '+ride.hour"></p>
-                  <p ng-bind="'Vous proposez '+ride.seats+' places.'"></p>
-                </td>
-                <td>
-                  <ul class="nav nav-pills">
-                    <li class="active"><a href="">Demandes<span class="badge" ng-bind="ride.request"></span></a></li>
-                  </ul>
-                </td>
-              </tr>
-            </table>
-          </div>
+        <div class="panel-body">
+          <table class="table-inbox">
+            <tr>
+              <td class="cell-s">
+                <a href="" ng-click="currentPop(ride.driver)">
+                  <img src="toolbox/asset/images/default.png" width="100" height="100"/>
+                </a>
+              </td>
+              <td>
+                <p>
+                  <b ng-bind="(ride.departure.name != null) ? ride.departure.name : ride.departure_city"></b>
+                  <i class="fa fa-arrow-right fa-1x"></i>
+                  <b ng-bind="(ride.arrival.name != null) ? ride.arrival.name : ride.arrival_city"></b></p>
+                <p>Le {{ ride.departure_date | date:'dd/MM/yyyy' }}</p>
+                <p class="text-success">Votre demande a été acceptée pour ce trajet</p>
+                <p></p>
+              </td>
+            </tr>
+          </table>
         </div>
-
-        <div class="panel panel-default content">
-          <div class="panel-body">
-            <p class="text-primary times"><i class="fa fa-times fa-2x"></i></p>
-            <p class="text-danger" ng-bind="'Attention, il ne vous reste que '+ride.remain+' places disponibles !'"></p>
-            <p class="text-danger" ng-hide="ride.remain > 0">Vous n'avez plus de place disponible sur ce trajet</p>
-            <table class="table-inbox">
-              <tr colspan="2">
-                <td><b>Participants à valider</b></td>
-              </tr>
-              <tr><!-- ng-repeat="participant in ride.asks" -->
-                <td>
-                  <p ng-bind"user.name | uppercase +' '+ user.first">
-                </td>
-                <td>
-                  <i class="fa fa-times fa-2x text-danger" ng-click="refusePassenger(ride,participant)"></i>
-                  <i class="fa fa-check fa-2x text-success" ng-click="acceptPassenger(ride,participant)"></i>
-                </td>
-              </tr>
-            </table>
-            <table class="table-inbox">
-              <tr colspan="2">
-                <td><b>Participants validés</b></td>
-              </tr>
-              <tr><!-- ng-repeat="participant in ride.accepted" -->
-                <td>
-                  <p ng-bind"user.name | uppercase +' '+ user.first">
-                </td>
-                <td>
-                  <i class="fa fa-check-circle fa-2x text-success"></i>
-                </td>
-              </tr>
-            </table>
-          </div>
-        </div>
-      </div>
-
-        </div>
-      </div>
-
-      <!--
-         - Over Rides
-       -->
-      <div class="panel panel-default">
-        <h3>
-          Trajets passés
-          <a href=""><i class="fa fa-chevron-down"></i></a>
-          <a href=""><i class="fa fa-chevron-up"></i></a>
-        </h3>
-        <div>
-
-        <!-- Passenger Box -->
-        <div class="panel panel-primary content"><!-- ng-repeat="ride in p_over_rides" -->
-          <div class="panel-heading">
-            <h4 class="panel-title">Passager</h4>
-          </div>
-          <div class="panel-body">
-            <table class="table-inbox">
-              <tr>
-                <td rowspan="2">
-                  <a href="" ng-click="userPop(ride.user)">
-                    <img src="toolbox/asset/images/default.png" width="100" height="100"/>
-                  </a>
-                </td>
-                <td rowspan="2">
-                  <p ng-bind="'Driver : ' + ride.user.name | uppercase + ' ' + ride.user.first"></p>
-                  <p>{{ ride.departure }} <i class="fa fa-arrow-right fa-1x"></i> {{ ride.arrival }}</p>
-                  <p ng-bind="'Le ' + ride.date + ' à ' + ride.hour"></p>
-                  <p ng-bind="'Places Disponibles : ' + ride.seats"></p>
-                </td>
-                <td>
-                  <p>Noter ce conducteur</p>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <i class="fa fa-thumbs-up fa-2x" ng-click="markDriverUp(ride.driver)"></i>
-                  <i class="fa fa-thumbs-down fa-2x" ng-click="markDriverDown(ride.driver)"></i>
-                </td>
-              </tr>
-            </table>
-          </div>
-        </div>
-
-        <!-- Driver Box -->
-        <div><!-- ng-repeat="ride in d_over_rides" -->
-
-        <div class="panel panel-success content">
-          <div class="panel-heading">
-            <h4 class="panel-title">Conducteur</h4>
-          </div>
-          <div class="panel-body">
-            <table class="table-inbox">
-              <tr>
-                <td class="cell-s">
-                  <p>Trajet N°</p>
-                  <h2 ng-bind="ride.number"></h2>
-                </td>
-                <td>
-                  <p><b ng-bind="ride.departure"></b><i class="fa fa-arrow-right fa-1x"></i><b ng-bind="ride.arrival"></b></p>
-                  <p ng-bind="'Le '+ride.date+' à '+ride.hour"></p>
-                  <p ng-bind="'Vous avez proposé '+ride.seats+' places.'"></p>
-                </td>
-                <td>
-                  <ul class="nav nav-pills">
-                    <li class="active">
-                      <a href="">Passager(s)
-                        <span class="badge" ng-bind="ride.passengers.length"></span>
-                      </a>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-            </table>
-          </div>
-        </div>
-
-        <div class="panel panel-default content">
-          <div class="panel-body">
-            <p class="text-primary times"><i class="fa fa-times fa-2x"></i></p>
-            <table class="table-inbox">
-              <tr colspan="2">
-                <h4>Personnes ayant participées à ce trajet</h4>
-              </tr>
-              <tr><!-- ng-repeat="user in ride.participants" -->
-                <td>
-                  <p ng-bind"user.name | uppercase +' '+ user.first"></p>
-                </td>
-                <td>
-                  <i class="fa fa-thumbs-up fa-2x" ng-click="markPassengerUp(ride,user)"></i>
-                  <i class="fa fa-thumbs-down fa-2x" ng-click="markPassengerDown(ride,user)"></i>
-                </td>
-              </tr>
-            </table>
-          </div>
-        </div>
-
-      </div>
-
-      </div>
-      </div>
-
-      <!--
-         - Refused Rides
-       -->
-      <div class="panel panel-default">
-        <h3 class="text-danger">
-          Trajets Refusés
-          <a href=""><i class="fa fa-chevron-down"></i></a>
-          <a href=""><i class="fa fa-chevron-up"></i></a>
-        </h3>
-        <div>
-
-          <!-- Passenger Box -->
-          <div class="panel panel-primary content"><!-- ng-repeat="ride in p_refused_rides" -->
-            <div class="panel-heading">
-              <h2 class="panel-title">Passager</h2>
-            </div>
-            <div class="panel-body">
-              <table class="table-inbox">
-                <tr>
-                  <td class="cell-s">
-                    <a href="" ng-click="userPop(ride.user)">
-                      <img src="toolbox/asset/images/default.png" width="100" height="100"/>
-                    </a>
-                  </td>
-                  <td>
-                    <p ng-bind="'Driver : ' + ride.user.name | uppercase + ' ' + ride.user.first"></p>
-                    <p>{{ ride.departure }} <i class="fa fa-arrow-right fa-1x"></i> {{ ride.arrival }}</p>
-                    <p ng-bind="'Le ' + ride.date + ' à ' + ride.hour"></p>
-                    <p ng-bind="'Places Disponibles : ' + ride.seats"></p>
-                  </td>
-                  <td>
-                    <i class="fa fa-times-circle fa-3x text-danger"></i>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </div>
-
+        <div class="panel-footer">
+          <a href="" ng-click="ridePop(ride)">Détails</a>
         </div>
       </div>
 
     </div>
+    <div class="well bloc bloc-m">
+      <h4>SES TRAJETS À VENIR : CONDUCTEUR</h4>
 
-</div>
+      <p ng-show="d_comming == 0">Cet utilisateur ne propose aucun trajet dans les jours à venir.</p>
+
+      <div class="panel panel-success in-container" ng-repeat="ride in d_comming">
+        <div class="panel-heading">
+        </div>
+        <div class="panel-body">
+          <table class="table-inbox">
+            <tr>
+              <td class="cell-s">
+                <i class="fa fa-users fa-2x text-primary"></i>
+                <p ng-bind="ride.passengers.length"></p>
+              </td>
+              <td>
+                <p>
+                  <b ng-bind="(ride.departure.name != null) ? ride.departure.name : departure_city"></b>
+                  <i class="fa fa-arrow-right fa-1x"></i>
+                  <b ng-bind="(ride.arrival.name != null) ? ride.arrival.name : arrival_city"></b></p>
+                <p>Le <b ng-bind="ride.departure_date | date:'dd/MM/yyyy'"></b> à <b ng-bind="ride.departure_time"></b></p>
+                <p>L'Utilisateur propose <b ng-bind="ride.remain"></b> places.</p>
+              </td>
+              <td>
+                <a href="" class="btn btn-primary" ng-class="already" ng-click="requestSeat(ride)" ng-show="ride.remain > 0 && !ride.notif">Je m'inscris !</a>
+                <a href="" class="btn btn-primary disabled" ng-show="ride.remain == 0 && !ride.notif">Complet</a>
+                <span class="label label-success" ng-show="ride.notif">Demande Envoyée !</span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="panel-footer">
+          <a href="" ng-click="ridePop(ride)">Détails <i class="fa fa-chevron-right"></i></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  </div>
 </section>

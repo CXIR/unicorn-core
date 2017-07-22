@@ -24,8 +24,10 @@ module.exports = function(sequelize, DataTypes) {
     freezeTableName: true,
     classMethods: {
       associate: function(models) {
-        Passenger_Request.belongsTo(models.Ride);
         Passenger_Request.belongsTo(models.User);
+        Passenger_Request.belongsToMany(models.Ride,{
+          through: 'Asks'
+        });
       }
     },
     instanceMethods: {
@@ -33,11 +35,13 @@ module.exports = function(sequelize, DataTypes) {
         let result = {};
         result.id = this.id;
         result.requestDate = this.requestDate;
+        result.acceptedDate = this.acceptedDate;
+        result.refusedDate = this.refusedDate;
         if (this.User) {
           result.user = this.User.responsify();
         }
-        if (this.Ride) {
-          result.ride = this.Ride.responsify();
+        if(this.Rides){
+          result.ride = this.Rides[0];
         }
         return result;
       }

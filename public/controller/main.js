@@ -38,6 +38,14 @@ var shareApp = angular.module('shareApp',[
 
 
 /**
+* GLOBAL VARIABLES / ANGULAR SESSION HANDLING
+*/
+shareApp.value('Current',{
+  user: { info: {id:4}, valid: 1}
+});
+
+
+/**
 *
 * APP ROUTE
 *
@@ -56,6 +64,14 @@ shareApp.config(['$routeProvider','$locationProvider',
             templateUrl: 'views/home.html',
             controller: 'homeCtrl'
         })
+        .when('/edit',{
+          templateUrl: 'views/edit.html',
+          controller: 'editCtrl'
+        })
+        .when('/proposal',{
+          templateUrl: 'views/proposal.html',
+          controller: 'proposalCtrl'
+        })
         .when('/users',{
             templateUrl: 'views/users.html',
             controller: 'usersCtrl'
@@ -71,10 +87,6 @@ shareApp.config(['$routeProvider','$locationProvider',
         .when('/profil/:user',{
           templateUrl: 'views/profil.html',
           controller: 'profilCtrl'
-        })
-        .when('/message',{
-          templateUrl: 'views/message.html',
-          controller: 'messageCtrl'
         })
         .when('/init', {
           templateUrl: 'views/init.html',
@@ -99,8 +111,9 @@ shareApp.config(['$routeProvider','$locationProvider',
 */
 
 
-
-// Navigation Bar
+/**
+* NAVIGATION BAR
+*/
 shareApp.directive('myNav',['$location',function($location){
   return {
     restrict: 'A',
@@ -114,6 +127,7 @@ shareApp.directive('myNav',['$location',function($location){
         else if(current[1] == 'rides') angular.element(document.querySelector('#rides')).addClass('active');
         else if(current[1] == 'message') angular.element(document.querySelector('#message')).addClass('active');
         else if(current[1] == 'home') angular.element(document.querySelector('#home')).addClass('active');
+<<<<<<< HEAD
         else if(current[1] == 'init') angular.element(document.querySelector('#init')).addClass('active');
         
         /*
@@ -122,11 +136,15 @@ shareApp.directive('myNav',['$location',function($location){
           scope.unread = res.data;
         },function(res){ console.log('FAIL : '+res.data); });
         */
+=======
+>>>>>>> master
     }
   };
 }]);
 
-// User Pop
+/**
+* USER POP
+*/
 shareApp.directive('userPop',['$location',function($location){
   return {
     restrict: 'A',
@@ -134,14 +152,63 @@ shareApp.directive('userPop',['$location',function($location){
     transclude: true,
     templateUrl: 'views/userpop.html',
   link: function (scope, element, attrs) {
-        scope.close = function(){
-            scope.pop = {};
+        scope.closeUpop = function(){
+            scope.upop = {};
+        }
+
+        scope.profile = function(user){
+          $location.path('/profil/'+user.id);
         }
     }
   };
 }]);
 
-// Simple Notification
+/**
+* RIDE POP
+*/
+shareApp.directive('ridePop',['$location',
+  function($location){
+    return{
+      restrict: 'A',
+      replace: true,
+      transclude: true,
+      templateUrl: 'views/ridepop.html',
+      link: function (scope, element, attrs) {
+
+          scope.profile = function(user){
+            $location.path('/profil/'+user.id);
+          }
+
+          scope.closeRidePop = function(){
+              scope.pop = {};
+          }
+      }
+    };
+  }
+]);
+
+/**
+* RIDE POP SPECIAL
+*/
+shareApp.directive('ridePopSpecial',[
+  function(){
+    return{
+      restrict: 'A',
+      replace: true,
+      transclude: true,
+      templateUrl: 'views/ridepopspecial.html',
+      link: function (scope, element, attrs) {
+          scope.closeRidePop = function(){
+              scope.pop = {};
+          }
+      }
+    };
+  }
+]);
+
+/**
+* SIMPLE NOTIFICATION
+*/
 shareApp.directive('notif',[
   function(){
     return {
@@ -151,8 +218,9 @@ shareApp.directive('notif',[
       templateUrl: 'views/notification.html',
       link:function(scope, element, attrs){
         scope.closeNotif = function(){
-          scope.notif =  {};
+          scope.notif = {};
         }
+
       }
     };
   }
@@ -169,6 +237,25 @@ shareApp.directive('dialog',[
       link:function(scope, element, attrs){
         scope.closeDialog = function(){
           scope.dialog =  {};
+        }
+      }
+    };
+  }
+]);
+
+/**
+* USER REPORT
+*/
+shareApp.directive('userReport',['$http',
+  function($http){
+    return{
+      restrict: 'A',
+      replace: true,
+      transclude: true,
+      templateUrl : 'views/report.html',
+      link:function(scope,element,attrs){
+        scope.closeReport = function(){
+          scope.report = {};
         }
       }
     };

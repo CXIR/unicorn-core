@@ -1,0 +1,108 @@
+<title>PTC | Nouveau Trajet</title>
+
+<div notif></div>
+
+<section>
+  <div my-nav></div>
+
+  <div class="main-wrapper">
+    <div class="home">
+      <div class="well bloc bloc-x">
+        <h2>Proposer un Trajet</h2>
+      </div>
+      <div style="clear:both"></div>
+    </div>
+
+    <p class="text-error" ng-show="error.show" ng-bind="error.message"></p>
+
+  <div class="home">
+
+  <div class="well bloc bloc-m">
+  <h4>DÉPART</h4>
+  <ul class="nav nav-tabs" ng-init="d_pro = true">
+    <li ng-class="(d_pro == true) ? 'active' : ''"><a href="" ng-click="d_pro = true">Professionnel</a></li>
+    <li ng-class="(d_pro == false) ? 'active' : ''"><a href="" ng-click="d_pro = false">Domestique</a></li>
+  </ul>
+  <br/>
+      <div ng-show="d_pro">
+        <div class="form-group">
+          <select class="form-control" id="select" ng-model="proposal.d_site" ng-options="site.name for site in sites">
+            <option value="">-- Sélectionnez un Site --</option>
+          </select>
+        </div>
+      </div>
+      <div ng-hide="d_pro">
+        <div class="form-group">
+          <input type="text" class="form-control"placeholder="Adresse" ng-model="proposal.d_address">
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control"placeholder="Code Postal" ng-model="proposal.d_postal">
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control"placeholder="Ville" ng-model="proposal.d_city">
+        </div>
+      </div>
+        <div id="ddate" class="form-group">
+          <input type="text" class="form-control" placeholder="Date JJ/MM/AAAA" ng-model="proposal.d_date" ng-change="validateDate(proposal.d_date,1)">
+        </div>
+        <div id="dhour" class="form-group">
+          <input type="text" class="form-control" placeholder="Heure (HH:MM)" ng-model="proposal.d_hour" ng-change="validateHour(proposal.d_hour,1)">
+        </div>
+    </div>
+
+  <div class="well bloc bloc-m">
+
+    <h4>ARRIVÉE</h4>
+    <ul class="nav nav-tabs" ng-init="a_pro = true">
+      <li ng-class="(a_pro == true) ? 'active' : ''"><a href="" ng-click="a_pro = true">Professionnel</a></li>
+      <li ng-class="(a_pro == false) ? 'active' : ''"><a href="" ng-click="a_pro = false">Domestique</a></li>
+    </ul>
+    <br/>
+        <div ng-show="a_pro">
+          <div class="form-group">
+            <select class="form-control" id="select" ng-model="proposal.a_site" ng-options="site.name for site in sites">
+              <option value="">-- Sélectionnez un Site --</option>
+            </select>
+          </div>
+        </div>
+        <div ng-hide="a_pro">
+          <div class="form-group">
+            <input type="text" class="form-control"placeholder="Adresse" ng-model="proposal.a_address">
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control"placeholder="Code Postal" ng-model="proposal.a_postal">
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control"placeholder="Ville" ng-model="proposal.a_city">
+          </div>
+        </div>
+          <div id="adate" class="form-group">
+            <input type="text" class="form-control" placeholder="Date JJ/MM/AAAA" ng-model="proposal.a_date" ng-change="validateDate(proposal.a_date,2)">
+          </div>
+          <div id="ahour" class="form-group">
+            <input type="text" class="form-control" placeholder="Heure HH:MM" ng-model="proposal.a_hour" ng-change="validateDate(proposal.a_hour,2)">
+          </div>
+</div>
+  </div>
+
+  <div class="home">
+    <div class="well bloc bloc-s">
+      <h4>NOMBRE DE PLACES PROPOSEES</h4>
+      <table class="table" ng-init="places = 0">
+        <tr>
+          <td><i class="fa fa-minus"></i></td>
+          <td><h1 ng-model="places" ng-bind="places"></h1></td>
+          <td><i class="fa fa-plus"></i></td>
+        </tr>
+      </table>
+    </div>
+    <div class="well bloc bloc-l">
+      <h4>TITRE DU TRAJET</h4>
+    </div>
+  </div>
+
+  <a href="" class="btn btn-danger" ng-click="">Effacer</a>
+  <a href="" class="btn btn-success" ng-click="proposeRide(proposal)">Proposer</a>
+</div>
+
+</section>

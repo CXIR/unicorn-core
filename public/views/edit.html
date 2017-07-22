@@ -1,0 +1,85 @@
+<title>PTC | Éditer</title>
+
+<div notif></div>
+
+<section>
+    <div my-nav></div>
+
+    <div class="main-wrapper">
+
+    <div class="home">
+      <div class="well bloc bloc-x">
+        <h2>Modifier mes Informations</h2>
+        <em class="text-success">Vos informations de bases sont enregistrées par votre entreprise et ne
+        peuvent être modifiées.</em>
+      </div>
+    </div>
+
+    <div class="home">
+      <div class="well bloc bloc-l">
+        <h4>MA DESCRIPTION</h4>
+        <div class="form-group description">
+            <textarea class="form-control" rows="5" id="textArea" ng-model="current.description"></textarea>
+        </div>
+        <a href="" class="btn btn-danger" ng-click="resetDescription()">Annuler</a>
+        <a href="" class="btn btn-success" ng-click="editDescription(current.description)">Modifier</a>
+      </div>
+      <div class="well bloc bloc-s">
+        <h4>MON MOT DE PASSE</h4>
+        <p class="text-warning" ng-show="error.show" ng-bind="error.message"></p>
+        <div id="fpass"class="form-group">
+          <input type="password" placeholder="Ancien Mot de Passe" class="form-control" ng-model="former" ng-change="verifyPassword(former)">
+        </div>
+        <div id="npass" class="form-group">
+          <input type="password" placeholder="Nouveau Mot de Passe" class="form-control" ng-model="password.one">
+        </div>
+        <div id="npass" class="form-group">
+          <input type="password" placeholder="Confirmez le nouveau Mot de Passe" class="form-control" ng-model="password.two">
+        </div>
+        <a href="" class="btn btn-danger" ng-click="clearPassword()">Annuler</a>
+        <a href="" class="btn btn-success" ng-click="editPassword(password)">Enregistrer</a>
+      </div>
+    </div>
+
+    <div class="home">
+      <div class="well bloc bloc-m">
+        <h4>MA VOITURE</h4>
+
+        <div ng-hide="snap.show">
+          <em class="text-primary" ng-show="car == 0">Vous n'avez renseigné aucun véhicule pour le moment</em>
+          <p class="text-warning" ng-show="car.isVehicleOK == 0 && car != 0">Ce véhicule n'a pas encore été validé!</p>
+          <p class="text-success" ng-show="car.isVehicleOK == 1 && car != 0">Ce véhicule a été validé !</p>
+        <div>
+        <p class="text-warning" ng-show="snap.show" ng-bind="snap.message"></p>
+
+        <div class="form-group">
+          <input type="text" placeholder="Marque" class="form-control" ng-model="car.brand">
+        </div>
+        <div class="form-group">
+          <input type="text" placeholder="Modèle" class="form-control" ng-model="car.model">
+        </div>
+        <div id="registration" class="form-group">
+          <input type="text" placeholder="Immatriculation" class="form-control" ng-model="car.registrationNumber" ng-change="verifyRegistration(car.registrationNumber)">
+        </div>
+        <div class="form-group">
+          <input type="text" placeholder="Nombre de Places (hors conducteur)" class="form-control" ng-model="car.placesNumber">
+        </div>
+        <div class="form-group">
+          <select class="form-control" id="select" ng-model="car.vehicleType">
+            <option value="">-- Type --</option>
+            <option value="Citadine">Citadine</option>
+            <option value="Berline">Berline</option>
+            <option value="4x4">4x4</option>
+            <option value="SUV">SUV</option>
+            <option value="Utilitaire">Utilitaire</option>
+            <option value="Scooter">Scooter</option>
+          </select>
+        </div>
+        <a href="" class="btn btn-danger" ng-click="clearCar()" ng-class="(car.isVehicleOK == 0 && car != 0) ? 'disabled' : ''">Annuler</a>
+        <a href="" class="btn btn-success" ng-click="editCar(car)" ng-class="(car.isVehicleOK == 0 && car != 0) ? 'disabled' : ''">Enregistrer</a>
+      </div>
+
+    </div>
+
+  </div>
+</section>

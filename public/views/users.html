@@ -1,7 +1,8 @@
-<section>
-  <title>PTC | Utilisateurs</title>
+<title>PTC | Utilisateurs</title>
 
   <div user-pop></div>
+
+<section class="{{ upop.display }}">
   <div my-nav></div>
 
   <div class="main-wrapper">
@@ -14,13 +15,20 @@
     <em class="text-success">Psst! Tapez tout ce que vous voulez, si un utilisateur correspond à votre saisie, il remontra tout seul!</em>
     <hr/>
 
+  <div class="scroll-box">
+
     <div ng-hide="loaded" class="main-wrapper">
       <div class="loading">
         <i class="fa fa-circle-o-notch fa-5x fa-spin"></i>
       </div>
     </div>
 
+    <h4 class="text-warning" ng-show="message.show" ng-bind="message.message"></h4>
+
     <div ng-show="loaded" class="panel panel-default content" ng-repeat="user in users | filter:userFilter">
+      <div class="panel-heading">
+        <h4><b ng-bind="user.lastname | uppercase"></b> <b ng-bind="user.firstname"></b></h4>
+      </div>
       <div class="panel-body">
         <table class="table-inbox">
           <tr>
@@ -30,11 +38,13 @@
               </a>
             </td>
             <td class="cell-l">
-              <p>Nom : {{ user.lastname | uppercase}} {{ user.firstname }}</p>
-              <p>Age : {{ user.birthdate | age:'user.birthdate' }} ans</p>
-              <p>Bureau : {{ user.site.name }}</p>
-              <i class="fa fa-thumbs-up fa-2x text-info">{{ user.positiveRating }}</i>
-              <i class="fa fa-thumbs-down fa-2x text-danger">{{ user.negativeRating }}</i>
+              <p>Age : <b ng-bind="user.birthdate | age:'user.birthdate'"></b> ans</p>
+              <p>Bureau : <b ng-bind="user.site.name"></b></p>
+              <blockquote>
+                <p ng-bind="(user.description == null) ? 'Pas de description' : user.description"></p>
+              </blockquote>
+              <i class="fa fa-thumbs-up fa-2x text-success" ng-bind="user.positiveRating"> </i>&nbsp;&nbsp;&nbsp;
+              <i class="fa fa-thumbs-down fa-2x text-danger" ng-bind="user.negativeRating"> </i>
             </td>
             <td>
               <a href="" class="btn btn-primary" ng-click="userProfile(user)">Voir le Profil <i class="fa fa-chevron-right fa-1x"></i></a>
@@ -42,9 +52,11 @@
           </tr>
         </table>
     </div>
-
+    <div class="panel-footer">
+    </div>
   </div>
 
-  </div>
+</div>
 
+  </div>
 </section>

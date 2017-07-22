@@ -3,8 +3,8 @@
 /**
 *View : login
 */
-shareAppControllers.controller('loginCtrl',['$scope','$http',
-    function($scope,$http){
+shareAppControllers.controller('loginCtrl',['$scope','$http','Current',
+    function($scope,$http,Current){
         $scope.reset = function(){
             $scope.log = {};
             $scope.error = {};
@@ -35,9 +35,9 @@ shareAppControllers.controller('loginCtrl',['$scope','$http',
           else{
             $scope.loading = true;
             /*
-            $http.post('',{'pin':log.pin,'pw':log.pw})
+            $http.post('/',{'pin':log.pin,'pw':log.pw})
             .then(function(res){
-            
+
             }, function(res) { console.log('FAIL : '+res.data); });
             */
           }

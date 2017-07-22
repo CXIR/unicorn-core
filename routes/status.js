@@ -15,7 +15,9 @@ router.get('/',function(req,res){
     for(let s of status){
       results.push(s.responsify());
     }
-    res.json(results);
+
+    if(results.length == 0) res.json({result:0, message:'Site not found w/ url '});
+    else res.json({result:1, content:results});
   }).catch(err => { res.json({result: -1, error: err}); } );
 
 });
@@ -27,16 +29,11 @@ router.get('/:id',function(req,res){
             id: req.params.id
           }
   })
-  .then(function(status){
-    if(status) {
-      res.json(status.responsify());
-    }
-    else res.json({ result: 0 });
+  .then(status => {
+    if(status) res.json({result:1, content:status.responsify()});
+    else res.json({ result: 0, message:'Site not found w/ url '});
   })
-  .catch(function(err){
-      res.json({
-                  result: -1
-               });
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url '});
   });
 
 });
@@ -47,33 +44,42 @@ router.get('/:id',function(req,res){
 router.post('/new',function(req,res,next){
   let send = req.body;
 
-  Status.create({
-    label: send.label
+  Status.find({
+    where: { label: send.label }
   })
-  .then(site => {
-    if(site){
-      res.json(site);
+  .then(status => {
+    if(status) res.json({result:0, message:'Similar status w/ same name already exists w/ url 07-003 '});
+    else{
+
+      Status.create({
+        label: send.label
+      })
+      .then(status => {
+        if(status) res.json({result:1, object:site});
+        else res.json({result: 0, message:'Status not created w/ url 07-003'});
+      })
+      .catch(err => { res.json({result:-1, message:'Unable to create Status w/ url 07-003', error:err}); });
     }
-    else res.json({result: 0, message:'Unable to create Status w/ url 07-003'});
   })
-  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 07-003', error:err}); });
+  .catch(err => {  res.json({result:-1, message:'Unable to find Status w/ url 07-003', error:err}); });
+  
 });
 
 /** Update on status | 07-004 */
 router.post('/edit',function(req,res,next){
   let send = req.body;
 
-  Site.find({
+  Status.find({
     where:{
             id: send.id
           }
   })
-  .then(function(site){
-    if(site){
-      site.updateAttributes({ label: send.label });
-      res.json({ result: 1 });
+  .then(status => {
+    if(status){
+      status.updateAttributes({ label: send.label });
+      res.json({result: 1, message:'Site successfully updated w/ url '});
     }
-    else res.json({ result: 0, message: 'No status found w/ url 07-004' });
+    else res.json({result: 0, message: 'No status found w/ url 07-004' });
   })
   .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 07-004', error: err}); });
 });
@@ -92,7 +98,7 @@ router.delete('/:id',function(req,res,next){
     if(status){
       status.destroy()
       .then(function(status){
-        res.json({ result: 1 });
+        res.json({result: 1, message:'Site successfully removed w/ url '});
       })
       .catch(err => { res.json({ result:0, message:'Unable to remove status on url 07-005', error:err}); });
     }
