@@ -65,9 +65,9 @@
       <div ng-hide="next == 0">
         <br/>
         <br/>
-        <div class="panel panel-default content" ng-class="(next.driver == true) ? 'panel-success' : 'panel-primary'">
+        <div class="panel panel-default content" ng-class="(next.drive == true) ? 'panel-success' : 'panel-primary'">
           <div class="panel-heading">
-            <h4 class="panel-title" ng-bind="(next.driver == true) ? 'Conducteur' : 'Passager'"></h4>
+            <h4 class="panel-title" ng-bind="(next.drive == true) ? 'Conducteur' : 'Passager'"></h4>
           </div>
           <div class="panel-body">
             <b ng-bind="ride.ad_message"></b>
@@ -79,9 +79,9 @@
                 </td>
                 <td>
                   <p>
-                    <b ng-bind="(next.departure.name != null) ? next.departure.name : departure_city"></b>
+                    <b ng-bind="(next.departure_city != null) ? next.departure_city : next.departure.name"></b>
                     <i class="fa fa-arrow-right fa-1x"></i>
-                    <b ng-bind="(next.arrival.name != null) ? next.arrival.name : arrival_city"></b>
+                    <b ng-bind="(next.arrival_city != null) ? next.arrival_city : next.arrival.name"></b>
                   </p>
                   <p>Le <b ng-bind="next.departure_date | date:'dd MMMM yyyy'"></b>, à <b ng-bind="next.departure_time"></b></p>
                 </td>
@@ -121,9 +121,9 @@
       <div class="panel panel-success in-container" ng-repeat="ride in d_comming">
         <div class="panel-heading">
           <p>
-            <b ng-bind="(ride.departure.name != null) ? ride.departure.name : departure_city"></b>
+            <b ng-bind="(ride.departure_city != null) ? ride.departure_city : ride.departure.name"></b>
             <i class="fa fa-arrow-right fa-1x"></i>
-            <b ng-bind="(ride.arrival.name != null) ? ride.arrival.name : arrival_city"></b>
+            <b ng-bind="(ride.arrival_city != null) ? ride.arrival_city : ride.arrival.name"></b>
           </p>
         </div>
         <div class="panel-body">
@@ -138,7 +138,7 @@
                 <p>Il reste <b ng-bind="ride.remain"></b> places disponibles.</p>
               </td>
               <td>
-                <a href="" class="btn" ng-class="(ride.asks.length == 0) ? 'btn-default' : 'btn-danger'" ng-bind="ride.asks.length"></a>
+                <a href="" class="btn" ng-class="(ride.requests.length == 0) ? 'btn-default' : 'btn-danger'" ng-bind="ride.requests.length"></a>
               </td>
             </tr>
           </table>
@@ -154,9 +154,9 @@
       <h4>MES TRAJETS À VENIR : PASSAGER</h4>
       <p ng-show="p_comming == 0">Vous ne participez à aucun trajet dans les jours à venir.</p>
 
-      <div class="panel panel-default content" ng-repeat="ride in p_comming">
+      <div class="panel panel-primary in-container" ng-repeat="ride in p_comming">
         <div class="panel-heading">
-          <h4 ng-bind="ride.ad_message"></h4>
+          <p ng-bind="ride.ad_message"></p>
         </div>
         <div class="panel-body">
           <table class="table-inbox">
@@ -167,7 +167,7 @@
                 </a>
               </td>
               <td>
-                <p>Proposé par : <b ng-bind="ride.driver.lastname +' '+ride.driver.firstname"></b></p>
+                <p>Proposé par : <b ng-bind="ride.driver.lastname"></b> <b ng-bind="ride.driver.firstname"></b></p>
                 <p><b ng-bind="ride.departure.name"></b> <i class="fa fa-arrow-right fa-1x"></i> <b ng-bind="ride.arrival.name"></b></p>
                 <p>Le : <b ng-bind="ride.departure_date | date:'dd MMMM yyyy'"></b> à <b ng-bind="ride.departure_time"></b></p>
                 <p>Places Disponibles : <b ng-bind="ride.remain"></b></p>

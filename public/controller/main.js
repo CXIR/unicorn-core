@@ -41,7 +41,7 @@ var shareApp = angular.module('shareApp',[
 * GLOBAL VARIABLES / ANGULAR SESSION HANDLING
 */
 shareApp.value('Current',{
-  user: { info: {id:4}, valid: 1}
+  user: { info: { id:1 }, valid: 1}
 });
 
 

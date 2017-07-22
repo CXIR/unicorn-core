@@ -55,7 +55,7 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
       if(res.data.result == 1){
         $scope.d_comming = res.data.content;
         $scope.next = res.data.content[0];
-        $scope.next.driver = true;
+        $scope.next.drive = true;
         driveFirst = 1;
       }
       else $scope.d_comming = 0;
@@ -67,7 +67,7 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
         $scope.p_comming = res.data.content;
         if(driveFirst == 0){
           $scope.next = res.data.content[0];
-          $scope.next.driver = false;
+          $scope.next.drive = false;
         }
       }
       else $scope.p_comming = 0;
@@ -96,16 +96,18 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
       else $scope.p_passed = 0;
     },function(res){ console.log('FAIL : '+res.data); });
 
-    /** RIDES REQUESTS */
 
-    $http.get('passenger_request/sended/'+Current.user.info.id)
+    /***************************** RIDES REQUESTS *****************************/
+
+
+    $http.get('/ride/sended/'+Current.user.info.id)
     .then(function(res){
       if(res.data.result == 1){
         $scope.s_requests = res.data.content;
       }
     },function(res){  console.log('FAIL : '+res.data); });
 
-    $http.get('passenger_request/received/'+Current.user.info.id)
+    $http.get('/ride/received/'+Current.user.info.id)
     .then(function(res){
       if(res.data.result == 1){
         $scope.r_requests = res.data.content;
@@ -140,44 +142,30 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
 
 
 
-    $scope.acceptAsk = function(ask,ride){
-      var post = { request:ask.id, ride:ride.id, user:ask.user.id };
+    $scope.acceptRequest = function(request,ride){
+      var post = { ride:ride.id, user:request.id };
 
-      $http.post('/passenger_request/accept',post)
+      $http.post('/ride/passenger',post)
       .then(function(res){
         if(res.data.result == 1){
-          ask.acceptedDate = new Date();
+          request.Requests.acceptedDate = new Date();
         }
         else{
-          $scope.special = {};
-          $scope.notif = {
-                            type:'alert-danger',
-                            show:true,
-                            title:'Oupsss !',
-                            message:'Nous rencontrons des problèmes lors du traitement des requêtes.'
-                          };
-          $timeout(function(){ $scope.notif = {}; },3000);
+
         }
       },function(res){ console.log('FAIL : '+res.data); });
     }
 
-    $scope.refuseAsk = function(ask,ride){
+    $scope.refuseRequest = function(request,ride){
       var post = { request:ask.id, ride:ride.id };
 
-      $http.post('/passenger_request/refuse',post)
+      $http.post('/ride/refuse',post)
       .then(function(res){
         if(res.data.result == 1){
-          ask.refusedDate = new Date();
+          request.Requests.refusedDate = new Date();
         }
         else{
-          $scope.special = {};
-          $scope.notif = {
-                            type:'alert-danger',
-                            show:true,
-                            title:'Oupsss !',
-                            message:'Nous rencontrons des problèmes lors du traitement des requêtes.'
-                          };
-          $timeout(function(){ $scope.notif = {}; },3000);
+
         }
       },function(res){ console.log('FAIL : '+res.data); });
     }
@@ -185,7 +173,7 @@ shareAppControllers.controller('homeCtrl',['$scope','$location','$http','Current
     /***************************** MARK A DRIVER ******************************/
 
     $scope.mark = function(){
-      
+
     }
 
   }

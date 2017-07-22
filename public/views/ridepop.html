@@ -35,20 +35,6 @@
         <td ng-bind="(pop.ride.arrival == undefined) ? pop.ride.arr_city+'-'+pop.ride.arr_postalCode : pop.ride.arrival.city+'-'+pop.ride.arrival.postalCode"></td>
       </tr>
     </table>
-
-    <b class="text-success"><i class="fa fa-users"></i> PASSAGERS</b>
-    <table class="table">
-      <tr>
-        <td>NOM COMPLET</td>
-        <td>MAIL</td>
-        <td>BUREAU</td>
-      </tr>
-      <tr ng-repeat="passenger in pop.ride.passengers">
-        <td ng-bind="passenger.lastname | uppercase +' '+ passenger.firstname"></td>
-        <td ng-bind="passenger.mailAdress"></td>
-        <td ng-bind="passenger.site.name"></td>
-      </tr>
-    </table>
   </div>
 
   <div class="panel-footer">

@@ -138,7 +138,8 @@ router.post('/new',function(req,res,next){
         .then(user => {
           request.setUser(user)
           .then(user =>{
-            res.redirect('/ride/'+send.ride+'/passenger_request/'+request.id);
+
+            //res.redirect('/ride/'+send.ride+'/passenger_request/'+request.id);
           })
           .catch(err => { res.json({result:-1, message:'Something went wrong when setting user on request w/ url 01-005', error:err}); });
         })

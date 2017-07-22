@@ -10,21 +10,27 @@
     <b class="text-success"><i class="fa fa-map-marker"></i> DÉPART</b>
     <table class="table">
       <tr>
-        <td colspan="2">
-          <p class="text-primary" ng-bind="(special.ride.departure == undefined) ? special.ride.dep_city : special.ride.departure.name"></p>
+        <td>
+          <b class="text-primary" ng-bind="(special.ride.departure_city == null) ? special.ride.departure.name : special.ride.departure_city"></b>
+        </td>
+        <td>
+          <p ng-bind="special.ride.departure_time"></p>
         </td>
       </tr>
       <tr>
-        <td ng-bind="(special.ride.departure == undefined) ? special.ride.dep_adress : special.ride.departure.adress"></td>
-        <td ng-bind="(special.ride.departure == undefined) ? special.ride.dep_city+'-'+special.ride.dep_postalCode : special.ride.departure.city+'-'+special.ride.departure.postalCode"></td>
+        <td ng-bind="(special.ride.departure_adress == null) ? special.ride.departure.adress : special.ride.departure_adress"></td>
+        <td ng-bind="(special.ride.departure_city == null) ? special.ride.departure.city+'-'+special.ride.departure.postalCode : special.ride.departure_city+'-'+special.ride.departure_postalCode"></td>
       </tr>
     </table>
 
     <b class="text-success"><i class="fa fa-map-marker"></i> ARRIVÉE</b>
     <table class="table">
       <tr>
-        <td colspan="2">
-          <p class="text-primary" ng-bind="(special.ride.arrival == undefined) ? special.ride.arr_city : special.ride.arrival.name"></p>
+        <td>
+          <b class="text-primary" ng-bind="(special.ride.arrival == undefined) ? special.ride.arr_city : special.ride.arrival.name"></b>
+        </td>
+        <td>
+          <p ng-bind="special.ride.arrival_time"></p>
         </td>
       </tr>
       <tr>
@@ -36,42 +42,41 @@
     <b class="text-success"><i class="fa fa-users"></i> PASSAGERS</b>
     <p ng-show="special.ride.passengers.length == 0">Pas de Passager pour le moment</p>
     <table class="table" ng-show="special.ride.passengers.length != 0">
-      <tr>
-        <td>NOM COMPLET</td>
-        <td>BUREAU</td>
-        <td>STATUT</td>
-      </tr>
       <tr ng-repeat="passenger in special.ride.passengers">
-        <td ng-bind="passenger.lastname | uppercase +' '+ passenger.firstname"></td>
-        <td ng-bind="passenger.site.name"></td>
-        <td><i class="fa fa-check-square-o text-success"></i></td>
+        <td ng-bind="passenger.lastname+' '+passenger.firstname"></td>
+        <td ng-bind="passenger.Site.name"></td>
+        <td><i class="fa fa-check-square-o text-success fa-2x"></i></td>
       </tr>
     </table>
     <hr/>
     <b class="text-success"><i class="fa fa-hourglass"></i> DEMANDES</b>
-    <p ng-show="special.ride.asks == 0">Pas de Demande pour le moment</p>
-    <table class="table" ng-show="special.ride.asks != 0">
+    <p ng-show="special.ride.requests == 0">Pas de Nouvelle Demande pour le moment</p>
+    <table class="table" ng-show="special.ride.requests != 0">
       <tr>
         <td>NOM COMPLET</td>
         <td>BUREAU</td>
         <td>STATUT</td>
         <td>ACTION</td>
       </tr>
-      <tr ng-repeat="ask in special.ride.asks">
-        <td ng-bind="ask.user.lastname | uppercase +' '+ ask.user.firstname"></td>
-        <td ng-bind="ask.user.Site.name"></td>
+      <tr ng-repeat="request in special.ride.requests">
+        <td ng-bind="request.lastname+' '+request.firstname"></td>
+        <td ng-bind="request.Site.name"></td>
         <td>
-          <i ng-show="ask.acceptedDate != null" class="fa fa-check-circle text-success fa-2x"></i>
-          <i ng-show="ask.refusedDate != null" class="fa fa-times-circle text-danger fa-2x"></i>
-          <i ng-show="ask.acceptedDate == null && ask.refusedDate == null" class="fa fa-exclamation-circle text-warning fa-2x"></i>
+          <i ng-show="request.Requests.acceptedDate != null" class="fa fa-check-circle text-success fa-2x"></i>
+          <i ng-show="request.Requests.refusedDate != null" class="fa fa-times-circle text-danger fa-2x"></i>
+          <i ng-show="request.Requests.acceptedDate == null && request.Requests.refusedDate == null" class="fa fa-exclamation-circle text-warning fa-2x"></i>
         </td>
         <td>
-          <p ng-show="ask.acceptedDate == null || ask.refusedDate == null">
-            <i class="fa fa-check fa-2x text-success" ng-click="acceptAsk(ask,ride)"></i>
-            <i class="fa fa-times fa-2x text-danger" ng-click="refuseAsk(ask,ride)"></i>
+          <p ng-show="request.Requests.acceptedDate == null && request.Requests.refusedDate == null">
+            <i class="fa fa-check fa-2x text-success" ng-click="acceptRequest(request,special.ride)"></i>
+            <i class="fa fa-times fa-2x text-danger" ng-click="refuseRequest(request,special.ride)"></i>
           </p>
+          <span class="label label-default">Traité</span>
         </td>
       </tr>
     </table>
+  </div>
+  <div class="panel-footer">
+    <a href="" class="btn btn-danger" ng-click="deleteRide(ride)">SUPPRIMER</a>
   </div>
 </div>

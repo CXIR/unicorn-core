@@ -117,7 +117,7 @@ shareAppControllers.controller('ridesCtrl',['$scope','$location','$http','$timeo
 
       $scope.requestSeat = function(ride){
         var post = {ride: ride.id, user: Current.user.info.id};
-        $http.post('/passenger_request/new',post)
+        $http.post('/ride/request',post)
         .then(function(res){
           if(res.data.result == 1){
             $scope.notif = {

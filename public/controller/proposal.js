@@ -5,8 +5,10 @@ shareAppControllers.controller('proposalCtrl',['$scope','$location','$http','$ro
 
     var clearProposal = function(){
       $scope.proposal = {};
-      angular.element(document.querySelector('#ddate, #adate')).removeClass('has-error');
-      angular.element(document.querySelector('#ddate, #adate')).removeClass('has-success');
+      angular.element(document.querySelector('#ddate')).removeClass('has-error');
+      angular.element(document.querySelector('#adate')).removeClass('has-error');
+      angular.element(document.querySelector('#ddate')).removeClass('has-success');
+      angular.element(document.querySelector('#adate')).removeClass('has-success');
     };
 
     $http.get('/site/')

@@ -8,13 +8,13 @@ var session = require('express-session');
 
 var index = require('./routes/index');
 var media = require('./routes/media');
-var passenger_request = require('./routes/passenger_request');
 var report = require('./routes/report');
 var ride = require('./routes/ride');
 var site = require('./routes/site');
 var status = require('./routes/status');
 var users = require('./routes/users');
 var vehicle = require('./routes/vehicle');
+var notif = require('./routes/notif');
 
 var models = require('./models');
 
@@ -63,18 +63,22 @@ app.use(function(req, res, next) {
 
 app.use('/', index);
 app.use('/media', media);
-app.use('/passenger_request', passenger_request);
 app.use('/report', report);
 app.use('/ride', ride);
 app.use('/site', site);
 app.use('/status', status);
 app.use('/users', users);
 app.use('/vehicle', vehicle);
+app.use('/notif',notif);
 
 var session;
 
 app.get('/',function(req,res){
     session = req.session;
+});
+
+app.post('/login',function(req,res){
+
 });
 
 app.get('*', function(req, res) {

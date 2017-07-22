@@ -16,8 +16,8 @@ router.get('/comming',function(req,res){
                   { model: models.Site, as:'Departure' },
                   { model: models.Site, as:'Arrival' },
                   { model: models.User, as: 'Driver', include: [ models.Site, models.Status ] },
-                  { model: models.User, as: 'Passengers'},
-                  { model: models.Passenger_Request, as: 'Asks', include: [ models.User ] }
+                  { model: models.User, as: 'Passengers', include: [ models.Site, models.Status ] },
+                  { model: models.User, as: 'Requests', include: [ models.Site, models.Status ] }
                 ]
   })
   .then(function(rides){
@@ -42,8 +42,8 @@ router.get('/comming/:id',function(req,res){
                 { model: models.Site, as:'Departure' },
                 { model: models.Site, as:'Arrival' },
                 { model: models.User, as: 'Driver', include: [ models.Site, models.Status ] },
-                { model: models.User, as: 'Passengers'},
-                { model: models.Passenger_Request, as: 'Asks' }
+                { model: models.User, as: 'Passengers', include: [ models.Site, models.Status ]},
+                { model: models.User, as: 'Requests', include: [ models.Site, models.Status ] }
               ]
   })
   .then(rides => {
@@ -53,13 +53,13 @@ router.get('/comming/:id',function(req,res){
       let hasRequested = false;
 
       let passengers = ride.Passengers;
-      let requests = ride.Asks;
+      let requests = ride.Requests;
 
       for(let passenger of passengers){
         if(passenger.id == req.params.id) isPassenger = true;
       }
       for(let request of requests){
-        if(request.user_id == req.params.id) hasRequested = true;
+        if(request.id == req.params.id) hasRequested = true;
       }
 
       if(!isPassenger && !hasRequested) results.push(ride.responsify());
@@ -85,8 +85,8 @@ router.get('/comming/driver/:id',function(req,res){
                   { model: models.Site, as: 'Departure' },
                   { model: models.Site, as: 'Arrival' },
                   { model: models.User, as: 'Driver' },
-                  { model: models.User, as: 'Passengers'},
-                  { model: models.Passenger_Request, as: 'Asks' }
+                  { model: models.User, as: 'Passengers', include: [ models.Site, models.Status ] },
+                  { model: models.User, as: 'Requests', through: { where: { acceptedDate: null, refusedDate: null } }, include: [ models.Site, models.Status ] }
                 ]
   })
   .then(function(rides){
@@ -110,16 +110,17 @@ router.get('/comming/passenger/:id',function(req,res){
     include: [
                 {
                   model: models.Ride,
+                  as: 'Passengers',
                   include: [
                               { model: models.Site, as: 'Departure' },
                               { model: models.Site, as: 'Arrival' },
-                              { model: models.User, as: 'Driver'}
+                              { model: models.User, as: 'Driver', include: [ models.Site, models.Status ] }
                             ]
                 }
              ]
   })
   .then(user => {
-    let rides = user.Rides;
+    let rides = user.Passengers;
     let results = [];
     for(let ride of rides){
       let elem = ride.responsify();
@@ -145,7 +146,8 @@ router.get('/passed/driver/:id',function(req,res){
                 { model: models.Site, as: 'Departure' },
                 { model: models.Site, as: 'Arrival' },
                 { model: models.User, as: 'Driver'},
-                { model: models.User, as: 'Passengers'}
+                { model: models.User, as: 'Passengers', include: [ models.Site, models.Status ]},
+                { model: models.user, as: 'Requests', include: [ models.Site, models.Status ] }
               ]
   })
   .then(function(rides){
@@ -168,10 +170,11 @@ router.get('/passed/passenger/:id',function(req,res){
     include: [
                 {
                   model: Ride,
+                  as: 'Passengers',
                   include: [
                               { model: models.Site, as: 'Departure' },
                               { model: models.Site, as: 'Arrival' },
-                              { model: models.User, as: 'Driver'}
+                              { model: models.User, as: 'Driver', include: [ models.Site, models.Status ]}
                             ]
                 }
              ]
@@ -202,8 +205,8 @@ router.get('/:id',function(req,res){
                       { model: models.Site, as:'Departure' },
                       { model: models.Site, as:'Arrival' },
                       { model: models.User, as: 'Driver', include: [ models.Site, models.Status ] },
-                      { model: models.User, as: 'Passengers'},
-                      { model: models.Passenger_Request, as: 'Asks', include: [ models.User ] }
+                      { model: models.User, as: 'Passengers', include: [ models.Site, models.Status ] },
+                      { model: models.User, as: 'Requests', include: [ models.Site, models.Status ] }
                     ]
   })
   .then(function(ride){
@@ -213,60 +216,132 @@ router.get('/:id',function(req,res){
 
 });
 
-/** Add an accepted Passenger to a Ride | 02-009 */
-router.get('/:rideID/users/:userID',function(req,res,next){
-    Ride.find({
-        where:{
-            id: req.params.rideID
-        }
-    })
-    .then(function(ride){
-        if(ride){
-           return models.User.find({
-              where:{
-                      id: req.params.userID
-                    }
-            })
-            .then(function(user){
-              user.addRide(ride);
-              res.json({result: 1, message:'User successfully added to the Ride w/ url ' });
-            })
-            .catch(err => { res.json({ result: -2, error: err }); });
-        }
-    })
-    .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-010', error: err}); } );
-});
-
-/** Add a request Passenger to a Ride | 02-00? */
-router.get('/:rideID/passenger_request/:requestID',function(req,res,next){
-    Ride.find({
-        where:{
-            id: req.params.rideID
-        }
-    })
-    .then(ride => {
-        if(ride){
-           return models.Passenger_Request.find({
-              where:{
-                      id: req.params.requestID
-                    }
-            })
-            .then(request => {
-              request.addRide(ride)
-              .then(ride => {
-                ride.decrement('remain_seats');
-                res.json({result:1, message:'Request successfully created w/ url 02-010'});
-              })
-              .catch(err => { res.json({result:-1, message:'Unable to associate ride and request w/ url 02-010', error:err}); });
-            })
-            .catch(err => { res.json({ result:-1, message:'Unable to find Passenger_Request w/ url 02-010', error:err}); });
-        }
-        else res.json({result:0, message:'Unable to find ride w/ url 02-010'});
-    })
-    .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-010', error: err}); } );
-});
-
 /**************************POST**************************/
+
+/** Create new Request for a Ride | */
+router.post('/request',function(req,res,next){
+  let send = req.body;
+
+  Ride.find({
+    where: { id: send.ride }
+  })
+  .then(ride => {
+    if(ride){
+
+      models.User.find({
+        where: { id: send.user }
+      })
+      .then(user => {
+        if(user){
+
+          ride.addRequest(user, { requestDate: new Date() })
+          .then(user => {
+            ride.decrement('remain_seats');
+            res.json({result:1, message:'User successfully set to Ride Requests w/ url '});
+          })
+          .catch(err => { res.json({result:-1, message:'Unable to set User to Ride Request w/ url ', error:err}); });
+        }
+        else res.json({result:0, message:'User not found w/ url '});
+      })
+      .catch(err => { res.json({result:-1, message:'Unable to find User w/ url ', error:err}); });
+    }
+    else res.json({result:0, message:'Ride not found w/ url '});
+  })
+  .catch(err => { res.json({result:-1, message:'Unable to find ride w/ url ', error:err}); });
+});
+
+/** Accept Request and add Passenger to Ride | */
+router.post('/passenger',function(req,res,next){
+  let send = req.body;
+
+  models.Requests.find({
+    where: {
+      user_id: send.user,
+      ride_id: send.ride
+    }
+  })
+  .then(request => {
+    if(request){
+      if(request.refusedDate == null){
+        if(request.acceptedDate == null){
+
+          Ride.find({
+            where: { id: send.ride }
+          })
+          .then(ride => {
+            if(ride){
+
+                models.User.find({
+                  where: { id: send.user }
+                })
+                .then(user => {
+
+                  ride.addPassenger(user, { marked: 0 })
+                  .then(user => {
+
+                    request.updateAttributes({
+                      acceptedDate: new Date()
+                    });
+                    res.json({result:1, message:'Passenger successfully added to the Ride w/ url '});
+                  })
+                  .catch(err => { res.json({result:-1, message:'Unable to set User to the Ride w/ url ', error:err}); });
+                })
+                .catch(err => { res.json({result:-1, message:'Unable to find User w/ url ', error:err}); });
+            }
+            else res.json({result:0, message:'Ride not found w/ url '});
+          })
+          .catch(err => { res.json({result:-1, message:'Unable to find Ride w/ url ', error:err}); });
+        }
+        else res.json({result:0, message:'Request already accepted w/ url '});
+      }
+      else res.json({result:0, message:'Request already refused w/ url '});
+    }
+    else res.json({result:0, message:'Request not found w/ url '});
+  })
+  .catch(err => { res.json({result:-1, message:'Unable to find Request w/ url ', error:err}); });
+
+});
+
+/** Refuse Request | */
+router.post('/refuse',function(req,res,next){
+  let send = req.body;
+
+  models.Requests.find({
+    where: {
+      ride_id: send.ride,
+      user_id: send.user
+    }
+  })
+  .then(request => {
+    if(request){
+      if(request.acceptedDate == null){
+        if(request.refusedDate == null){
+
+          Ride.find({
+            where: { id: send.ride }
+          })
+          .then(ride =>{
+            if(ride){
+
+              ride.increment('remain_seats');
+              request.updateAttributes({
+                refusedDate: new Date()
+              });
+              res.json({result:1, message:'Request successfully refused w/ url '});
+            }
+            else res.json({result:0, message:'Ride not found w/ url '});
+          })
+          .catch(err => { res.json({result:-1, message:'Unable to find Ride w/ url ', error:err}); });
+        }
+        else res.json({result:0, message:'Request has already been refused w/ url '});
+      }
+      else res.json({result:0, message:'Request has already been accepted w/ url'});
+    }
+    else res.json({result:0, message:'Request not found w/ url '});
+  })
+  .catch(err => { res.json({result:-1, message:'Unable to find request w/ url ', error:err}); });
+
+});
 
 /** Create a new ride | 02-010 */
 router.post('/new',function(req,res,next){
@@ -456,7 +531,7 @@ router.post('/new',function(req,res,next){
             })
             .then(ride => {
               if(ride){
-                ride.setDeparture(arrival)
+                ride.setArrival(arrival)
                 .then(arrival => {
 
                   ride.setDriver(driver)
@@ -577,6 +652,43 @@ router.post('/search',function(req,res){
     else res.json({result:1, content:results});
   })
   .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 02-013'}); });
+});
+
+/** Rate a Ride | */
+router.post('/mark',function(req,res,next){
+  let send = req.body;
+
+  models.User.find({
+    where: { id: send.rated }
+  })
+  .then(user => {
+    if(user){
+
+      if(send.type == 'positive') user.increment('positiveRating');
+      else if(send.type == 'negative') user.increment('negativeRating');
+
+      models.Passengers.find({
+        where: {
+          user_id: send.rater,
+          ride_id: send.ride
+        }
+      })
+      .then(elem => {
+        if(elem){
+
+          elem.updateAttributes({
+            marked: 1
+          });
+          res.json({result:1, message:'User successfully rated w/ url '});
+        }
+        else res.json({result:-1, message:'Passenger association not found w/ url ', error:err});
+      })
+      .catch(err => { res.json({result:-1, message:'Unable to find Passenger association w/ url ', error:err}); });
+    }
+    else res.json({result:1, message:'User not found w/ url '});
+  })
+  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url ', error:err}); });
+
 });
 
 /**************************DELETE**************************/
