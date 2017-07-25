@@ -121,6 +121,7 @@ shareApp.directive('myNav',['$location','Current',function($location,Current){
     transclude: true,
     templateUrl: 'views/navbar.html',
   link: function (scope, element, attrs) {
+
         var current = $location.path().split(/\//g);
         if(current[1] == 'profil') angular.element(document.querySelector('#profil')).addClass('active');
         else if(current[1] == 'users') angular.element(document.querySelector('#users')).addClass('active');
@@ -133,6 +134,7 @@ shareApp.directive('myNav',['$location','Current',function($location,Current){
             Current.valid = 0;
             $location.path('/login');
         }
+
     }
   };
 }]);
@@ -222,6 +224,27 @@ shareApp.directive('notif',[
     };
   }
 ]);
+
+/**
+* DIALOG BOX
+*/
+shareApp.directive('dialog',[
+  function(){
+    return {
+      restrict: 'A',
+      replace: true,
+      transclude: true,
+      templateUrl: 'views/dialog.html',
+      link:function(scope, element, attrs){
+        scope.closeDialog = function(){
+          scope.dialog = {};
+        }
+
+      }
+    };
+  }
+]);
+
 
 
 /**

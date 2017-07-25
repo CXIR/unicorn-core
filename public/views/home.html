@@ -4,8 +4,9 @@
 <div ride-pop-special></div>
 <div ride-pop></div>
 <div notif></div>
+<div dialog></div>
 
-<section class="{{ pop.display }} {{ upop.display }} {{ special.display }}">
+<section class="{{ pop.display }} {{ upop.display }} {{ special.display }} {{ dialog.display }}">
 
   <div my-nav></div>
 
@@ -15,6 +16,7 @@
   <div class="home">
     <div class="well bloc bloc-s">
       <h4>NOTIFICATIONS</h4>
+      <p ng-show="notifications == 0">Pas de Notifications</p>
 
         <div class="alert alert-dismissible alert-success" ng-repeat="notif in notifications" ng-class="notif.class">
           <button type="button" class="readNotif(notif)" data-dismiss="alert">&times;</button>
@@ -348,17 +350,18 @@
 
     <div class="well bloc bloc-s">
       <h4>À PROPOS</h4>
+        <img src="toolbox/resources/logo.png" width="100"/>
       <br/>
       <p>
-        Application réalisée avec amour par la Team Licorne,
-        sauvagement dirigée (tyranisée) par rien de moins que
-        ce petit bout d'humain aux basckets Nike.
+        Partage ta Caisse !<br/>
+        Application de Covoiturage Professionnel
       </p>
       <br/>
       <br/>
-      <em>
-        "Jamais ne se plaint ni ne s'explique" EIIR
-      </em>
+      <p cass="text-default">
+        Unicorn Soft - 2017
+        Version 2.0
+      <p>
     </div>
   </div>
 

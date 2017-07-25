@@ -16,10 +16,10 @@ router.get('/',function(req,res){
       results.push(site.responsify());
     }
 
-    if(results.length == 0) res.json({result:0, message:'No site found w/ url 05-001'});
+    if(results.length == 0) res.json({result:0, message:'No Site found w/ url 05-001'});
     else res.json({result:1, content:results});
 
-  }).catch(err => { res.json({result:-1, message:'Somthing went wrong w/ url 05-001', error:err}); });
+  }).catch(err => { res.json({result:-1, message:'Unable to find Site w/ url 05-001', error:err}); });
 
 });
 
@@ -32,11 +32,11 @@ router.get('/:id',function(req,res){
   })
   .then(function(site){
     if(site) {
-      res.json(site.responsify());
+      res.json({result:1,content:site.responsify()});
     }
     else res.json({result: 0, message:'No site found w/ url 05-002'});
   })
-  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 05-002', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find Site w/ url 05-002', error:err}); });
 });
 
 /**************************POST**************************/
@@ -49,7 +49,7 @@ router.post('/new',function(req,res,next){
     where:{ name: send.name }
   })
   .then(site => {
-    if(site) res.json({result:0, message:'Similar site w/ same name already exists w/ url '});
+    if(site) res.json({result:0, message:'Similar site w/ same name already exists w/ url 05-003'});
     else{
 
       Site.create({
@@ -65,7 +65,7 @@ router.post('/new',function(req,res,next){
       .catch(err => { res.json({result:-1, message:'Unable to create Site w/ url 05-003', error:err}); });
     }
   })
-  .catch(err => { res.json({result:-1, message:'Unable to find site w/ url ', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find site w/ url 05-003', error:err}); });
 
 
 });
@@ -88,11 +88,11 @@ router.post('/edit',function(req,res,next){
                               postalCode: send.postal
                             });
 
-      res.json({result: 1,  message:'Site successfully updated w/ url '});
+      res.json({result: 1,  message:'Site successfully updated w/ url 05-004'});
     }
     else res.json({ result: 0, message: 'No site found w/ url 05-004'});
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 05-004', error: err}); });
+  .catch(err => { res.json({result: -1, message:'Unable to find Site w/ url 05-004', error: err}); });
 });
 
 
@@ -115,7 +115,7 @@ router.delete('/:id',function(req,res,next){
     }
     else res.json({result: -1, message:'No site found w/ url 05-005'});
   })
-  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 05-005', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find Site w/ url 05-005', error:err}); });
 });
 
 /**************************END**************************/

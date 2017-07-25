@@ -1,14 +1,21 @@
 'use strict';
 
 /**
-* View : Rides
+* View : rides
 */
 shareAppControllers.controller('ridesCtrl',['$scope','$location','$http','$timeout','Current',
     function($scope,$location,$http,$timeout,Current){
+      if(Current.user.valid != 1) $location.path('/login');
+      else if(Current.user.info == null) $location.path('/login');
+      else{
 
       $scope.loaded = false;
       $scope.rideFilter = '';
       var rides = {};
+
+
+      /*************************** PRECISE SEARCH ******************************/
+
 
       /** Date Input Verification */
       var dateVerify = function(dt){
@@ -51,30 +58,6 @@ shareAppControllers.controller('ridesCtrl',['$scope','$location','$http','$timeo
         $timeout(function(){ $scope.notif = {}; },3000);
       },function(res){ console.log('FAIL : '+res.data); });
 
-      /** Get all comming rides **/
-      var getRides = function() {
-        $http.get('/ride/comming/'+Current.user.info.id)
-        .then(function(res){
-          if(res.data.result == 1){
-            $scope.rides = res.data.content;
-            rides = res.data.content;
-          }
-          else if(res.data.result == 0){
-            $scope.message = {show:true, message:'Aucun de vos collègue n\'a proposé de trajet pour le moment, et sur lequel vous n\'êtes pas inscrit...'};
-          }
-          else{
-            $scope.notif = {
-                              type:'alert-danger',
-                              show:true,
-                              title:'Oupss !',
-                              message:'Un problème est survenu lors de la récupération des Trajets.'
-                            };
-          }
-          $scope.loaded = true;
-          $timeout(function(){ $scope.notif = {}; },3000);
-        },function(res){ console.log('FAIL : '+ res.data); });
-      }; getRides();
-
       /** Special Search w/ defined Criteria */
       $scope.searchRide = function(search,date){
         $scope.rides = {};
@@ -114,6 +97,41 @@ shareAppControllers.controller('ridesCtrl',['$scope','$location','$http','$timeo
         $scope.simple = true;
         getRides();
       }
+
+
+
+      /*************************** ALL RIDES ******************************/
+
+
+
+      /** Get all comming rides **/
+      var getRides = function() {
+        $http.get('/ride/comming/'+Current.user.info.id)
+        .then(function(res){
+          if(res.data.result == 1){
+            $scope.rides = res.data.content;
+            rides = res.data.content;
+          }
+          else if(res.data.result == 0){
+            $scope.message = {show:true, message:'Aucun de vos collègue n\'a proposé de trajet pour le moment, et sur lequel vous n\'êtes pas inscrit...'};
+          }
+          else{
+            $scope.notif = {
+                              type:'alert-danger',
+                              show:true,
+                              title:'Oupss !',
+                              message:'Un problème est survenu lors de la récupération des Trajets.'
+                            };
+          }
+          $scope.loaded = true;
+          $timeout(function(){ $scope.notif = {}; },3000);
+        },function(res){ console.log('FAIL : '+ res.data); });
+      }; getRides();
+
+
+
+      /*************************** RIDE ACTIONS ******************************/
+
 
       $scope.requestSeat = function(ride){
         var post = {ride: ride.id, user: Current.user.info.id};
@@ -158,6 +176,8 @@ shareAppControllers.controller('ridesCtrl',['$scope','$location','$http','$timeo
 
       $scope.userPop = function(user){
         $scope.upop = { show:true, display:'opacify', user:user }
+      }
+
       }
     }
 ]);

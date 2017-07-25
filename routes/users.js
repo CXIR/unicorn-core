@@ -29,9 +29,9 @@ router.get('/all',function(req,res){
       results.push(user.responsify());
     }
 
-    if(results.length == 0) res.json({result:0, message:'No user found w/ url '});
+    if(results.length == 0) res.json({result:0, message:'No User found w/ url 04-001'});
     else res.json({result:1, content:results});
-  }).catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-001', error: err}); } );
+  }).catch(err => { res.json({result: -1, message:'Unable to find User w/ url 04-001', error: err}); });
 });
 
 /** Get all active users except whom searching | 04-002 */
@@ -55,9 +55,9 @@ router.get('/all/:id',function(req,res){
       results.push(user.responsify());
     }
 
-    if(results.length == 0) res.json({result:0, message:'No user found w/ url '});
+    if(results.length == 0) res.json({result:0, message:'No User found w/ url 04-002'});
     else res.json({result:1, content:results});
-  }).catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-002', error: err}); } );
+  }).catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-002', error: err}); });
 
 });
 
@@ -79,7 +79,7 @@ router.get('/:id',function(req,res){
     .catch(err => { res.json({result: -1, message:'Unable to find User w/ url 04-003', error: err}); });
 });
 
-/** Get a single User by mail | 04-003 */
+/** Get a single User by mail | 04-004 */
 router.get('/mail/:mailAdress',function(req,res){
     User.find({
       where:{ mailAdress: req.params.mailAdress },
@@ -87,14 +87,14 @@ router.get('/mail/:mailAdress',function(req,res){
     })
     .then(user => {
       if(user) res.json({result:1, content:user.responsify()});
-      else res.json({result:0, message:'User not found w/ url 04-003'});
+      else res.json({result:0, message:'User not found w/ url 04-004'});
     })
-    .catch(err => { res.json({result: -1, message:'User not found w/ url 04-003', error: err}); });
+    .catch(err => { res.json({result: -1, message:'Unable to find User w/ url 04-004', error: err}); });
 });
 
 /**************************POST**************************/
 
-/** Create a new user | 04-004 */
+/** Create a new user | 04-005 */
 router.post('/new',function(req,res,next){
   let send = req.body;
 
@@ -106,7 +106,7 @@ router.post('/new',function(req,res,next){
     where: { mailAdress: send.mail }
   })
   .then(user => {
-    if(user) res.json({result:0, message:'Similar user w/ same mail exists w/ url '});
+    if(user) res.json({result:0, message:'Similar User w/ same mail already exists w/ url 04-005'});
     else{
 
       models.Site.find({
@@ -141,27 +141,27 @@ router.post('/new',function(req,res,next){
 
                       res.json({result:1, object:user});
                     })
-                    .catch(err => { res.json({result:-1, message:'Unable to set status to user w/ url 04-004', error:err}); });
+                    .catch(err => { res.json({result:-1, message:'Unable to set status to user w/ url 04-005', error:err}); });
                   })
-                  .catch(err => { res.json({ result:-1, message:'Unable to set Site on user w/ url 04-004', error:err}); });
+                  .catch(err => { res.json({ result:-1, message:'Unable to set Site on user w/ url 04-005', error:err}); });
                 }
-                else res.json({result:0, message:'User not created w/ url 04-004'});
+                else res.json({result:0, message:'User not created w/ url 04-005'});
               })
-              .catch(err => { res.json({result:-1, message:'Unable to create user w/ url 04-004', error:err}); });
+              .catch(err => { res.json({result:-1, message:'Unable to create user w/ url 04-005', error:err}); });
             }
-            else res.json({result:0, message:'Status not found w/ url 04-004'});
+            else res.json({result:0, message:'Status not found w/ url 04-005'});
           })
-          .catch(err => { res.json({result:-1, message:'Unable to find Status w/ url 04-004', error:err}); });
+          .catch(err => { res.json({result:-1, message:'Unable to find Status w/ url 04-005', error:err}); });
         }
-        else res.json({result:0, message:'Site not found w/ url 04-004'});
+        else res.json({result:0, message:'Site not found w/ url 04-005'});
       })
-      .catch(err => { res.json({result:-1, message:'Unable to find Site w/ url 04-004', error:err}); });
+      .catch(err => { res.json({result:-1, message:'Unable to find Site w/ url 04-005', error:err}); });
     }
   })
-  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 04-004', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 04-005', error:err}); });
 });
 
-/** Update User rating | 04-005 */
+/** Update User rating | 04-006 */
 router.post('/markup',function(req,res,next){
   let send = req.body;
   let type = req.body.type;
@@ -173,20 +173,20 @@ router.post('/markup',function(req,res,next){
     if(user){
       if(type == 'positive'){
         user.increment('positiveRating');
-        res.json({result:1, message:'User mark up successfully incremented w/ url '});
+        res.json({result:1, message:'User mark up successfully incremented w/ url 04-006'});
       }
       else if(type == 'negative'){
         user.increment('negativeRating');
-        res.json({result:1, message:'User mark down successfully incremented w/ url '});
+        res.json({result:1, message:'User mark down successfully incremented w/ url 04-006'});
       }
-      else res.json({result:0, message:'Unknown rating type w/ url 04-005'});
+      else res.json({result:0, message:'Unknown rating type w/ url 04-006'});
     }
-    else res.json({result:0, message:'User not found w/ url 04-005'});
+    else res.json({result:0, message:'User not found w/ url 04-006'});
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-005', error: err}); } );
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-006', error: err}); });
 });
 
-/** Update user Basic Information | 04-006 */
+/** Update user Basic Information | 04-007 */
 router.post('/edit',function(req,res,next){
   let send = req.body;
 
@@ -203,14 +203,14 @@ router.post('/edit',function(req,res,next){
                               description: (send.description != undefined) ? send.description : null
                             });
 
-      res.json({result:1, message:'User basic information successfully update w/ url '});
+      res.json({result:1, message:'User basic information successfully update w/ url 04-007'});
     }
-    else res.json({result: 0, message:'User not found w/ url 04-006 '});
+    else res.json({result: 0, message:'User not found w/ url 04-007'});
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-006', error: err}); });
+  .catch(err => { res.json({result: -1, message:'Unable to find User w/ url 04-007', error: err}); });
 });
 
-/** Update user Site | 04-007 */
+/** Update user Site | 04-008 */
 router.post('/edit/site',function(req,res,next){
   let send = req.body;
 
@@ -228,17 +228,17 @@ router.post('/edit/site',function(req,res,next){
 
           user.setSite(site)
           .then(site => {
-            res.json({result:1, message:'Site successfully updated w/ url 04-007'});
+            res.json({result:1, message:'Site successfully updated w/ url 04-008'});
           })
-          .catch(err => { res.json({ result:-1, message:'Unable to update Site w/ url 04-007'}); });
+          .catch(err => { res.json({ result:-1, message:'Unable to update Site w/ url 04-008'}); });
         }
-        else res.json({result:0, message:'Site not found w/ url '});
+        else res.json({result:0, message:'Site not found w/ url 04-008'});
     })
-    .catch(err => { res.json({ result:-1, message:'Unable to find site w/ url 04-007'}); });
+    .catch(err => { res.json({ result:-1, message:'Unable to find site w/ url 04-008'}); });
     }
-    else res.json({result:0, message:'User not found w/ url '});
+    else res.json({result:0, message:'User not found w/ url 04-008'});
   })
-  .catch(err => { res.json({ result:-1, message:'Unable to find user w/ url 04-007'}); });
+  .catch(err => { res.json({ result:-1, message:'Unable to find user w/ url 04-008'}); });
 });
 
 /** Update user Status | 04-008 */
@@ -257,20 +257,20 @@ router.post('/edit/status',function(req,res,next){
         if(status){
           user.setStatus(status)
           .then(status => {
-            res.json({ result:1, message:'Status successfully updated w/ url 04-007'});
+            res.json({ result:1, message:'Status successfully updated w/ url 04-008'});
           })
-          .catch(err => { res.json({ result:-2, message:'Unable to update Status w/ url 04-007'}); });
+          .catch(err => { res.json({ result:-2, message:'Unable to update Status w/ url 04-008'}); });
         }
-        else res.json({result:0, message:'Status not found w/ url '});
+        else res.json({result:0, message:'Status not found w/ url 04-008'});
       })
-      .catch(err => { res.json({ result:-1, message:'Status not found w/ url 04-007'}); });
+      .catch(err => { res.json({ result:-1, message:'Status not found w/ url 04-008'}); });
     }
-    else res.json({result:0, message:'User not found w/ url '});
+    else res.json({result:0, message:'User not found w/ url 04-008'});
   })
-  .catch(err => { res.json({ result:-1, message:'User not found w/ url 04-007'}); });
+  .catch(err => { res.json({ result:-1, message:'User not found w/ url 04-008'}); });
 });
 
-/** Update User Description */
+/** Update User Description | 04-009 */
 router.post('/edit/description',function(req,res,next){
   let send = req.body;
 
@@ -282,12 +282,12 @@ router.post('/edit/description',function(req,res,next){
       description: send.description
     });
 
-    res.json({result:1, message:'User description successfully updated w/ url '});
+    res.json({result:1, message:'User description successfully updated w/ url 04-009'});
   })
-  .catch(err => { res.json({result:-1, message:'Something'}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 04-009'}); });
 });
 
-/** Update User Password */
+/** Update User Password | 04-010 */
 router.post('/edit/password',function(req,res,next){
   let send = req.body;
 
@@ -298,14 +298,29 @@ router.post('/edit/password',function(req,res,next){
     user.updateAttributes({
       password: send.password
     });
-    res.json({result:1, message:'User password successfully updated w/ url '});
+    res.json({result:1, message:'User password successfully updated w/ url 04-010'});
   })
-  .catch(err => { res.json({result:-1, message:'Something'}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 04-010'}); });
+});
+
+
+/** Get User by Mail | 04-011 */
+router.post('/mail',function(req,res,next){
+  let send = req.body;
+
+  User.find({
+    where: { mailAdress: send.mail }
+  })
+  .then(user => {
+    if(user) res.json({result:1, content:user});
+    else res.json({result:0, message:'User not found w/ url 04-011'});
+  })
+  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 04-011', error:err}); });
 });
 
 /**************************DELETE**************************/
 
-/** Delete an active user | 04-009 */
+/** Delete an active user | 04-012 */
 router.delete('/:id',function(req,res,next){
   User.find({
     where:{
@@ -316,13 +331,13 @@ router.delete('/:id',function(req,res,next){
     if(user){
       user.destroy()
       .then(function(user){
-        res.json({result:1, message:'User successfully removed w/ url '});
+        res.json({result:1, message:'User successfully removed w/ url 04-012'});
       })
-      .catch(err => { res.json({result: 0, message:'Unable to destroy user w/ url 04-007', error: err}); } );
+      .catch(err => { res.json({result: 0, message:'Unable to destroy user w/ url 04-012', error: err}); } );
     }
-    else res.json({result:-1, message:'User not found w/ url 04-007'});
+    else res.json({result:-1, message:'User not found w/ url 04-012'});
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-007', error: err}); });
+  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 04-012', error: err}); });
 });
 
 

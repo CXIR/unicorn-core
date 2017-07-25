@@ -1,14 +1,25 @@
 'use strict';
 
 /**
-* View : my profile
+* View : a profile
 */
 shareAppControllers.controller('profilCtrl',['$scope','$location','$http','$routeParams','$timeout','Current',
     function($scope,$location,$http,$routeParams,$timeout,Current){
+      if(Current.user.valid != 1) $location.path('/login');
+      else if(Current.user.info == null) $location.path('/login');
+      else{
+
         var url = $location.path().split(/\//g);
         var user = url[2];
 
-        /** USER INFORMATION */
+
+
+
+        /*************************** USER INFORMATIONS ******************************/
+
+
+
+
         $http.get('/users/'+user)
         .then(function(res){
           if(res.data.result == 1){
@@ -22,6 +33,11 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$http','$rout
           }
           else $location.path('/users');
         },function(res){ console.log('FAIL : '+res.data); });
+
+
+
+        /*************************** USER RIDES ******************************/
+
 
 
         /** COMMING RIDES */
@@ -40,6 +56,12 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$http','$rout
           }
           else $scope.p_comming = 0;
         },function(res){ console.log('FAIL : '+res.data); });
+
+
+
+        /*************************** PROFIL ACTIONS ******************************/
+
+
 
         $scope.reportUser = function(user){
           $scope.report = {show:true, display:'opacify'}
@@ -117,5 +139,7 @@ shareAppControllers.controller('profilCtrl',['$scope','$location','$http','$rout
             $timeout(function(){ $scope.notif = {}; },3000);
           },function(res){ console.log('FAIL  : '+res.data); });
         }
+
+      }
     }
 ]);

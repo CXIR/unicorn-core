@@ -6,7 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var media = require('./routes/media');
 var report = require('./routes/report');
 var ride = require('./routes/ride');
 var site = require('./routes/site');
@@ -17,9 +16,13 @@ var notif = require('./routes/notif');
 
 var models = require('./models');
 
+/**
+* SEQUELIZE SYNCHRONISATION
+*/
 models.sequelize.sync();
 
 //models.sequelize.sync({force:true});
+
 /*
 models.sequelize.query('SET FOREIGN_KEY_CHECKS = 0', {raw: true}).then(function(results) {
         models.sequelize.sync({force: true});
@@ -34,7 +37,7 @@ app.set('view engine', 'jade');
 
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -43,7 +46,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/', index);
-app.use('/media', media);
 app.use('/report', report);
 app.use('/ride', ride);
 app.use('/site', site);
@@ -53,7 +55,7 @@ app.use('/vehicle', vehicle);
 app.use('/notif',notif);
 
 
-/** SESSION SARTER */
+/** SESSION STARTER */
 app.post('/login',function(req,res){
   let send = req.body;
 
@@ -73,8 +75,11 @@ app.post('/login',function(req,res){
 
 });
 
-app.get('*', function(req, res) {
-    res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+app.get('*', function(req, res){
+    /**
+    *  load the Single View file for AngularJS (angular will handle the page changes on the front-end)
+    */
+    res.sendfile('./public/index.html');
 });
 
 // catch 404 and forward to error handler

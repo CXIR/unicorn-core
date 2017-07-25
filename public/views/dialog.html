@@ -1,10 +1,16 @@
-<div id="dialog" class="panel popup {{dialog.type}}" ng-show="dialog.show">
+<div id="dialog" class="panel {{dialog.type}} dialog" ng-show="dialog.show">
   <div class="panel-heading">
     <h3 class="panel-title">{{dialog.title}}</h3>
   </div>
   <div class="panel-body">
-    <p class="popup-message">{{dialog.message}}</p>
-      <a class="btn btn-danger" href="" ng-click="closeDialog()">{{dialog.cancel}}</a>
-      <a class="btn btn-primary" href="" ng-click="diagres(dialog.action)">{{dialog.valid}}</a>
+    <br/>
+    <br/>
+    <p>{{dialog.message}}</p>
+    <br/>
+    <br/>
+  </div>
+  <div class="panel-footer">
+    <a class="btn btn-danger" href="" ng-click="closeDialog()">Non</a>
+    <a class="btn btn-primary" href="" ng-click="agree(dialog.content)">Oui</a>
   </div>
 </div>

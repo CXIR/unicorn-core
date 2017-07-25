@@ -4,6 +4,10 @@
 
 /** GENERAL */
 
+.dialog{ position: fixed; width: 40%; margin-left: 30%; margin-top: 10em; z-index: 1; text-align: center; }
+
+.info{ position: fixed; width: 100%; bottom:1em; font-size: 10px; text-align: center; }
+
 .navbar{ position: fixed; width: 100%; top: 0px; z-index: 1; }
 .navfix{ height: 1em; }
 
