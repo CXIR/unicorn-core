@@ -26,13 +26,13 @@ router.get('/comming',function(req,res){
       results.push(ride.responsify());
     }
 
-    if(results.length == 0) res.json({result:0, message:'No ride found w/ url 02-001'});
+    if(results.length == 0) res.json({result:0, message:'No Ride found w/ url 02-001'});
     else res.json({result:1, content:results});
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-001', error: err}); });
+  .catch(err => { res.json({result: -1, message:'Unable to find Ride w/ url 02-001', error: err}); });
 });
 
-/** Get all comming rides except those user requested for or those who drives | 02-014 */
+/** Get all comming rides except those user requested for or those who drives | 02-002 */
 router.get('/comming/:id',function(req,res){
   Ride.findAll({
     where: {
@@ -65,13 +65,13 @@ router.get('/comming/:id',function(req,res){
       if(!isPassenger && !hasRequested) results.push(ride.responsify());
     }
 
-    if(results.length == 0) res.json({result:0, message:'No ride found w/ url 02-014'});
+    if(results.length == 0) res.json({result:0, message:'No Ride found w/ url 02-002'});
     else res.json({result:1, content:results});
   })
-  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 02-014', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find Ride w/ url 02-002', error:err}); });
 });
 
-/** Get all single user comming rides as driver | 02-002 */
+/** Get all single user comming rides as driver | 02-003 */
 router.get('/comming/driver/:id',function(req,res){
 
   Ride.findAll({
@@ -95,14 +95,14 @@ router.get('/comming/driver/:id',function(req,res){
       results.push(ride.responsify());
     }
 
-    if(results.length == 0) res.json({ result:0, message:'No rides found' });
+    if(results.length == 0) res.json({ result:0, message:'No Ride found w/ url 02-003' });
     else res.json({result:1,content:results});
 
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-002', error: err}); });
+  .catch(err => { res.json({result: -1, message:'Unable to find Ride w/ url 002-003', error: err}); });
 });
 
-/** Get all single user comming rides as passenger | 02-003 */
+/** Get all single user comming rides as passenger | 02-004 */
 router.get('/comming/passenger/:id',function(req,res){
 
   models.User.find({
@@ -129,13 +129,13 @@ router.get('/comming/passenger/:id',function(req,res){
       }
     }
 
-    if(results.length == 0) res.json({result:0, message:'No ride found w/ 02-003'});
+    if(results.length == 0) res.json({result:0, message:'No Ride found w/ 02-004'});
     else res.json({result:1,content:results});
   })
-  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 02-003', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-004', error:err}); });
 });
 
-/** Get all single user passed rides as driver | 02-004 */
+/** Get all single user passed rides as driver | 02-005 */
 router.get('/passed/driver/:id',function(req,res){
 
   Ride.findAll({
@@ -159,14 +159,14 @@ router.get('/passed/driver/:id',function(req,res){
       results.push(ride.responsify());
     }
 
-    if(results.length == 0) res.json({ result:0, message:'No rides found' });
+    if(results.length == 0) res.json({ result:0, message:'No Ride found w/ url 02-005'});
     else res.json({result:1,content:results});
 
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-002', error: err}); });
+  .catch(err => { res.json({result: -1, message:'Unable to find Ride w/ url 02-005', error: err}); });
 });
 
-/** Get all single user passed rides as passenger | 02-005 */
+/** Get all single user passed rides as passenger | 02-006 */
 router.get('/passed/passenger/:id',function(req,res){
 
   models.User.find({
@@ -193,10 +193,10 @@ router.get('/passed/passenger/:id',function(req,res){
       }
     }
 
-    if(results.length == 0) res.json({result:0, message:'No ride found w/ 02-003'});
+    if(results.length == 0) res.json({result:0, message:'No Ride found w/ 02-006'});
     else res.json({result:1,content:results});
   })
-  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 02-003', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-006', error:err}); });
 });
 
 /** Get a single ride | 02-007 */
@@ -216,11 +216,11 @@ router.get('/:id',function(req,res){
   .then(function(ride){
     res.json({result:1, content:ride.responsify()});
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-007', error: err}); } );
+  .catch(err => { res.json({result: -1, message:'Unable to find Ride w/ url 02-007', error: err}); } );
 
 });
 
-/** Get full User sended request | */
+/** Get full User sended request | 02-008 */
 router.get('/sended/:userID',function(req,res){
 
   models.User.find({
@@ -246,17 +246,17 @@ router.get('/sended/:userID',function(req,res){
         let elem = request.responsify();
         results.push(elem);
       }
-      if(results.length == 0) res.json({result:0, message:'No ride found w/ url '});
+      if(results.length == 0) res.json({result:0, message:'No Ride found w/ url 02-008'});
       else res.json({result:1, content:results});
     }
-    else res.json({result:0, message:'User not found w/ url '});
+    else res.json({result:0, message:'User not found w/ url 02-008'});
   })
-  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url ', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-008', error:err}); });
 });
 
 /**************************POST**************************/
 
-/** Create new Request for a Ride | */
+/** Create new Request for a Ride | 02-009 */
 router.post('/request',function(req,res,next){
   let send = req.body;
 
@@ -267,7 +267,7 @@ router.post('/request',function(req,res,next){
     }
   })
   .then(request => {
-    if(request) res.json({result:0, message:'User has already requested for this ride w/ url '});
+    if(request) res.json({result:0, message:'User has already requested for this Ride w/ url 02-009'});
     else{
 
       Ride.find({
@@ -285,23 +285,23 @@ router.post('/request',function(req,res,next){
               ride.addRequest(user, { requestDate: new Date() })
               .then(user => {
                 ride.decrement('remain_seats');
-                res.json({result:1, message:'User successfully set to Ride Requests w/ url '});
+                res.json({result:1, message:'User successfully set to Ride Requests w/ url 02-009'});
               })
-              .catch(err => { res.json({result:-1, message:'Unable to set User to Ride Request w/ url ', error:err}); });
+              .catch(err => { res.json({result:-1, message:'Unable to set User to Ride Request w/ url 02-009', error:err}); });
             }
-            else res.json({result:0, message:'User not found w/ url '});
+            else res.json({result:0, message:'User not found w/ url 02-009'});
           })
-          .catch(err => { res.json({result:-1, message:'Unable to find User w/ url ', error:err}); });
+          .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-009', error:err}); });
         }
-        else res.json({result:0, message:'Ride not found w/ url '});
+        else res.json({result:0, message:'Ride not found w/ url 02-009'});
       })
-      .catch(err => { res.json({result:-1, message:'Unable to find ride w/ url ', error:err}); });
+      .catch(err => { res.json({result:-1, message:'Unable to find Ride w/ url 02-009', error:err}); });
     }
   })
-  .catch(err => { res.json({result:-1, message:'Unable to find Request w/ url ', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find Request w/ url 02-009', error:err}); });
 });
 
-/** Accept Request and add Passenger to Ride | */
+/** Accept Request and add Passenger to Ride | 02-010 */
 router.post('/passenger',function(req,res,next){
   let send = req.body;
 
@@ -333,27 +333,27 @@ router.post('/passenger',function(req,res,next){
                     request.updateAttributes({
                       acceptedDate: new Date()
                     });
-                    res.json({result:1, message:'Passenger successfully added to the Ride w/ url '});
+                    res.json({result:1, message:'Passenger successfully added to the Ride w/ url 02-010'});
                   })
-                  .catch(err => { res.json({result:-1, message:'Unable to set User to the Ride w/ url ', error:err}); });
+                  .catch(err => { res.json({result:-1, message:'Unable to set User to the Ride w/ url 02-010', error:err}); });
                 })
-                .catch(err => { res.json({result:-1, message:'Unable to find User w/ url ', error:err}); });
+                .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-010', error:err}); });
             }
-            else res.json({result:0, message:'Ride not found w/ url '});
+            else res.json({result:0, message:'Ride not found w/ url 02-010'});
           })
-          .catch(err => { res.json({result:-1, message:'Unable to find Ride w/ url ', error:err}); });
+          .catch(err => { res.json({result:-1, message:'Unable to find Ride w/ url 02-010', error:err}); });
         }
-        else res.json({result:0, message:'Request already accepted w/ url '});
+        else res.json({result:0, message:'Request already accepted w/ url 02-010'});
       }
-      else res.json({result:0, message:'Request already refused w/ url '});
+      else res.json({result:0, message:'Request already refused w/ url 02-010'});
     }
-    else res.json({result:0, message:'Request not found w/ url '});
+    else res.json({result:0, message:'Request not found w/ url 02-010'});
   })
-  .catch(err => { res.json({result:-1, message:'Unable to find Request w/ url ', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find Request w/ url 02-010', error:err}); });
 
 });
 
-/** Refuse Request | */
+/** Refuse Request | 02-011 */
 router.post('/refuse',function(req,res,next){
   let send = req.body;
 
@@ -378,23 +378,23 @@ router.post('/refuse',function(req,res,next){
               request.updateAttributes({
                 refusedDate: new Date()
               });
-              res.json({result:1, message:'Request successfully refused w/ url '});
+              res.json({result:1, message:'Request successfully refused w/ url 02-011'});
             }
-            else res.json({result:0, message:'Ride not found w/ url '});
+            else res.json({result:0, message:'Ride not found w/ url 02-011'});
           })
-          .catch(err => { res.json({result:-1, message:'Unable to find Ride w/ url ', error:err}); });
+          .catch(err => { res.json({result:-1, message:'Unable to find Ride w/ url 02-011', error:err}); });
         }
-        else res.json({result:0, message:'Request has already been refused w/ url '});
+        else res.json({result:0, message:'Request has already been refused w/ url 02-011'});
       }
-      else res.json({result:0, message:'Request has already been accepted w/ url'});
+      else res.json({result:0, message:'Request has already been accepted w/ url 02-011'});
     }
-    else res.json({result:0, message:'Request not found w/ url '});
+    else res.json({result:0, message:'Request not found w/ url 02-011'});
   })
-  .catch(err => { res.json({result:-1, message:'Unable to find request w/ url ', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find Request w/ url 02-011', error:err}); });
 
 });
 
-/** Create a new ride | 02-010 */
+/** Create a new ride | 02-012 */
 router.post('/new',function(req,res,next){
   let send = req.body;
 
@@ -428,20 +428,20 @@ router.post('/new',function(req,res,next){
           .then(ride => {
             ride.setDriver(driver)
             .then(driver =>{
-              if(ride) res.json({result:1, message:'Ride successfully created w/ url '});
-              else res.json({result:0, message:'Ride not created w/ url '});
+              if(ride) res.json({result:1, message:'Ride successfully created w/ url 02-012'});
+              else res.json({result:0, message:'Ride not created w/ url 02-012'});
             })
-            .catch(err => { res.json({result:-1, message:'Unable to set User to the Ride w/ url 02-010',error:err}); });
+            .catch(err => { res.json({result:-1, message:'Unable to set User to the Ride w/ url 02-012',error:err}); });
           })
-          .catch(err => { res.json({result:-1, message:'Unable to create Ride w/ url ', error:err}); });
+          .catch(err => { res.json({result:-1, message:'Unable to create Ride w/ url 02-012', error:err}); });
         }
-        else res.json({result:0, message:'User not found w/ url 02-010'});
+        else res.json({result:0, message:'User not found w/ url 02-012'});
       })
-      .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-010', error:err}); });
+      .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-012', error:err}); });
     }
   }
   else if(send.dep_site != undefined && send.arr_site != undefined){
-    if(send.dep_site == send.arr_site) res.json({result:0, message:'Departure and Arrival Sites could not be the same w/ url'});
+    if(send.dep_site == send.arr_site) res.json({result:0, message:'Departure and Arrival Sites could not be the same w/ url 02-012'});
     else{
 
       models.User.find({
@@ -481,27 +481,27 @@ router.post('/new',function(req,res,next){
 
                         ride.setDriver(driver)
                         .then(driver => {
-                          res.json({result:1, message:'Ride successfully created w/ url '});
+                          res.json({result:1, message:'Ride successfully created w/ url 02-012'});
                         })
-                        .catch(err => { res.json({result:-1, message:'Unable to set User to the Ride w/ url 02-010', error:err}); });
+                        .catch(err => { res.json({result:-1, message:'Unable to set User to the Ride w/ url 02-012', error:err}); });
                       })
-                      .catch(err => { res.json({result:-1, message:'Unable to set Arrival to the Ride w/ url ', error:err}); });
+                      .catch(err => { res.json({result:-1, message:'Unable to set Arrival to the Ride w/ url 02-012', error:err}); });
                     })
-                    .catch(err => { res.json({result:-1, message:'Unable to set Departure to the Ride w/ url ', error:err}); });
+                    .catch(err => { res.json({result:-1, message:'Unable to set Departure to the Ride w/ url 02-012', error:err}); });
                   }
-                  else res.json({result:0, message:'Ride not created w/ url '});
+                  else res.json({result:0, message:'Ride not created w/ url 02-012'});
                 })
-                .catch(err => { res.json({result:-1, message:'Unable to create Ride w/ url ', error:err}); });
+                .catch(err => { res.json({result:-1, message:'Unable to create Ride w/ url 02-012', error:err}); });
               })
-              .catch(err => { res.json({result:-1, message:'Unable to find Arrival w/ url ', error:err}); });
+              .catch(err => { res.json({result:-1, message:'Unable to find Arrival w/ url 02-012', error:err}); });
             }
-            else res.json({result:0, message:'Departure Site not found w/ url '});
+            else res.json({result:0, message:'Departure Site not found w/ url 02-012'});
           })
-          .catch(err => { res.json({result:-1, message:'Unable to find Departure w/ url ', error:err}); });
+          .catch(err => { res.json({result:-1, message:'Unable to find Departure w/ url 02-012', error:err}); });
         }
-        else res.json({result:0, message:'User not found w/ url 02-010'});
+        else res.json({result:0, message:'User not found w/ url 02-012'});
       })
-      .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-010', error:err}); });
+      .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-012', error:err}); });
 
     }
   }
@@ -537,23 +537,23 @@ router.post('/new',function(req,res,next){
 
                   ride.setDriver(driver)
                   .then(driver => {
-                    res.json({result:1, message:'Ride successfully created w/ url'});
+                    res.json({result:1, message:'Ride successfully created w/ url 02-012'});
                   })
-                  .catch(err => { res.json({result:-1, message:'Unable to set User to the Ride w/ url 02-010', error:err}); });
+                  .catch(err => { res.json({result:-1, message:'Unable to set User to the Ride w/ url 02-012', error:err}); });
                 })
-                .catch(err => { res.json({result:-1, message:'Unable to set departure w/ url ', error:err}); });
+                .catch(err => { res.json({result:-1, message:'Unable to set departure w/ url 02-012', error:err}); });
               }
-              else res.json({result:0, message:'Ride not created w/ url '});
+              else res.json({result:0, message:'Ride not created w/ url 02-012'});
             })
-            .catch(err => { res.json({result:-1, message:'Unable to create Ride w/ url ', error:err}); });
+            .catch(err => { res.json({result:-1, message:'Unable to create Ride w/ url 02-012', error:err}); });
           }
-          else res.json({result:0, message:'Departure not found w/ url'});
+          else res.json({result:0, message:'Departure not found w/ url 02-012'});
         })
-        .catch(err => { res.json({result:-1, message:'Unable to find Site w/ url ', error:err}); });
+        .catch(err => { res.json({result:-1, message:'Unable to find Site w/ url 02-012', error:err}); });
       }
-      else res.json({result:0, message:'User not found w/ url 02-010'});
+      else res.json({result:0, message:'User not found w/ url 02-012'});
     })
-    .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-010', error:err}); });
+    .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-012', error:err}); });
   }
   else if(send.dep_site == undefined && send.arr_site != undefined){
     models.User.find({
@@ -587,29 +587,29 @@ router.post('/new',function(req,res,next){
 
                   ride.setDriver(driver)
                   .then(driver => {
-                    res.json({result:1, message:'Ride successfully created w/ url'});
+                    res.json({result:1, message:'Ride successfully created w/ url 02-012'});
                   })
-                  .catch(err => { res.json({result:-1, message:'Unable to set Driver to the Ride w/ url 02-10', error:err}); });
+                  .catch(err => { res.json({result:-1, message:'Unable to set Driver to the Ride w/ url 02-012', error:err}); });
                 })
-                .catch(err => { res.json({result:-1, message:'Unable to set departure w/ url ', error:err}); });
+                .catch(err => { res.json({result:-1, message:'Unable to set Departure w/ url 02-012', error:err}); });
               }
-              else res.json({result:0, message:'Ride not created w/ url '});
+              else res.json({result:0, message:'Ride not created w/ url 02-012'});
             })
-            .catch(err => { res.json({result:-1, message:'Unable to create Ride w/ url ', error:err}); });
+            .catch(err => { res.json({result:-1, message:'Unable to create Ride w/ url 02-012', error:err}); });
           }
-          else res.json({result:0, message:'Departure not found w/ url'});
+          else res.json({result:0, message:'Departure not found w/ url 02-012'});
         })
-        .catch(err => { res.json({result:-1, message:'Unable to find Site w/ url ', error:err}); });
+        .catch(err => { res.json({result:-1, message:'Unable to find Site w/ url 02-012', error:err}); });
       }
-      else res.json({result:0, message:'User not found w/ url 02-010'});
+      else res.json({result:0, message:'User not found w/ url 02-012'});
     })
-    .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-010', error:err}); });
+    .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-012', error:err}); });
 
   }
-  else res.json({result:0, message:'Ride informations do not match prerequesits w/ url '});
+  else res.json({result:0, message:'Ride information do not match prerequesits w/ url 02-012'});
 });
 
-/** Update single ride | 02-011 */
+/** Update single ride | 02-013 */
 router.post('/edit',function(req,res,next){
   let send = req.body;
 
@@ -627,7 +627,7 @@ router.post('/edit',function(req,res,next){
       }
       else res.json({result:0, message:'Ride not found w/ url 02-011'});
   })
-  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 02-011', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find Ride w/ url 02-011', error:err}); });
 });
 
 /** Search a ride | 02-013 */
@@ -657,7 +657,7 @@ router.post('/search',function(req,res){
       let hasRequested = false;
 
       let passengers = ride.Passengers;
-      let requests = ride.Asks;
+      let requests = ride.Requests;
 
       for(let passenger of passengers){
         if(passenger.id == send.user) isPassenger = true;
@@ -669,13 +669,13 @@ router.post('/search',function(req,res){
       if(!isPassenger && !hasRequested) results.push(ride.responsify());
     }
 
-    if(results.length == 0) res.json({result:0, message:'No ride found w/ url 02-013'});
+    if(results.length == 0) res.json({result:0, message:'No Ride found w/ url 02-013'});
     else res.json({result:1, content:results});
   })
-  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 02-013'}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find Ride w/ url 02-013'}); });
 });
 
-/** Rate a Ride | */
+/** Rate a Ride | 02-014 */
 router.post('/mark',function(req,res,next){
   let send = req.body;
 
@@ -700,21 +700,21 @@ router.post('/mark',function(req,res,next){
           elem.updateAttributes({
             marked: 1
           });
-          res.json({result:1, message:'User successfully rated w/ url '});
+          res.json({result:1, message:'User successfully rated w/ url 02-014'});
         }
-        else res.json({result:-1, message:'Passenger association not found w/ url ', error:err});
+        else res.json({result:-1, message:'Passenger association not found w/ url 02-014', error:err});
       })
-      .catch(err => { res.json({result:-1, message:'Unable to find Passenger association w/ url ', error:err}); });
+      .catch(err => { res.json({result:-1, message:'Unable to find Passenger association w/ url 02-014', error:err}); });
     }
-    else res.json({result:1, message:'User not found w/ url '});
+    else res.json({result:1, message:'User not found w/ url 02-014'});
   })
-  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url ', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find User w/ url 02-014', error:err}); });
 
 });
 
 /**************************DELETE**************************/
 
-/** Delete a ride | 02-012 */
+/** Delete a ride | 02-015 */
 router.delete('/:id',function(req,res,next){
   Ride.find({
     where:{
@@ -725,15 +725,15 @@ router.delete('/:id',function(req,res,next){
     if(ride){
       ride.destroy()
       .then(ride => {
-         if(ride) res.json({result:1, message:'Ride successfully removed w/ url '});
-         else res.json({result:0, message:'Ride not found w/ url '}); })
+         if(ride) res.json({result:1, message:'Ride successfully removed w/ url 02-015'});
+         else res.json({result:0, message:'Ride not found w/ url 02-015'}); })
       .catch(err => { res.json({result: -1, error: err}); } );
     }
     else{
-      res.json({ result: -1 });
+      res.json({result:0, message:'Ride not found w/ url 02-015'});
     }
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 02-011', error: err}); });
+  .catch(err => { res.json({result: -1, message:'Unable to find Ride w/ url 02-015', error: err}); });
 });
 
 /**************************END**************************/

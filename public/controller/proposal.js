@@ -1,15 +1,27 @@
 'use strict';
 
+/**
+* View : proposal
+*/
 shareAppControllers.controller('proposalCtrl',['$scope','$location','$http','$routeParams','Current','$timeout',
   function($scope,$location,$http,$routeParams,Current,$timeout){
+    if(Current.user.valid != 1) $location.path('/login');
+    else if(Current.user.info == null) $location.path('/login');
+    else{
 
-    var clearProposal = function(){
-      $scope.proposal = {};
-      angular.element(document.querySelector('#ddate')).removeClass('has-error');
-      angular.element(document.querySelector('#adate')).removeClass('has-error');
-      angular.element(document.querySelector('#ddate')).removeClass('has-success');
-      angular.element(document.querySelector('#adate')).removeClass('has-success');
-    };
+      var clearProposal = function(){
+        $scope.proposal = {};
+        angular.element(document.querySelector('#ddate')).removeClass('has-error');
+        angular.element(document.querySelector('#adate')).removeClass('has-error');
+        angular.element(document.querySelector('#ddate')).removeClass('has-success');
+        angular.element(document.querySelector('#adate')).removeClass('has-success');
+      };
+
+
+
+      /*************************** PROPOSAL INFORMATION ******************************/
+
+
 
     $http.get('/site/')
     .then(function(res){
@@ -65,6 +77,12 @@ shareAppControllers.controller('proposalCtrl',['$scope','$location','$http','$ro
       return 0;
     };
 
+
+
+    /*************************** INPUT CONTROLS ******************************/
+
+
+
     $scope.validateDate = function(date,which){
       angular.element(document.querySelector('#ddate, #adate')).removeClass('has-error');
       angular.element(document.querySelector('#ddate, #adate')).removeClass('has-success');
@@ -102,6 +120,13 @@ shareAppControllers.controller('proposalCtrl',['$scope','$location','$http','$ro
       }
       return 0;
     };
+
+
+
+    /*************************** PROPOSE RIDE ******************************/
+
+
+
 
     $scope.proposeRide = function(proposal,seats){
       var date1 = dateVerify(proposal.d_date);
@@ -181,5 +206,6 @@ shareAppControllers.controller('proposalCtrl',['$scope','$location','$http','$ro
       }
     }
 
+    }
   }
 ]);

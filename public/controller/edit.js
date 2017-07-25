@@ -3,6 +3,9 @@
 /** Edit User Information **/
 shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Current','$timeout',
   function($scope,$http,$routeParams,Current,$timeout){
+    if(Current.user.valid != 1) $location.path('/login');
+    else if(Current.user.info == null) $location.path('/login');
+    else{
 
     var car = {};
     var user = {};
@@ -45,6 +48,14 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
       }
     }
 
+    $scope.resetPassword = function(){
+      $scope.pass = {};
+      angular.element(document.querySelector('#npass')).removeClass('has-error');
+      angular.element(document.querySelector('#fpass')).removeClass('has-error');
+      angular.element(document.querySelector('#npass')).removeClass('has-success');
+      angular.element(document.querySelector('#fpass')).removeClass('has-success');
+    }
+
     $scope.editPassword = function(pass){
       angular.element(document.querySelector('#npass')).removeClass('has-error');
       if(valid == 1){
@@ -58,7 +69,7 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
             .then(function(res){
               if(res.data.result == 1){
                 getCurrent();
-                resetPassword();
+                $scope.resetPassword();
                 $scope.notif = {
                                   type:'alert-success',
                                   show:true,
@@ -83,12 +94,6 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
         }
       }
       else $scope.error = { show:true, message:'Votre ancien mot de passe n\'est pas correct.' };
-    }
-
-    $scope.resetPassword = function(){
-      $scope.pass = {};
-      angular.element(document.querySelector('#npass, #fpass')).removeClass('has-error');
-      angular.element(document.querySelector('#npass, #fpass')).removeClass('has-success');
     }
 
     $scope.resetDescription = function(){
@@ -145,7 +150,7 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
       else if(ncar.model.match(/^\s+$/g) || ncar.model == undefined){
         $scope.snap = {show:true,message:'Veuillez renseigner un Modèle.'};
       }
-      else if(ncar.placesNumber.match(/^\s+$/g) || ncar.placesNumber == undefined){
+      else if(!angular.isNumber(parseInt(ncar.placesNumber))){
         $scope.snap = {show:true,message:'Veuillez renseigner le nombre de Places passagères.'};
       }
       else if(ncar.vehicleType == undefined || ncar.vehicleType == ''){
@@ -205,9 +210,10 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
                                 message:'Un problème est survenu à l\'enregistrement...'
                               };
             }
-            $timeout(closeNotif(),3000);
+            $timeout(function(){ $scope.notif = {} },3000);
             $scope.snap = {};
             angular.element(document.querySelector('#registration')).removeClass('has-error');
+            angular.element(document.querySelector('#registration')).removeClass('has-success');
           },function(res){ console.log('FAIL : '+res.data); });
         }
       }
@@ -222,6 +228,6 @@ shareAppControllers.controller('editCtrl',['$scope','$http','$routeParams','Curr
       $scope.car = car;
     }
 
-
+    }
   }
 ]);

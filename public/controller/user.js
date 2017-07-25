@@ -6,7 +6,16 @@
 
 shareAppControllers.controller('usersCtrl',['$scope','$location','$http','Current','$timeout',
     function($scope,$location,$http,Current,$timeout){
+      if(Current.user.valid != 1) $location.path('/login');
+      else if(Current.user.info == null) $location.path('/login');
+      else{
+
         $scope.loaded = false;
+
+
+        /***************************  GET USERS ******************************/
+
+
 
         /** Get all users */
         var getUsers = function(){
@@ -31,6 +40,12 @@ shareAppControllers.controller('usersCtrl',['$scope','$location','$http','Curren
           },function(res){ console.log('FAIL : '+res.data); });
         }; getUsers();
 
+
+
+        /*************************** USERS ACTIONS ******************************/
+
+
+
         $scope.userProfile = function(user){
           $location.path('/profil/'+user.id);
         }
@@ -38,5 +53,7 @@ shareAppControllers.controller('usersCtrl',['$scope','$location','$http','Curren
         $scope.userPop = function(user){
           $scope.upop = { show:true, display:'opacify', user:user }
         }
+
+      }
     }
 ]);

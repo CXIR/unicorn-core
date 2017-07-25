@@ -16,9 +16,9 @@ router.get('/',function(req,res){
       results.push(s.responsify());
     }
 
-    if(results.length == 0) res.json({result:0, message:'Site not found w/ url '});
+    if(results.length == 0) res.json({result:0, message:'No Status found w/ url 07-001'});
     else res.json({result:1, content:results});
-  }).catch(err => { res.json({result: -1, error: err}); } );
+  }).catch(err => { res.json({result: -1, message:'Unable to find Status w/ url 07-001', error: err}); });
 
 });
 
@@ -31,9 +31,9 @@ router.get('/:id',function(req,res){
   })
   .then(status => {
     if(status) res.json({result:1, content:status.responsify()});
-    else res.json({ result: 0, message:'Site not found w/ url '});
+    else res.json({ result: 0, message:'Status not found w/ url 07-002'});
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url '});
+  .catch(err => { res.json({result: -1, message:'Unable to find Status w/ url 07-002'});
   });
 
 });
@@ -48,7 +48,7 @@ router.post('/new',function(req,res,next){
     where: { label: send.label }
   })
   .then(status => {
-    if(status) res.json({result:0, message:'Similar status w/ same name already exists w/ url 07-003 '});
+    if(status) res.json({result:0, message:'Similar Status w/ same name already exists w/ url 07-003'});
     else{
 
       Status.create({
@@ -77,11 +77,11 @@ router.post('/edit',function(req,res,next){
   .then(status => {
     if(status){
       status.updateAttributes({ label: send.label });
-      res.json({result: 1, message:'Site successfully updated w/ url '});
+      res.json({result: 1, message:'Status successfully updated w/ url 07-004'});
     }
-    else res.json({result: 0, message: 'No status found w/ url 07-004' });
+    else res.json({result: 0, message:'Status not found w/ url 07-004'});
   })
-  .catch(err => { res.json({result: -1, message:'Something went wrong w/ url 07-004', error: err}); });
+  .catch(err => { res.json({result: -1, message:'Unable to find Status w/ url 07-004', error: err}); });
 });
 
 
@@ -98,13 +98,13 @@ router.delete('/:id',function(req,res,next){
     if(status){
       status.destroy()
       .then(function(status){
-        res.json({result: 1, message:'Site successfully removed w/ url '});
+        res.json({result: 1, message:'Status successfully removed w/ url '});
       })
-      .catch(err => { res.json({ result:0, message:'Unable to remove status on url 07-005', error:err}); });
+      .catch(err => { res.json({ result:0, message:'Unable to remove Status on url 07-005', error:err}); });
     }
-    else res.json({result: -1, message:'No status found w/ url 07-005'});
+    else res.json({result: -1, message:'Status not found w/ url 07-005'});
   })
-  .catch(err => { res.json({result:-1, message:'Something went wrong w/ url 07-005', error:err}); });
+  .catch(err => { res.json({result:-1, message:'Unable to find Status w/ url 07-005', error:err}); });
 });
 
 

@@ -50,9 +50,14 @@ shareAppControllers.controller('loginCtrl',['$scope','$http','Current','$locatio
             $http.post('/login',post)
             .then(function(res){
               if(res.data.result == 1){
-                Current.user.info = res.data.object;
-                Current.user.valid = 1;
-                $location.path('/home');
+                if(res.data.content.status.id == 3){
+                  $scope.error = {uncorrect:true,message:'Votre compte a été vérouillé par les Gestionnaires. Vous n\'avez plus accès à cette Application pour le moment.'};
+                }
+                else{
+                  Current.user.info = res.data.object;
+                  Current.user.valid = 1;
+                  $location.path('/home');
+                }
               }
               else if(res.data.result == 0) $scope.error = { uncorrect:true, message:'Vos identifiants sont incorrects !'};
               else $scope.error = {uncorrect:true,message:'Impossible de vous identifier, veuillez retenter plus tard.'};
